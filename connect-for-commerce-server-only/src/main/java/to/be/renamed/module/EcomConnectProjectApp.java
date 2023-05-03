@@ -49,27 +49,51 @@ public class EcomConnectProjectApp implements ProjectApp {
         Logging.logInfo("Updating project app for project with ID " + environment.getProjectId() + " from version " + oldVersionString, getClass());
         if (isConfigMigrationNeeded(oldVersionString)) {
             Logging.logInfo("Starting migration of project app configuration for project with ID " + environment.getProjectId(), getClass());
-            final FileSystem<? extends FileHandle> fs = environment.getConfDir();
+            final Properties props = loadOldConfiguration();
+
+            final GeneralConfig generalConfig = new GeneralConfig(props.getProperty("bridge.content-creator-extension"),
+                                                                  Boolean.parseBoolean(props.getProperty("general.use-content-creator-extension")),
+                                                                  Boolean.parseBoolean(props.getProperty("checkbox.disable-bridge-page-creation")));
+            final BridgeConfig bridgeConfig = new BridgeConfig(props.getProperty("bridge.api-url"), props.getProperty("bridge.username"), props.getProperty("bridge.password"));
+
+            int categoryLevels = 3;
             try {
-                final FileHandle file = fs.obtain("FirstSpirit Connect for Commerce.properties");
-                final Properties props = new Properties();
-                props.load(file.load());
-
-                final GeneralConfig generalConfig = new GeneralConfig(props.getProperty("bridge.content-creator-extension"),
-                                                                      Boolean.parseBoolean(props.getProperty("general.use-content-creator-extension")),
-                                                                      Boolean.parseBoolean(props.getProperty("checkbox.disable-bridge-page-creation")));
-                final BridgeConfig bridgeConfig = new BridgeConfig(props.getProperty("bridge.api-url"), props.getProperty("bridge.username"), props.getProperty("bridge.password"));
-                final ReportConfig reportConfig = new ReportConfig(Integer.parseInt(props.getProperty("report.category-levels")), Integer.parseInt(props.getProperty("report.product-levels")));
-
-                final ProjectAppConfiguration projectAppConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig);
-
-                final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
-                projectAppConfigurationService.storeConfiguration(projectAppConfiguration);
-                Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!", getClass());
-            } catch (IOException e) {
-                Logging.logError("Failed migration of project app configuration for project with ID " + environment.getProjectId() + "!", e, getClass());
+                categoryLevels = Integer.parseInt(props.getProperty("report.category-levels"));
+            } catch (final NumberFormatException nfe) {
+                Logging.logInfo("No value for property report.category-levels found in old configuration file. Migrating to default value: 3", getClass());
             }
+
+            int productLevels = 3;
+            try {
+                productLevels = Integer.parseInt(props.getProperty("report.product-levels"));
+            } catch (final NumberFormatException nfe) {
+                Logging.logInfo("No value for property report.product-levels found in old configuration file. Migrating to default value: 3", getClass());
+            }
+
+            final ReportConfig reportConfig = new ReportConfig(categoryLevels, productLevels);
+
+            final ProjectAppConfiguration projectAppConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig);
+
+            storeMigratedConfiguration(projectAppConfiguration);
+            Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!", getClass());
         }
+    }
+
+    protected void storeMigratedConfiguration(final ProjectAppConfiguration projectAppConfiguration) {
+        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
+        projectAppConfigurationService.storeConfiguration(projectAppConfiguration);
+    }
+
+    protected Properties loadOldConfiguration() {
+        final FileSystem<? extends FileHandle> fs = environment.getConfDir();
+        final Properties props = new Properties();
+        try {
+            final FileHandle file = fs.obtain("FirstSpirit Connect for Commerce.properties");
+            props.load(file.load());
+        } catch (IOException e) {
+            Logging.logError("Failed migration of project app configuration for project with ID " + environment.getProjectId() + "!", e, getClass());
+        }
+        return props;
     }
 
     protected boolean isConfigMigrationNeeded(final String oldVersionString) {
