@@ -11,6 +11,29 @@ Its purpose is to give interested parties an insight into the implementation in 
 The package names and structure have been adjusted to not conflict with the official implementation of the module.
 Therefore, to use the classes published here, the package names and structure must be adapted to your own specifications.
 
+## Building the module
+
+### Connect to artifactory
+
+Please see chapter 3.2 of the [FirstSpirit Guide:
+Developing Modules in the Cloud](https://docs.e-spirit.com/cloud/module-development/Module_Development_FirstSpirit_Guide_EN.pdf) on how to set up your artifactory credentials.
+
+### Run the build 
+
+To build the module, simply run
+
+```
+./gradlew build
+```
+
+in the root directory.
+
+The built fsm file will be located at
+
+```
+connect-for-commerce-module/build/fsm
+```
+
 ## Resources
 
 [Documentation](https://docs.e-spirit.com/ecom/fsconnect-com/FirstSpirit_Connect_for_Commerce_Documentation_EN.html)
