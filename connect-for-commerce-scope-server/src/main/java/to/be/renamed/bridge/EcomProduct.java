@@ -1,9 +1,8 @@
 package to.be.renamed.bridge;
 
 import to.be.renamed.bridge.client.Json;
-import de.espirit.firstspirit.json.JsonObject;
-import de.espirit.firstspirit.json.JsonPair;
-import de.espirit.firstspirit.json.values.JsonStringValue;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import java.io.Serializable;
 
@@ -26,6 +25,13 @@ public class EcomProduct extends EcomId implements Serializable {
         categoryId = json.get("categoryId");
     }
 
+    public EcomProduct(String id, String type, String lang, String pageRefUid, String label, String extract, String thumbnail, String image, String categoryId) {
+        super(id, type, lang, pageRefUid, label);
+        this.extract = extract;
+        this.thumbnail = thumbnail;
+        this.image = image;
+        this.categoryId = categoryId;
+    }
 
     @Override
     public String getType() {
@@ -34,30 +40,30 @@ public class EcomProduct extends EcomId implements Serializable {
 
     @Override
     public JsonObject getValue() {
-        JsonObject jsonObject = JsonObject.create();
+        JsonObject jsonObject = new JsonObject();
         if (type != null) {
-            jsonObject.put(JsonPair.of("type", JsonStringValue.of(type)));
+            jsonObject.add("type", new JsonPrimitive(type));
         }
         if (lang != null) {
-            jsonObject.put(JsonPair.of("lang", JsonStringValue.of(lang)));
+            jsonObject.add("lang", new JsonPrimitive(lang));
         }
         if (id != null) {
-            jsonObject.put(JsonPair.of("id", JsonStringValue.of(id)));
+            jsonObject.add("id", new JsonPrimitive(id));
         }
         if (label != null) {
-            jsonObject.put(JsonPair.of("label", JsonStringValue.of(label)));
+            jsonObject.add("label", new JsonPrimitive(label));
         }
         if (extract != null) {
-            jsonObject.put(JsonPair.of("extract", JsonStringValue.of(extract)));
+            jsonObject.add("extract", new JsonPrimitive(extract));
         }
         if (thumbnail != null) {
-            jsonObject.put(JsonPair.of("thumbnail", JsonStringValue.of(thumbnail)));
+            jsonObject.add("thumbnail", new JsonPrimitive(thumbnail));
         }
         if (image != null) {
-            jsonObject.put(JsonPair.of("image", JsonStringValue.of(image)));
+            jsonObject.add("image", new JsonPrimitive(image));
         }
         if (categoryId != null) {
-            jsonObject.put(JsonPair.of("categoryId", JsonStringValue.of(categoryId)));
+            jsonObject.add("categoryId", new JsonPrimitive(categoryId));
         }
 
         return jsonObject;

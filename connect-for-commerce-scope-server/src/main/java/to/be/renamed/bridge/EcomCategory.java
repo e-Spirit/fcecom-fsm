@@ -2,9 +2,6 @@ package to.be.renamed.bridge;
 
 import to.be.renamed.bridge.client.Json;
 
-import de.espirit.firstspirit.json.JsonArray;
-import de.espirit.firstspirit.json.JsonObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,11 +10,18 @@ import java.util.List;
 public class EcomCategory extends EcomId implements Serializable {
 
     private static final long serialVersionUID = 151051737286568433L;
+    private static final String CHILDREN_KEY = "children";
     private final EcomCategory parent;
     private final List<EcomCategory> children;
 
     public EcomCategory(Json json) {
        this(json, null);
+    }
+
+    public EcomCategory(String id, String type, String lang, String pageRefUid, String label) {
+        super(id, type, lang, pageRefUid, label);
+        this.parent = null;
+        this.children = null;
     }
 
     private EcomCategory(Json json, EcomCategory parent) {
@@ -26,18 +30,21 @@ public class EcomCategory extends EcomId implements Serializable {
         this.children = new LinkedList<>();
 
         if (hasChildren(json)) {
-            ((JsonArray) json.getValue().get("children").getValue()).stream()
-                .map(child -> new EcomCategory(new Json((JsonObject) child), this))
-                .filter(EcomCategory::isValid)
-                .forEach(children::add);
+            (json.getValue().get(CHILDREN_KEY).getAsJsonArray())
+                    .forEach(child -> {
+                        EcomCategory category = new EcomCategory(new Json(child), this);
+                        if (category.isValid()) {
+                            children.add(category);
+                        }
+                    });
         }
     }
 
     private boolean hasChildren(final Json json) {
-        return json.getValue().hasAttribute("children") &&
-               json.getValue().get("children").getValue() != null &&
-               !"".equals(json.getValue().get("children").getValue()) &&
-               !"[]".equals(json.getValue().get("children").getValue());
+        return json.getValue().has(CHILDREN_KEY) &&
+               json.getValue().get(CHILDREN_KEY) != null &&
+               json.getValue().get(CHILDREN_KEY).isJsonArray() &&
+               !json.getValue().get(CHILDREN_KEY).getAsJsonArray().isEmpty();
     }
 
     public boolean hasParent() {

@@ -17,7 +17,12 @@ public class EcomContent extends EcomId implements Serializable {
 
     public EcomContent(Json json) {
         super(json);
-        extract = json .get("extract");
+        extract = json.get("extract");
+    }
+
+    public EcomContent(String id, String type, String lang, String pageRefUid, String label, String extract) {
+        super(id, type, lang, pageRefUid, label);
+        this.extract = extract;
     }
 
     @Override
@@ -44,11 +49,11 @@ public class EcomContent extends EcomId implements Serializable {
                     if (ServiceFactory.getBridgeService(scope.getBroker()).hasNewContentEndpoint()) {
                         throw new EcomConnectException(
                                 format(
-                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().json()));
+                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().toString()));
                     } else {
                         throw new EcomConnectException(
                                 format(
-                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getOldJsonModel().json()));
+                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getOldJsonModel().toString()));
                     }
                 }
                 element.updatePageId(pageId);

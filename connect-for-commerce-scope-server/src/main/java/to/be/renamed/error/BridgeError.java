@@ -1,6 +1,6 @@
 package to.be.renamed.error;
 
-import kong.unirest.json.JSONObject;
+import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 
@@ -21,19 +21,19 @@ public class BridgeError implements Serializable {
      * Creates a representation of an error returned in the bridges response
      * @param jsonObject The error as a unirest JSONObject
      */
-    public BridgeError(JSONObject jsonObject) {
-        if (jsonObject.has(FIELD_PROPERTY) && jsonObject.get(FIELD_PROPERTY) instanceof String) {
-            this.field = (String) jsonObject.get(FIELD_PROPERTY);
+    public BridgeError(JsonObject jsonObject) {
+        if (jsonObject.has(FIELD_PROPERTY) && jsonObject.get(FIELD_PROPERTY).isJsonPrimitive()) {
+            this.field = jsonObject.get(FIELD_PROPERTY).getAsString();
         } else {
             this.field = UNKNOWN;
         }
-        if (jsonObject.has(CAUSE_PROPERTY) && jsonObject.get(CAUSE_PROPERTY) instanceof String) {
-            this.cause = (String) jsonObject.get(CAUSE_PROPERTY);
+        if (jsonObject.has(CAUSE_PROPERTY) && jsonObject.get(CAUSE_PROPERTY).isJsonPrimitive()) {
+            this.cause = jsonObject.get(CAUSE_PROPERTY).getAsString();
         } else {
             this.cause = UNKNOWN;
         }
-        if (jsonObject.has(CODE_PROPERTY) && jsonObject.get(CODE_PROPERTY) instanceof String) {
-            this.code = (String) jsonObject.get(CODE_PROPERTY);
+        if (jsonObject.has(CODE_PROPERTY) && jsonObject.get(CODE_PROPERTY).isJsonPrimitive()) {
+            this.code = jsonObject.get(CODE_PROPERTY).getAsString();
         } else {
             this.code = ErrorCode.UNKNOWN.get();
         }

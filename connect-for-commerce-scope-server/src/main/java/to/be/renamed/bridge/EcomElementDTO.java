@@ -1,12 +1,11 @@
 package to.be.renamed.bridge;
 
-import de.espirit.firstspirit.json.JsonObject;
-import de.espirit.firstspirit.json.JsonPair;
-import de.espirit.firstspirit.json.values.JsonBooleanValue;
-import de.espirit.firstspirit.json.values.JsonNullValue;
-import de.espirit.firstspirit.json.values.JsonStringValue;
 
-import javax.annotation.Nullable;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -45,12 +44,12 @@ public class EcomElementDTO implements Serializable {
      * @return FirstSpirit JsonObject representation of the EcomElementDTO
      */
     public JsonObject getJsonModel() {
-        JsonObject jsonModel = JsonObject.create();
-        jsonModel.put(JsonPair.of("template", JsonStringValue.ofNullable(template)));
-        jsonModel.put(JsonPair.of("released", JsonBooleanValue.of(released)));
-        jsonModel.put(JsonPair.of("pageUid", JsonStringValue.ofNullable(pageUid)));
-        jsonModel.put(JsonPair.of("label", label != null && !label.isEmpty() ? jsonObjectFromMap(label) : JsonNullValue.NULL));
-        jsonModel.put(JsonPair.of("path", path != null && !path.isEmpty() ? jsonObjectFromMap(path) : JsonNullValue.NULL));
+        JsonObject jsonModel = new JsonObject();
+        jsonModel.add("template", template != null ? new JsonPrimitive(template) : JsonNull.INSTANCE);
+        jsonModel.add("released", new JsonPrimitive(released));
+        jsonModel.add("pageUid", pageUid != null ? new JsonPrimitive(pageUid) : JsonNull.INSTANCE);
+        jsonModel.add("label", label != null && !label.isEmpty() ? jsonObjectFromMap(label) : JsonNull.INSTANCE);
+        jsonModel.add("path", path != null && !path.isEmpty() ? jsonObjectFromMap(path) : JsonNull.INSTANCE);
 
         return jsonModel;
     }
@@ -61,11 +60,12 @@ public class EcomElementDTO implements Serializable {
      * @return FirstSpirit JsonObject representation of the EcomElementDTO (old json model).
      */
     public JsonObject getOldJsonModel() {
-        JsonObject jsonModel = JsonObject.create();
-        jsonModel.put(JsonPair.of("template", JsonStringValue.ofNullable(template)));
-        jsonModel.put(JsonPair.of("visible", JsonBooleanValue.of(released)));
-        jsonModel.put(JsonPair.of("pageUid", JsonStringValue.ofNullable(pageUid)));
-        jsonModel.put(JsonPair.of("label", JsonStringValue.ofNullable(getFirstValue(label))));
+        JsonObject jsonModel = new JsonObject();
+        jsonModel.add("template", template != null ? new JsonPrimitive(template) : JsonNull.INSTANCE);
+        jsonModel.add("visible", new JsonPrimitive(released));
+        jsonModel.add("pageUid", pageUid != null ? new JsonPrimitive(pageUid) : JsonNull.INSTANCE);
+        jsonModel.add("label", getFirstValue(label) != null ? new JsonPrimitive(getFirstValue(label)) : JsonNull.INSTANCE);
+
 
         return jsonModel;
     }
@@ -93,8 +93,8 @@ public class EcomElementDTO implements Serializable {
      * @return A FirstSpirit JsonObject with the keys and values from the map as keys and values.
      */
     private static JsonObject jsonObjectFromMap(Map<String, String> input) {
-        JsonObject jsonModel = JsonObject.create();
-        input.forEach((key, value) -> jsonModel.put(key, JsonStringValue.ofNullable(value)));
+        JsonObject jsonModel = new JsonObject();
+        input.forEach((key, value) -> jsonModel.add(key, new JsonPrimitive(value)));
         return jsonModel;
     }
 

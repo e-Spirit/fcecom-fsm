@@ -1,5 +1,7 @@
 package to.be.renamed.dap;
 
+import to.be.renamed.bridge.EcomId;
+import to.be.renamed.bridge.client.Json;
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.EcomConnectScope;
 
@@ -38,7 +40,6 @@ import de.espirit.firstspirit.client.plugin.report.ReportContext;
 import de.espirit.firstspirit.client.plugin.report.ReportItem;
 import de.espirit.firstspirit.generate.functions.json.JsonGenerationContext;
 import de.espirit.firstspirit.json.JsonElement;
-import de.espirit.firstspirit.json.JsonObject;
 import de.espirit.firstspirit.webedit.plugin.report.WebeditExecutableReportItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ import java.util.Set;
  *
  * @param <T> Type of the proxy class
  */
-public abstract class EcomAbstract<T extends JsonElement<JsonObject>> implements DataAccessPlugin<T>, EcomDataAccessPlugin.Defaults<T> {
+public abstract class EcomAbstract<T extends EcomId> implements DataAccessPlugin<T>, EcomDataAccessPlugin.Defaults<T> {
 
     protected final DataAccessAspectMap dataAccessAspects = new DataAccessAspectMap();
     protected EcomConnectScope scope;
@@ -186,7 +187,7 @@ public abstract class EcomAbstract<T extends JsonElement<JsonObject>> implements
 
                     @Override
                     public @NotNull JsonElement<?> handle(@NotNull JsonGenerationContext context, @NotNull T item) {
-                        return Objects.requireNonNull(item.getValue());
+                        return Objects.requireNonNull(Json.asFSJsonElement(item.getValue()));
                     }
 
                     @Override

@@ -51,7 +51,7 @@ class EcomContentCreatorMessage {
      * @param broker
      */
     public void apply(SpecialistsBroker broker) {
-        String json = Json.asJsonElement(message).json();
+        String json = Json.asJsonElement(message).toString();
         final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(broker);
         final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
         if (!projectAppConfiguration.getGeneralConfig().useCCExtensions()) {

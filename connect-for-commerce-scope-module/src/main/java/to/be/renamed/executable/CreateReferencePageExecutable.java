@@ -9,14 +9,13 @@ import to.be.renamed.fspage.FsPageCreator;
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.module.ServiceFactory;
 import com.espirit.moddev.components.annotations.PublicComponent;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.script.Executable;
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
 import de.espirit.firstspirit.agency.OperationAgent;
-import de.espirit.firstspirit.json.JsonObject;
-import de.espirit.firstspirit.json.values.JsonBooleanValue;
-import de.espirit.firstspirit.json.values.JsonNullValue;
-import de.espirit.firstspirit.json.values.JsonStringValue;
 import de.espirit.firstspirit.ui.operations.RequestOperation;
 
 import java.io.Writer;
@@ -36,8 +35,6 @@ public class CreateReferencePageExecutable extends ExecutableUtilities implement
     private static final String ERROR_PROPERTY = "error";
     private static final String ERROR_CODE_PROPERTY = "code";
     private static final String ERROR_CAUSE_PROPERTY = "cause";
-    private static final String INVALID_DISPLAYNAMES_FORMAT = "Invalid display names format";
-    private static final String REQUIRED_PARAMETER_MISSING = "A required parameter is missing";
 
     private BaseContext context;
 
@@ -82,10 +79,10 @@ public class CreateReferencePageExecutable extends ExecutableUtilities implement
             return createJsonResponse(false, e.getErrorCode(), e.getMessage());
         } catch (InvalidNestedMapTypeException e) {
             context.logError(e.getMessage(), e);
-            return createJsonResponse(false, ErrorCode.INVALID_DISPLAYNAMES_FORMAT.get(), INVALID_DISPLAYNAMES_FORMAT);
+            return createJsonResponse(false, ErrorCode.INVALID_DISPLAYNAMES_FORMAT.get(), e.getMessage());
         } catch (RequiredParamMissingException e) {
             context.logError(e.getMessage(), e);
-            return createJsonResponse(false, ErrorCode.REQUIRED_PARAM_MISSING.get(), REQUIRED_PARAMETER_MISSING);
+            return createJsonResponse(false, ErrorCode.REQUIRED_PARAM_MISSING.get(), e.getMessage());
         } catch (Exception e) {
             // Show error message in Content Creator
             context.logError(e.getMessage(), e);
@@ -101,21 +98,21 @@ public class CreateReferencePageExecutable extends ExecutableUtilities implement
     }
 
     private String createJsonResponse(Boolean success, String errorCode, String errorCause) {
-        JsonObject result = JsonObject.create();
-        JsonObject error = JsonObject.create();
-        result.put(SUCCESS_PROPERTY, JsonBooleanValue.of(success));
+        JsonObject result = new JsonObject();
+        JsonObject error = new JsonObject();
+        result.add(SUCCESS_PROPERTY, new JsonPrimitive(success));
         if (errorCode != null) {
-            error.put(ERROR_CODE_PROPERTY, JsonStringValue.of(errorCode));
+            error.add(ERROR_CODE_PROPERTY, new JsonPrimitive(errorCode));
         } else {
-            error.put(ERROR_CODE_PROPERTY, JsonNullValue.NULL);
+            error.add(ERROR_CODE_PROPERTY, JsonNull.INSTANCE);
         }
         if (errorCause != null) {
-            error.put(ERROR_CAUSE_PROPERTY, JsonStringValue.of(errorCause));
+            error.add(ERROR_CAUSE_PROPERTY, new JsonPrimitive(errorCause));
         } else {
-            error.put(ERROR_CAUSE_PROPERTY, JsonNullValue.NULL);
+            error.add(ERROR_CAUSE_PROPERTY, JsonNull.INSTANCE);
         }
         if (!(errorCode == null && errorCause == null)) {
-            result.put(ERROR_PROPERTY, error);
+            result.add(ERROR_PROPERTY, error);
         }
 
         return new Json(result).toString();

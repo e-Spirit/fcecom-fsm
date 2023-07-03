@@ -1,14 +1,14 @@
 package to.be.renamed.bridge.client;
 
+import com.google.gson.JsonElement;
 import kong.unirest.*;
-
-import de.espirit.firstspirit.json.JsonArray;
-import de.espirit.firstspirit.json.JsonElement;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static to.be.renamed.bridge.BridgeUtilities.toJsonElement;
 
 /**
  * Bridge Request for loading all pages of a specific GET endpoint
@@ -30,14 +30,12 @@ public class PagedBridgeRequest extends BridgeRequest {
     }
 
     @Override
-    public List<JsonElement<?>> getItems() {
-        final List<JsonElement<?>> items = new ArrayList<>();
+    public List<JsonElement> getItems() {
+        final List<JsonElement> items = new ArrayList<>();
         paginatedRequest()
             .getBodies()
-            .stream().map(body -> (JsonArray) Json.asJsonElement(body))
-            .filter(page -> page.size() > 0)
             // flattens page structure
-            .forEach(page -> page.stream().forEach(items::add));
+            .forEach(page -> page.getArray().forEach(element -> items.add(toJsonElement(element))));
         return items;
     }
 

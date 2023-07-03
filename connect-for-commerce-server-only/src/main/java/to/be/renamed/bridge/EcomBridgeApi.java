@@ -8,7 +8,6 @@ import to.be.renamed.bridge.client.UnirestInterceptor;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import de.espirit.common.base.Logging;
 import de.espirit.common.tools.Strings;
-import de.espirit.firstspirit.json.JsonObject;
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
 import kong.unirest.HttpStatus;
@@ -70,7 +69,7 @@ public class EcomBridgeApi {
                         .routeParam("categoryIds", Strings.implode(categoryIds, ","))
                         .queryString("lang", lang))
                 .getItems()
-                .stream().map(category -> new EcomCategory(new Json((JsonObject) category)))
+                .stream().map(category -> new EcomCategory(new Json(category)))
                 .filter(EcomCategory::isValid)
                 .collect(toList());
     }
@@ -87,7 +86,7 @@ public class EcomBridgeApi {
         return PagedBridgeRequest.pagedBridgeRequest(baseRequest, unirestConnector.getHttpClient())
                 .getItems()
                 .stream()
-                .map(category -> new EcomCategory(new Json((JsonObject) category)))
+                .map(category -> new EcomCategory(new Json(category)))
                 .filter(EcomCategory::isValid)
                 .collect(Collectors.toList());
     }
@@ -107,7 +106,7 @@ public class EcomBridgeApi {
 
             flattenCategories(BridgeRequest.bridgeRequest(baseRequest)
                     .getItems()
-                    .stream().map(category -> new EcomCategory(new Json((JsonObject) category)))
+                    .stream().map(category -> new EcomCategory(new Json(category)))
                     .filter(EcomCategory::isValid)
                     .collect(toList()), categories);
         }
@@ -134,7 +133,7 @@ public class EcomBridgeApi {
 
         return BridgeRequest.bridgeRequest(baseRequest)
                 .getItems()
-                .stream().map(product -> new EcomProduct(new Json((JsonObject) product)))
+                .stream().map(product -> new EcomProduct(new Json(product)))
                 .filter(EcomProduct::isValid)
                 .collect(toList());
     }
@@ -154,7 +153,7 @@ public class EcomBridgeApi {
 
         return PagedBridgeRequest.pagedBridgeRequest(baseRequest, unirestConnector.getHttpClient())
                 .getItems()
-                .stream().map(product -> new EcomProduct(new Json((JsonObject) product)))
+                .stream().map(product -> new EcomProduct(new Json(product)))
                 .filter(EcomProduct::isValid)
                 .collect(toList());
     }
@@ -186,7 +185,7 @@ public class EcomBridgeApi {
 
         return BridgeRequest.bridgeRequest(baseRequest)
                 .getItems()
-                .stream().map(content -> new EcomContent(new Json((JsonObject) content)))
+                .stream().map(content -> new EcomContent(new Json(content)))
                 .filter(EcomContent::isValid)
                 .collect(toList());
     }
@@ -207,7 +206,7 @@ public class EcomBridgeApi {
 
         return PagedBridgeRequest.pagedBridgeRequest(baseRequest, unirestConnector.getHttpClient())
                 .getItems()
-                .stream().map(content -> new EcomContent(new Json((JsonObject) content)))
+                .stream().map(content -> new EcomContent(new Json(content)))
                 .filter(EcomContent::isValid)
                 .collect(toList());
     }
@@ -287,7 +286,7 @@ public class EcomBridgeApi {
 
         return BridgeRequest.bridgeRequest(baseRequest)
                 .getItems()
-                .stream().map(content -> new EcomContent(new Json((JsonObject) content)))
+                .stream().map(content -> new EcomContent(new Json(content)))
                 .filter(EcomContent::isValid)
                 .collect(toList());
     }
@@ -304,7 +303,7 @@ public class EcomBridgeApi {
         }
         return PagedBridgeRequest.pagedBridgeRequest(baseRequest, unirestConnector.getHttpClient())
                 .getItems()
-                .stream().map(content -> new EcomContent(new Json((JsonObject) content)))
+                .stream().map(content -> new EcomContent(new Json(content)))
                 .filter(EcomContent::isValid)
                 .collect(toList());
     }

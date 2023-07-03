@@ -2,14 +2,19 @@ package to.be.renamed.bridge.client;
 
 import to.be.renamed.error.CreatePageException;
 import to.be.renamed.error.ErrorExtractor;
-import kong.unirest.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import kong.unirest.HttpMethod;
+import kong.unirest.HttpRequest;
+import kong.unirest.HttpResponse;
+import kong.unirest.HttpStatus;
+import kong.unirest.JsonNode;
 
-import de.espirit.firstspirit.json.JsonElement;
-import de.espirit.firstspirit.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static to.be.renamed.bridge.BridgeUtilities.toJsonElement;
 import static java.util.Collections.emptyList;
 
 public class BridgeRequest {
@@ -57,8 +62,8 @@ public class BridgeRequest {
 
         // everything ok
         if (jsonResponse != null && !jsonResponse.isArray()) {
-            JsonElement<?> jsonElement = Json.asJsonElement(jsonResponse.getObject());
-            return new Json((JsonObject) jsonElement.getValue());
+            JsonElement jsonElement = toJsonElement(jsonResponse.getObject());
+            return new Json((JsonObject) jsonElement);
         }
 
         return new Json();
@@ -69,8 +74,9 @@ public class BridgeRequest {
                 baseRequest.getHttpMethod().equals(HttpMethod.PUT)) &&
                 response.getStatus() == HttpStatus.BAD_REQUEST) {
             JsonNode body = response.getBody();
-            throw new CreatePageException("Error creating page:", ErrorExtractor.extractBodyValidationErrors(body), null);
+            throw new CreatePageException("Error creating page:", ErrorExtractor.extractBodyValidationErrors(toJsonElement(body.getObject())), null);
         }
+
         return new Json();
     }
 
@@ -80,7 +86,7 @@ public class BridgeRequest {
      *
      * @return List of JsonElements from the response bodies
      */
-    public List<JsonElement<?>> getItems() {
+    public List<JsonElement> getItems() {
         final HttpResponse<JsonNode> response = baseRequest.asJson();
 
         if (!response.isSuccess()) return emptyList();
@@ -88,8 +94,8 @@ public class BridgeRequest {
 
         final JsonNode body = response.getBody();
 
-        List<JsonElement<?>> items = new ArrayList<>();
-        body.getArray().forEach(item -> items.add(Json.asJsonElement(item)));
+        List<JsonElement> items = new ArrayList<>();
+        body.getArray().forEach(item -> items.add(toJsonElement(item)));
         return items;
     }
 }

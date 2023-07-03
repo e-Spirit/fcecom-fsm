@@ -105,7 +105,7 @@ public class EcomConnectScope {
         final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
         // without cc extensions
         if (!projectAppConfiguration.getGeneralConfig().useCCExtensions()) {
-            String javascript = String.format("() => (WE_API.Report.show(\"%s\", %s, true))", dap.getName(), Json.asJsonElement(params).json());
+            String javascript = String.format("() => (WE_API.Report.show(\"%s\", %s, true))", dap.getName(), Json.asJsonElement(params).toString());
             Objects.requireNonNull(broker.requireSpecialist(OperationAgent.TYPE)
                                        .getOperation(ClientScriptOperation.TYPE))
                 .perform(javascript, false);
@@ -165,7 +165,7 @@ public class EcomConnectScope {
         final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
         // without cc extensions
         if (!projectAppConfiguration.getGeneralConfig().useCCExtensions()) {
-            String javascript = String.format("() => (WE_API.Common.setPreviewElement(%s))", Json.asJsonElement(getFSID(pageRef)).json());
+            String javascript = String.format("() => (WE_API.Common.setPreviewElement(%s))", Json.asJsonElement(getFSID(pageRef)).toString());
             broker.requireSpecialist(OperationAgent.TYPE)
                 .getOperation(ClientScriptOperation.TYPE)
                 .perform(javascript, false);

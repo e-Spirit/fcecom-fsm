@@ -4,28 +4,22 @@ import to.be.renamed.bridge.client.Json;
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.OrphanedPageRefException;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
-import de.espirit.firstspirit.json.JsonElement;
-import de.espirit.firstspirit.json.JsonObject;
-import de.espirit.firstspirit.json.JsonPair;
-import de.espirit.firstspirit.json.values.JsonNullValue;
-import de.espirit.firstspirit.json.values.JsonStringValue;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
+import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
-import java.io.Writer;
 
 import static java.lang.String.format;
 
 /**
  * Object representation of a general page from the shop system.
  */
-public abstract class EcomId implements JsonElement<JsonObject>, Serializable {
+public abstract class EcomId implements Serializable {
 
     protected static final String CATEGORY_TEMPLATE_UID = "category";
     protected static final String PRODUCT_TEMPLATE_UID = "product";
@@ -47,6 +41,14 @@ public abstract class EcomId implements JsonElement<JsonObject>, Serializable {
         label = json.get("label");
     }
 
+    protected EcomId(String id, String type, String lang, String pageRefUid, String label) {
+        this.id = id;
+        this.type = type;
+        this.lang = lang;
+        this.pageRefUid = pageRefUid;
+        this.label = label;
+    }
+
     public static EcomId from(Json json) {
         if (json != null) {
             String type = json.get("type");
@@ -60,8 +62,33 @@ public abstract class EcomId implements JsonElement<JsonObject>, Serializable {
                         return new EcomContent(json);
                 }
             } else {
-                Logging.logWarning("Could not resolve EcomId-JSON " + json.json(), EcomId.class);
+                Logging.logWarning("Could not resolve EcomId-JSON " + json.toString(), EcomId.class);
             }
+        }
+        return null;
+    }
+
+    /**
+     * Creates an EcomId from values.
+     *
+     * @param type The type of the EcomId
+     * @param id The id from the shop system
+     * @param lang The current language
+     * @param pageRefUid The Uid of the pageRef
+     * @return EcomId internal Object to describe Product, Category or Content
+     */
+    public static EcomId from(String type, String id, String lang, String pageRefUid) {
+        if (type != null) {
+            switch (type) {
+                case CATEGORY_TEMPLATE_UID:
+                    return new EcomCategory(id, type, lang, pageRefUid, null);
+                case PRODUCT_TEMPLATE_UID:
+                    return new EcomProduct(id, type, lang, pageRefUid, null, null, null, null, null);
+                default:
+                    return new EcomContent(id, type, lang, pageRefUid, null, null);
+            }
+        } else {
+            Logging.logWarning("Could not resolve Page because of missing type.", EcomId.class);
         }
         return null;
     }
@@ -92,13 +119,12 @@ public abstract class EcomId implements JsonElement<JsonObject>, Serializable {
                 throw new OrphanedPageRefException(format(
                     "Could not find page for page ref with%n\tpageId: %s", pageRef.getPageId()));
             }
-            Json json = new Json();
+
             String pageId = getPageId(page, language);
-            json.getValue().put("type", JsonStringValue.of(page.getTemplate().getUid()));
-            json.getValue().put("id", pageId == null ? JsonNullValue.NULL : JsonStringValue.of(pageId));
-            json.getValue().put("lang", JsonStringValue.of(EcomConnectScope.getLang(language)));
-            json.getValue().put("pageRefUid", JsonStringValue.of(pageRef.getUid()));
-            return from(json);
+
+            String type = page.getTemplate().getUid();
+            String lang = EcomConnectScope.getLang(language);
+            return from(type, pageId, lang, pageRef.getUid());
         }
         return null;
     }
@@ -143,27 +169,21 @@ public abstract class EcomId implements JsonElement<JsonObject>, Serializable {
         this.id = id;
     }
 
-    @Override
     public @Nullable JsonObject getValue() {
-        JsonObject jsonObject = JsonObject.create();
+        JsonObject jsonObject = new JsonObject();
         if (type != null) {
-            jsonObject.put(JsonPair.of("type", JsonStringValue.of(type)));
+            jsonObject.add("type", new JsonPrimitive(type));
         }
         if (lang != null) {
-            jsonObject.put(JsonPair.of("lang", JsonStringValue.of(lang)));
+            jsonObject.add("lang", new JsonPrimitive(lang));
         }
         if (id != null) {
-            jsonObject.put(JsonPair.of("id", JsonStringValue.of(id)));
+            jsonObject.add("id", new JsonPrimitive(id));
         }
         if (label != null) {
-            jsonObject.put(JsonPair.of("label", JsonStringValue.of(label)));
+            jsonObject.add("label", new JsonPrimitive(label));
         }
 
         return jsonObject;
-    }
-
-    @Override
-    public void writeTo(@NotNull Writer writer) throws IOException {
-        getValue().writeTo(writer);
     }
 }

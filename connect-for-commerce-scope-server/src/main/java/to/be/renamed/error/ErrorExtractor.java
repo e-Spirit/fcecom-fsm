@@ -1,8 +1,8 @@
 package to.be.renamed.error;
 
-import kong.unirest.JsonNode;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +18,12 @@ public final class ErrorExtractor {
      * @param body Response body as unirest JsonNode
      * @return A list of BodyValidationErrors
      */
-    public static List<BridgeError> extractBodyValidationErrors(JsonNode body) {
+    public static List<BridgeError> extractBodyValidationErrors(JsonElement body) {
         List<BridgeError> bridgeErrors = new ArrayList<>();
-        if (body.getObject().has("error")) {
-            JSONArray errors = body.getObject().getJSONArray("error");
-            for (int i = 0; i < errors.length(); i++) {
-                JSONObject error = errors.getJSONObject(i);
+        if (body.isJsonObject() && body.getAsJsonObject().has("error")) {
+            JsonArray errors = body.getAsJsonObject().get("error").getAsJsonArray();
+            for (int i = 0; i < errors.size(); i++) {
+                JsonObject error = errors.get(i).getAsJsonObject();
                 bridgeErrors.add(new BridgeError(error));
             }
         }

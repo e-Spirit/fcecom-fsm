@@ -5,8 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.format;
-
 public abstract class ExecutableUtilities {
 
     private Map<String, Object> parameters;
@@ -32,14 +30,18 @@ public abstract class ExecutableUtilities {
             if (value instanceof Map<?, ?>) {
                 if (!((Map<?, ?>) value).isEmpty())
                     return (Map<String, Object>) value;
-            } else throw new InvalidNestedMapTypeException(format("Nested parameter %s is not a map", parameterName));
+            } else {
+                throw new InvalidNestedMapTypeException(parameterName);
+            }
         }
         return new HashMap<>();
     }
 
     public String requireParam(String parameterName) {
         String value = getParam(parameterName);
-        if (value == null) throw new RequiredParamMissingException(format("Parameter is empty or missing '%s'", parameterName));
+        if (value == null) {
+            throw new RequiredParamMissingException(parameterName);
+        }
         return value;
     }
 }
