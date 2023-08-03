@@ -72,20 +72,20 @@ public class Json {
     }
 
     public static de.espirit.firstspirit.json.JsonElement<?> asFSJsonElement(Object input) {
-        if (input instanceof Boolean) {
-            return JsonBooleanValue.of((Boolean) input);
-        } else if (input instanceof Number) {
-            return JsonNumberValue.of((Number) input);
-        } else if (input instanceof String) {
-            return JsonStringValue.of((String) input);
-        } else if (input instanceof Iterable<?>) {
-            de.espirit.firstspirit.json.JsonArray jsonArray = de.espirit.firstspirit.json.JsonArray.create();
-            ((Iterable<?>) input).forEach(item -> jsonArray.add(asFSJsonElement(item)));
-            return jsonArray;
-        } else if (input instanceof Map) {
+        if (input instanceof JsonObject) {
             de.espirit.firstspirit.json.JsonObject jsonObject = de.espirit.firstspirit.json.JsonObject.create();
-            ((Map<?, ?>) input).forEach((key, value) -> jsonObject.put(String.valueOf(key), asFSJsonElement(value)));
+            ((JsonObject) input).getAsJsonObject().entrySet().forEach(entry -> jsonObject.put(entry.getKey(), asFSJsonElement(entry.getValue())));
             return jsonObject;
+        } else if (input instanceof JsonPrimitive) {
+            if (((JsonPrimitive) input).isString()) {
+                return JsonStringValue.of(((JsonPrimitive) input).getAsString());
+            } else if (((JsonPrimitive) input).isNumber()) {
+                return JsonNumberValue.of(((JsonPrimitive) input).getAsNumber());
+            } else if (((JsonPrimitive) input).isBoolean()) {
+                return JsonBooleanValue.of(((JsonPrimitive) input).getAsBoolean());
+            } else {
+                return JsonNullValue.NULL;
+            }
         } else {
             if (input != null)
                 Logging.logWarning(format("Unable to transform %s (%s)", input, input.getClass().getName()), Json.class);
