@@ -158,115 +158,6 @@ public class EcomBridgeApi {
                 .collect(toList());
     }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public boolean hasContents() {
-        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClient().head("/api/contentpages")).perform();
-        return isStatusOk(status);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public List<EcomContent> getContents(Collection<String> contentIds, @Nullable String lang) {
-        if (contentIds == null || contentIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        final GetRequest baseRequest = unirestConnector.getHttpClient().get("/api/contentpages/ids/{contentIds}");
-        baseRequest.routeParam("contentIds", Strings.implode(contentIds, ","));
-
-        if (lang != null) {
-            baseRequest.queryString("lang", lang);
-        }
-
-        return BridgeRequest.bridgeRequest(baseRequest)
-                .getItems()
-                .stream().map(content -> new EcomContent(new Json(content)))
-                .filter(EcomContent::isValid)
-                .collect(toList());
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public List<EcomContent> findContents(@Nullable String q, @Nullable String lang) {
-        final GetRequest baseRequest = unirestConnector.getHttpClient().get("/api/contentpages/");
-
-        if (q != null) {
-            baseRequest.queryString("q", q);
-        }
-        if (lang != null) {
-            baseRequest.queryString("lang", lang);
-        }
-
-        return PagedBridgeRequest.pagedBridgeRequest(baseRequest, unirestConnector.getHttpClient())
-                .getItems()
-                .stream().map(content -> new EcomContent(new Json(content)))
-                .filter(EcomContent::isValid)
-                .collect(toList());
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public String createContentPage(EcomElementDTO data, String lang) {
-        invalidateCache();
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClient().post("/api/contentpages/");
-
-        if (lang != null) {
-            baseRequest.queryString("lang", lang);
-        }
-
-        return BridgeRequest.bridgeRequest(baseRequest
-                .body(BridgeUtilities.toJSONObject(data.getOldJsonModel()))
-                .header("Content-Type", "application/json"))
-                .getItem()
-                .get("id");
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void updateContentPage(String contentId, EcomElementDTO data, String lang) {
-        invalidateCache();
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClient().put("/api/contentpages/{contentId}");
-
-        if (lang != null) {
-            baseRequest.queryString("lang", lang);
-        }
-
-        BridgeRequest.bridgeRequest(baseRequest
-                .header("Content-Type", "application/json")
-                .body(BridgeUtilities.toJSONObject(data.getOldJsonModel()))
-                .routeParam("contentId", contentId))
-                .perform();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void deleteContentPage(String contentId, String lang) {
-        invalidateCache();
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClient().delete("/api/contentpages/{contentId}");
-
-        baseRequest.routeParam("contentId", contentId);
-
-        if (lang != null) {
-            baseRequest.queryString("lang", lang);
-        }
-
-        BridgeRequest.bridgeRequest(baseRequest)
-                .perform();
-    }
-
     public final boolean hasContent() {
         final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClient().head("/api/content")).perform();
         return isStatusOk(status);
@@ -377,7 +268,6 @@ public class EcomBridgeApi {
 
         BridgeRequest.bridgeRequest(connector.getHttpClient().head("/api/categories/tree")).perform();
         BridgeRequest.bridgeRequest(connector.getHttpClient().head("/api/content")).perform();
-        BridgeRequest.bridgeRequest(connector.getHttpClient().head("/api/contentpages")).perform();
 
         connector.getHttpClient().shutDown();
 

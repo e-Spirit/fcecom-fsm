@@ -32,7 +32,7 @@ public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> 
     @Override
     public boolean isAvailable() {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        return bridgeService.hasContent() || bridgeService.hasContents();
+        return bridgeService.hasContent();
     }
 
     @Override
@@ -70,21 +70,13 @@ public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> 
     @Override
     public List<EcomContent> resolve(Collection<String> identifiers) {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        if (bridgeService.hasNewContentEndpoint()) {
-            return bridgeService.getContent(identifiers, scope.getLang());
-        } else {
-            return bridgeService.getContents(identifiers, scope.getLang());
-        }
+        return bridgeService.getContent(identifiers, scope.getLang());
     }
 
     @Override
     public Iterator<EcomContent> getItems(Map<String, String> filters) {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        if (bridgeService.hasNewContentEndpoint()) {
-            return bridgeService.findContent(filters.get(FILTER_QUERY), scope.getLang()).iterator();
-        } else {
-            return bridgeService.findContents(filters.get(FILTER_QUERY), scope.getLang()).iterator();
-        }
+        return bridgeService.findContent(filters.get(FILTER_QUERY), scope.getLang()).iterator();
     }
 
     @Override

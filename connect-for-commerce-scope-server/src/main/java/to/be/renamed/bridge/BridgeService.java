@@ -77,63 +77,6 @@ public interface BridgeService {
     // Content
 
     /**
-     * @deprecated
-     * Checks if the contentpages endpoints are available.
-     * @return True if available
-     */
-    @Deprecated
-    boolean hasContents();
-
-    /**
-     * @deprecated
-     * Returns a list of content pages which match the given contentIds.
-     * @param contentIds The ids of the desired content pages.
-     * @param lang The language of the result.
-     * @return A list of content pages which match the given contentIds.
-     */
-    @Deprecated
-    List<EcomContent> getContents(Collection<String> contentIds, @Nullable String lang);
-
-    /**
-     * @deprecated
-     * Returns a list of content pages which can be filtered using the query parameters listed below.
-     * @param q Fulltext search query string.
-     * @param lang The language of the result.
-     * @return A list of content pages which match the given filters.
-     */
-    @Deprecated
-    List<EcomContent> findContents(@Nullable String q, @Nullable String lang);
-
-    /**
-     * @deprecated
-     * Creates a new page in the shop system.
-     * @param data The data of the page is created as a EcomElementDTO.
-     * @param lang The language to localize the label.
-     * @return The id of the created page in the shop system.
-     */
-    @Deprecated
-    String createContentPage(EcomElementDTO data, String lang);
-
-    /**
-     * @deprecated
-     * Updates a page in the shop system.
-     * @param contentId The id of the to be updated page in the shop system.
-     * @param data The data of the page is created as a EcomElementDTO.
-     * @param lang The language to localize the label.
-     */
-    @Deprecated
-    void updateContentPage(String contentId, EcomElementDTO data, String lang);
-
-    /**
-     * @deprecated
-     * Deletes a page in the shop system.
-     * @param contentId The id of the to be deleted page in the shop system.
-     * @param lang The language to localize the label.
-     */
-    @Deprecated
-    void deleteContentPage(String contentId, String lang);
-
-    /**
      * Checks if the content endpoints are available.
      * @return True if available
      */

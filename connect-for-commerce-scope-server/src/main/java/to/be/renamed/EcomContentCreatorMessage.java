@@ -84,7 +84,7 @@ class EcomContentCreatorMessage {
 
                 RequestOperation alert = broker.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
                 Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
-                alert.setTitle("EcomConnectScopeException");
+                alert.setTitle("Extension not found");
                 alert.perform(errorCodes.getString("errorCode") + " " + errorCode + " | " + errorCodes.getString(errorCode));
                 Logging.logWarning("Missing ContentCreator Extension.", EcomContentCreatorMessage.class);
             }

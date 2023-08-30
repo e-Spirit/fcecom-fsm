@@ -55,22 +55,6 @@ public class EcomElementDTO implements Serializable {
     }
 
     /**
-     * Creates a FirstSpirit JsonObject representation of the EcomElementDTO (old json model).
-     * Used as request body for creating and updating a content page via the bridge (old content pages endpoints).
-     * @return FirstSpirit JsonObject representation of the EcomElementDTO (old json model).
-     */
-    public JsonObject getOldJsonModel() {
-        JsonObject jsonModel = new JsonObject();
-        jsonModel.add("template", template != null ? new JsonPrimitive(template) : JsonNull.INSTANCE);
-        jsonModel.add("visible", new JsonPrimitive(released));
-        jsonModel.add("pageUid", pageUid != null ? new JsonPrimitive(pageUid) : JsonNull.INSTANCE);
-        jsonModel.add("label", getFirstValue(label) != null ? new JsonPrimitive(getFirstValue(label)) : JsonNull.INSTANCE);
-
-
-        return jsonModel;
-    }
-
-    /**
      * Gives the first value rom a map with strings as key and value if present.
      * @param input A map with strings as key and value.
      * @return The first value of the map or null if no value is present.

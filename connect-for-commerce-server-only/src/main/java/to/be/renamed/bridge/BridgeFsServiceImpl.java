@@ -100,54 +100,6 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
 
     // Content
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public boolean hasContents(Long projectId) {
-        return getBridgeInstance(projectId).hasContents();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public List<EcomContent> getContents(Long projectId, Collection<String> contentIds, @Nullable String lang) {
-        return getBridgeInstance(projectId).getContents(contentIds, lang);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public List<EcomContent> findContents(Long projectId, @Nullable String q, @Nullable String lang) {
-        return getBridgeInstance(projectId).findContents(q, lang);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public String createContentPage(Long projectId, EcomElementDTO data, String lang) {
-        return getBridgeInstance(projectId).createContentPage(data, lang);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void updateContentPage(Long projectId, String contentId, EcomElementDTO data, String lang) {
-        getBridgeInstance(projectId).updateContentPage(contentId, data, lang);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void deleteContentPage(Long projectId, String contentId, String lang) {
-        getBridgeInstance(projectId).deleteContentPage(contentId, lang);
-    }
-
     public final boolean hasContent(Long projectId) {
         return getBridgeInstance(projectId).hasContent();
     }

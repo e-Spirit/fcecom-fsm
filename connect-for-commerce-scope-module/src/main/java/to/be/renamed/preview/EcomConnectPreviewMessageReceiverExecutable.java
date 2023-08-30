@@ -67,14 +67,13 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
             context.logError(e.getMessage(), e);
             RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
             alert.setKind(RequestOperation.Kind.ERROR);
-            alert.setTitle(e.getClass().getSimpleName());
+            alert.setTitle("Error during page creation");
             alert.perform(prettyErrorString(e.getBridgeErrors(), scope.getLanguage().getLocale()));
         } catch (Exception e) {
             context.logError(e.getMessage(), e);
             RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
             alert.setKind(RequestOperation.Kind.ERROR);
-            String topic = getParam(TOPIC_PARAM);
-            alert.setTitle((topic == null ? "" : (topic + " | ")) + e.getClass().getSimpleName());
+            alert.setTitle("Error during page creation");
             alert.perform(e.getLocalizedMessage());
         }
         return null;

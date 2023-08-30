@@ -88,7 +88,7 @@ public class CreateReferencePageExecutable extends ExecutableUtilities implement
             context.logError(e.getMessage(), e);
             RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
             Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
-            alert.setTitle(("Create Reference Page" + " | ") + e.getClass().getSimpleName());
+            alert.setTitle("Unknown error during page creation");
             alert.perform(e.getLocalizedMessage());
 
             return createJsonResponse(false, ErrorCode.UNKNOWN.get(), null);

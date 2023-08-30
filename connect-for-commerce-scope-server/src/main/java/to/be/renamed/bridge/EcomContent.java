@@ -40,21 +40,13 @@ public class EcomContent extends EcomId implements Serializable {
             PageRef pageRef = element.getPageRef();
             if (pageRef.getPage() != null && getPageId(pageRef.getPage(), element.getLanguage()) == null) {
                 String pageId;
-                if (ServiceFactory.getBridgeService(scope.getBroker()).hasNewContentEndpoint()) {
-                    pageId = ServiceFactory.getBridgeService(scope.getBroker()).createContent(element.getEcomElementDTO());
-                } else {
-                    pageId = ServiceFactory.getBridgeService(scope.getBroker()).createContentPage(element.getEcomElementDTO(), getLang());
-                }
+                pageId = ServiceFactory.getBridgeService(scope.getBroker()).createContent(element.getEcomElementDTO());
+
                 if (pageId == null) {
-                    if (ServiceFactory.getBridgeService(scope.getBroker()).hasNewContentEndpoint()) {
-                        throw new EcomConnectException(
-                                format(
-                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().toString()));
-                    } else {
-                        throw new EcomConnectException(
-                                format(
-                                        "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getOldJsonModel().toString()));
-                    }
+                    throw new EcomConnectException(
+                            format(
+                                    "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().toString()));
+                    
                 }
                 element.updatePageId(pageId);
                 setId(pageId);
