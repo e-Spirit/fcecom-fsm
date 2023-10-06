@@ -1,5 +1,6 @@
 package to.be.renamed.bridge;
 
+import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 
@@ -139,12 +140,15 @@ public interface BridgeService {
      * @return A EcomId object for the given URL
      */
     EcomId resolveStoreFrontUrl(String storeFrontUrl);
-    // Test
 
     /**
      * Executes a bridge connection test.
      * @param bridgeConfig The config to test with.
-     * @return The result as a String.
+     * @param params.httpMethod Method used for requesting the targeted endpoint
+     * @param params.url URL of the target endpoint
+     * @param params.deprecated Marks the endpoint as isDeprecated using a notice inside the log
+     * @return BridgeTestResult contains all the necessary data to display if the request was successful and,
+     * if not, which problem lead to it. It's compatible with the TestConnectionSummary GUI.
      */
-    String testConnection(BridgeConfig bridgeConfig);
+    BridgeTestResult testConnection(BridgeConfig bridgeConfig, TestConnectionRequest params);
 }

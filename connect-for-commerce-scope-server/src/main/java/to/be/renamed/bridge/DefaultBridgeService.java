@@ -1,7 +1,7 @@
 package to.be.renamed.bridge;
 
+import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
-import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.ServicesBroker;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 
@@ -18,7 +18,9 @@ public class DefaultBridgeService implements BridgeService {
 
     private Long projectId;
 
-    public DefaultBridgeService() {}
+    public DefaultBridgeService() {
+    }
+
     // Needed for testing
     protected DefaultBridgeService(final SpecialistsBroker broker, Long projectId) {
         final ServicesBroker servicesBroker = broker.requireSpecialist(ServicesBroker.TYPE);
@@ -201,9 +203,13 @@ public class DefaultBridgeService implements BridgeService {
     /**
      * Executes a bridge connection test.
      * @param bridgeConfig The config to test with.
-     * @return The result as a String.
+     * @param params.httpMethod Method used for requesting the targeted endpoint
+     * @param params.url URL of the target endpoint
+     * @param params.deprecated Marks the endpoint as isDeprecated using a notice inside the log
+     * @return BridgeTestResult contains all the necessary data to display if the request was successful and,
+     * if not, which problem lead to it. It's compatible with the TestConnectionSummary GUI.
      */
-    public String testConnection(BridgeConfig bridgeConfig) {
-        return bridgeFsService.testConnection(projectId, bridgeConfig).toString();
+    public BridgeTestResult testConnection(BridgeConfig bridgeConfig, TestConnectionRequest params) {
+        return bridgeFsService.testConnection(projectId, bridgeConfig, params);
     }
 }

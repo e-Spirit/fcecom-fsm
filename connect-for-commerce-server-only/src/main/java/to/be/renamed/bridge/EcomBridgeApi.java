@@ -5,8 +5,8 @@ import to.be.renamed.bridge.client.Json;
 import to.be.renamed.bridge.client.PagedBridgeRequest;
 import to.be.renamed.bridge.client.UnirestConnector;
 import to.be.renamed.bridge.client.UnirestInterceptor;
+import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
-import de.espirit.common.base.Logging;
 import de.espirit.common.tools.Strings;
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
@@ -260,23 +260,13 @@ public class EcomBridgeApi {
                 .getItem());
     }
 
-    public static String testConnection(UnirestConnector connector) {
-        Logging.logDebug("Performing Bridge Test", EcomBridgeApi.class);
-
-        StringBuilder summary = new StringBuilder();
-        connector.interceptWith(new UnirestInterceptor(summary));
-
-        BridgeRequest.bridgeRequest(connector.getHttpClient().head("/api/categories/tree")).perform();
-        BridgeRequest.bridgeRequest(connector.getHttpClient().head("/api/content")).perform();
-
-        connector.getHttpClient().shutDown();
-
-        return summary.toString();
+    public static BridgeTestResult testConnection(UnirestConnector connector, TestConnectionRequest params) {
+        return new TestConnectionJob(connector).test(params);
     }
 
-    public String testConnection(BridgeConfig bridgeConfig) {
+    public BridgeTestResult testConnection(BridgeConfig bridgeConfig, TestConnectionRequest params) {
         // create a new http client to not override the config of the current one
-        return testConnection(UnirestConnector.create(bridgeConfig));
+        return testConnection(UnirestConnector.create(bridgeConfig), params);
     }
 
     /**

@@ -10,6 +10,7 @@ public enum Label {
     BRIDGE_API_URL("projectApp.configuration.items.bridge-api-url.label"),
     BRIDGE_USERNAME("projectApp.configuration.items.bridge-username.label"),
     BRIDGE_PASSWORD("projectApp.configuration.items.bridge-password.label"),
+    TEST_CONNECTION("projectApp.configuration.items.bridge-test.dialog.title"),
     BRIDGE_TEST_CONNECTION("projectApp.configuration.actions.bridge-test.button.label"),
     REPORT_CATEGORY_LEVELS("projectApp.configuration.items.category-levels.label"),
     REPORT_PRODUCT_LEVELS("projectApp.configuration.items.product-levels.label"),

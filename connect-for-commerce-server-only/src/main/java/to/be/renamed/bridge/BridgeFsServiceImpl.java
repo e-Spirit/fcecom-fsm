@@ -2,6 +2,7 @@ package to.be.renamed.bridge;
 
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.module.ServiceFactory;
+import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import com.espirit.moddev.components.annotations.ServiceComponent;
 import de.espirit.common.base.Logging;
@@ -136,8 +137,8 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
         return getBridgeInstance(projectId).resolveStoreFrontUrl(storeFrontUrl);
     }
 
-    public String testConnection(Long projectId, BridgeConfig bridgeConfig) {
-        return getBridgeInstance(projectId).testConnection(bridgeConfig);
+    public BridgeTestResult testConnection(Long projectId, BridgeConfig bridgeConfig, TestConnectionRequest params) {
+        return getBridgeInstance(projectId).testConnection(bridgeConfig, params);
     }
 
     // FS Service Overrides

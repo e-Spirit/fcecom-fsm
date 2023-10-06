@@ -1,5 +1,6 @@
 package to.be.renamed.bridge;
 
+import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 
 import javax.annotation.Nullable;
@@ -7,6 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Interface of the BridgeFsService.
+ */
 public interface BridgeFsService {
 
     /**
@@ -159,7 +163,11 @@ public interface BridgeFsService {
      * Executes a bridge connection test.
      * @param projectId The id of the project for which the request is executed.
      * @param bridgeConfig The config to test with.
-     * @return The result as a String.
+     * @param params.httpMethod Method used for requesting the targeted endpoint
+     * @param params.url URL of the target endpoint
+     * @param params.deprecated Marks the endpoint as isDeprecated using a notice inside the log
+     * @return BridgeTestResult contains all the necessary data to display if the request was successful and,
+     * if not, which problem lead to it. It's compatible with the TestConnectionSummary GUI.
      */
-    String testConnection(Long projectId, BridgeConfig bridgeConfig);
+    BridgeTestResult testConnection(Long projectId, BridgeConfig bridgeConfig, TestConnectionRequest params);
 }
