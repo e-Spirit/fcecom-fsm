@@ -1,5 +1,7 @@
 package to.be.renamed.dap;
 
+import to.be.renamed.bridge.EcomCategory;
+import to.be.renamed.error.BridgeConnectionException;
 import to.be.renamed.module.EcomConnectWebApp;
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.bridge.BridgeService;
@@ -7,6 +9,7 @@ import to.be.renamed.bridge.EcomProduct;
 import to.be.renamed.module.ServiceFactory;
 import com.espirit.moddev.components.annotations.PublicComponent;
 
+import de.espirit.common.base.Logging;
 import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Language;
@@ -23,7 +26,8 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Products Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME + " - Data Access Plugin: Products")
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Products Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                       + " - Data Access Plugin: Products")
 public class EcomProductDataAccessPlugin extends EcomAbstract<EcomProduct> {
 
     public static final String FILTER_QUERY = "q";
@@ -71,23 +75,35 @@ public class EcomProductDataAccessPlugin extends EcomAbstract<EcomProduct> {
             final var projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
             int categoryLevels = projectAppConfiguration.getReportConfig().getProductReportCategoryLevel();
             Map<String, String> tempCategoryFilter = new LinkedHashMap<>();
-            bridgeService.getCategoriesTree(scope.getLang())
-                                            .entrySet()
-                                            .stream()
-                                            .filter(entry -> entry.getValue()
-                                                                  .getParentChain()
-                                                                  .size() < categoryLevels)
-                                            .forEach((entry) -> {
-                                                String label = String.join("", Collections.nCopies(entry.getValue().getParentChain().size(), "│ ")) + "├ " + entry.getValue().getLabel();
-                                                tempCategoryFilter.put(entry.getKey(), label);
-                                            });
+
+            Map<String, EcomCategory> categoryTree;
+
+            try {
+                categoryTree = bridgeService.getCategoriesTree(scope.getLang());
+            } catch (BridgeConnectionException e) {
+                Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+                openDialog(e.getLocalizedMessage(), e.getErrorCode());
+                categoryTree = Collections.emptyMap();
+            }
+            categoryTree
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue()
+                                     .getParentChain()
+                                     .size() < categoryLevels)
+                .forEach(entry -> {
+                    String
+                        label =
+                        String.join("", Collections.nCopies(entry.getValue().getParentChain().size(), "│ ")) + "├ " + entry.getValue().getLabel();
+                    tempCategoryFilter.put(entry.getKey(), label);
+                });
 
             Map<String, String> categoryFilter = new LinkedHashMap<>();
             categoryFilter.put("", format("%s (%s %s %s)",
-                                    scope.getLabel("report.categories.filter.label"),
-                                    tempCategoryFilter.size(),
-                                    scope.getLabel("report.categories.filter.of"),
-                                    bridgeService.getCategoriesTree(scope.getLang()).size()));
+                                          scope.getLabel("report.categories.filter.label"),
+                                          tempCategoryFilter.size(),
+                                          scope.getLabel("report.categories.filter.of"),
+                                          bridgeService.getCategoriesTree(scope.getLang()).size()));
             categoryFilter.putAll(tempCategoryFilter);
             filters.addSelect(FILTER_CATEGORY, categoryFilter);
         }
@@ -95,12 +111,25 @@ public class EcomProductDataAccessPlugin extends EcomAbstract<EcomProduct> {
 
     @Override
     public List<EcomProduct> resolve(Collection<String> identifiers) {
-        return ServiceFactory.getBridgeService(scope.getBroker()).getProducts(identifiers, scope.getLang());
+        try {
+            return ServiceFactory.getBridgeService(scope.getBroker()).getProducts(identifiers, scope.getLang());
+        } catch (BridgeConnectionException e) {
+            Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            openDialog(e.getLocalizedMessage(), e.getErrorCode());
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Iterator<EcomProduct> getItems(Map<String, String> filters) {
-        return ServiceFactory.getBridgeService(scope.getBroker()).findProducts(filters.get(FILTER_QUERY), filters.get(FILTER_CATEGORY), scope.getLang()).iterator();
+        try {
+            return ServiceFactory.getBridgeService(scope.getBroker())
+                .findProducts(filters.get(FILTER_QUERY), filters.get(FILTER_CATEGORY), scope.getLang()).iterator();
+        } catch (BridgeConnectionException e) {
+            Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            openDialog(e.getLocalizedMessage(), e.getErrorCode());
+            return Collections.emptyIterator();
+        }
     }
 
     @Override

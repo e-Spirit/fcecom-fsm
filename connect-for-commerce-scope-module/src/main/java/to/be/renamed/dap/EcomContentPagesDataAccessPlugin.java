@@ -1,5 +1,6 @@
 package to.be.renamed.dap;
 
+import to.be.renamed.error.BridgeConnectionException;
 import to.be.renamed.module.EcomConnectWebApp;
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.bridge.BridgeService;
@@ -7,6 +8,7 @@ import to.be.renamed.bridge.EcomContent;
 import to.be.renamed.module.ServiceFactory;
 import com.espirit.moddev.components.annotations.PublicComponent;
 
+import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.client.plugin.report.ReportContext;
@@ -19,7 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - ContentPages Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME + " - Data Access Plugin: ContentPages")
+import static java.lang.String.format;
+
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - ContentPages Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                           + " - Data Access Plugin: ContentPages")
 public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> {
 
     public static final String FILTER_QUERY = "q";
@@ -32,7 +37,13 @@ public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> 
     @Override
     public boolean isAvailable() {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        return bridgeService.hasContent();
+        try {
+            return bridgeService.hasContent();
+        } catch (BridgeConnectionException e) {
+            Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            openDialog(e.getLocalizedMessage(), e.getErrorCode());
+        }
+        return false;
     }
 
     @Override
@@ -70,13 +81,27 @@ public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> 
     @Override
     public List<EcomContent> resolve(Collection<String> identifiers) {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        return bridgeService.getContent(identifiers, scope.getLang());
+
+        try {
+            return bridgeService.getContent(identifiers, scope.getLang());
+        } catch (BridgeConnectionException e) {
+            Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            openDialog(e.getLocalizedMessage(), e.getErrorCode());
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Iterator<EcomContent> getItems(Map<String, String> filters) {
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
-        return bridgeService.findContent(filters.get(FILTER_QUERY), scope.getLang()).iterator();
+
+        try {
+            return bridgeService.findContent(filters.get(FILTER_QUERY), scope.getLang()).iterator();
+        } catch (BridgeConnectionException e) {
+            Logging.logError(format(ERROR_LOG_MESSAGE, ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            openDialog(e.getLocalizedMessage(), e.getErrorCode());
+            return Collections.emptyIterator();
+        }
     }
 
     @Override

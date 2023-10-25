@@ -4,6 +4,7 @@ import to.be.renamed.bridge.EcomContent;
 import to.be.renamed.bridge.EcomElement;
 import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.client.Json;
+import to.be.renamed.error.BridgeException;
 import to.be.renamed.module.ServiceFactory;
 import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
@@ -33,6 +34,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class EcomConnectScope {
+
+    private static final String COULD_NOT_GET_URL = "Could not get URL from bridge, check bridge logs";
 
     private static final Map<Locale, ResourceBundle> BUNDLES = new HashMap<>();
     private static final String BUNDLE_NAME = "reports";
@@ -120,17 +123,31 @@ public class EcomConnectScope {
     }
 
     public void openStoreFrontUrl(SpecialistsBroker broker, EcomId ecomId) {
-        EcomContentCreatorMessage.create("openStoreFrontUrl")
+        EcomContentCreatorMessage message = EcomContentCreatorMessage.create("openStoreFrontUrl");
+
+        try {
+            message.add("url", ServiceFactory.getBridgeService(broker).getStoreFrontUrl(ecomId));
+        } catch (BridgeException e) {
+            Logging.logWarning(COULD_NOT_GET_URL, e, this.getClass());
+        }
+
+        message
             .add("id", ecomId.getId())
             .add("type", ecomId.getType())
-            .add("url", ServiceFactory.getBridgeService(broker).getStoreFrontUrl(ecomId))
             .add("name", ecomId.getLabel())
             .apply(broker);
     }
 
 
     public void setContentCreatorPreviewElement(SpecialistsBroker broker, EcomId ecomId) {
-        EcomContentCreatorMessage message = EcomContentCreatorMessage.create("setContentCreatorPreviewElement")
+        EcomContentCreatorMessage message = EcomContentCreatorMessage.create("setContentCreatorPreviewElement");
+
+        try {
+            message.add("url", ServiceFactory.getBridgeService(broker).getStoreFrontUrl(ecomId));
+        } catch (BridgeException e) {
+            Logging.logWarning(COULD_NOT_GET_URL, e, this.getClass());
+        }
+        message
             .add("id", ecomId.getId())
             .add("type", ecomId.getType())
             .add("lang", ecomId.getLang())
@@ -140,17 +157,17 @@ public class EcomConnectScope {
         if (element.getPageRef() == null) {
             if (ecomId instanceof EcomContent) {
                 message.add("templates", ((TemplateStoreRoot) broker.requireSpecialist(StoreAgent.TYPE)
-                        .getStore(Store.Type.TEMPLATESTORE))
-                        .getPageTemplates()
-                        .getChildren(new TypedFilter<>(PageTemplate.class) {
-                            @Override
-                            public boolean accept(PageTemplate template) {
-                                return !template.isHidden();
-                            }
-                        }, true).toList().stream()
-                        .map(template -> Map.of("id", template.getUid(),
-                                                "label", template.getDisplayName(getLanguage())))
-                        .collect(Collectors.toList())
+                    .getStore(Store.Type.TEMPLATESTORE))
+                    .getPageTemplates()
+                    .getChildren(new TypedFilter<>(PageTemplate.class) {
+                        @Override
+                        public boolean accept(PageTemplate template) {
+                            return !template.isHidden();
+                        }
+                    }, true).toList().stream()
+                    .map(template -> Map.of("id", template.getUid(),
+                                            "label", template.getDisplayName(getLanguage())))
+                    .collect(Collectors.toList())
                 );
             }
         } else {

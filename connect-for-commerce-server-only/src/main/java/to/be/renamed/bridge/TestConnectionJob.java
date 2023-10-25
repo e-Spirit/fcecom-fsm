@@ -12,7 +12,7 @@ public class TestConnectionJob {
     private final TestConnectionInterceptor interceptor;
 
     public TestConnectionJob(UnirestConnector connector) {
-        this.httpClient = connector.getHttpClient();
+        this.httpClient = connector.getHttpClientWithoutCache();
         this.interceptor = new TestConnectionInterceptor();
 
         connector.interceptWith(interceptor);

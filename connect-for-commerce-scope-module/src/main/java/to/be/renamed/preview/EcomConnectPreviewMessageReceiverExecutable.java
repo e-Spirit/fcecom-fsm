@@ -1,5 +1,6 @@
 package to.be.renamed.preview;
 
+import to.be.renamed.error.BridgeConnectionException;
 import to.be.renamed.executable.ExecutableUtilities;
 import to.be.renamed.error.CreatePageException;
 import to.be.renamed.EcomConnectException;
@@ -27,12 +28,14 @@ import de.espirit.firstspirit.ui.operations.RequestOperation;
 
 import java.io.Writer;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.String.format;
 
 import static to.be.renamed.error.ErrorUtils.prettyErrorString;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Preview Message Receiver", displayName = ProjectAppHelper.MODULE_NAME + " - Executable: Preview Message Receiver")
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Preview Message Receiver", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                    + " - Executable: Preview Message Receiver")
 public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtilities implements Executable {
 
     private static final String TOPIC_PARAM = "topic";
@@ -40,7 +43,9 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
     private static final String PAGE_REF_ID_PARAM = "pageRefId";
     private static final String LANGUAGE_PARAM = "language";
 
-    private static final String CREATE_PAGE_VIA_BRIDGE_DEACTIVATED = "Did not ensure existence of page with uid '%s' in shop system. Create page via bridge is disabled in the project config.";
+    private static final String
+        CREATE_PAGE_VIA_BRIDGE_DEACTIVATED =
+        "Did not ensure existence of page with uid '%s' in shop system. Create page via bridge is disabled in the project config.";
 
     private BaseContext context;
     private EcomConnectScope scope;
@@ -66,19 +71,24 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
         } catch (CreatePageException e) {
             context.logError(e.getMessage(), e);
             RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
-            alert.setKind(RequestOperation.Kind.ERROR);
+            Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
             alert.setTitle("Error during page creation");
             alert.perform(prettyErrorString(e.getBridgeErrors(), scope.getLanguage().getLocale()));
+        } catch (BridgeConnectionException e) {
+            context.logError(e.getMessage(), e);
+            RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
+            Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
+            alert.setTitle("Error while connecting to bridge");
+            alert.perform(format("Errorcode: %s | %s", e.getErrorCode(), e.getLocalizedMessage()));
         } catch (Exception e) {
             context.logError(e.getMessage(), e);
             RequestOperation alert = context.requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
-            alert.setKind(RequestOperation.Kind.ERROR);
-            alert.setTitle("Error during page creation");
+            Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
+            alert.setTitle("Unknown Error");
             alert.perform(e.getLocalizedMessage());
         }
         return null;
     }
-
 
 
     private void updatedStoreFrontUrl(String storeFrontUrl) {

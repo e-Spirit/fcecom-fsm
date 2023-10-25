@@ -14,6 +14,8 @@ public enum ErrorCode {
     // Bridge connection errors
     CANNOT_CONNECT_TO_BRIDGE("3010"),
     BRIDGE_AUTH_ERROR("3020"),
+    BRIDGE_SERVER_ERROR("3030"),
+    BRIDGE_REQUEST_TIMEOUT("3040"),
     // CC extension errors 
     MISSING_CC_EXTENSION("3050"),
     // Shop system connection errors

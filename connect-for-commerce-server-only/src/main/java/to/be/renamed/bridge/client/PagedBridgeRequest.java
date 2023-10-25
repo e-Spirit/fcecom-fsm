@@ -1,6 +1,7 @@
 package to.be.renamed.bridge.client;
 
 import com.google.gson.JsonElement;
+
 import kong.unirest.*;
 
 import java.util.ArrayList;
@@ -14,14 +15,15 @@ import static to.be.renamed.bridge.BridgeUtilities.toJsonElement;
  * Bridge Request for loading all pages of a specific GET endpoint
  */
 public class PagedBridgeRequest extends BridgeRequest {
+
     private final UnirestInstance httpClient;
+
     PagedBridgeRequest(HttpRequest<?> baseRequest, UnirestInstance httpClient) {
         super(baseRequest);
         this.httpClient = httpClient;
     }
 
     /**
-     *
      * @param baseRequest Base Request with URL and query params
      * @return Instance of PagedBridgeRequest
      */
@@ -49,7 +51,10 @@ public class PagedBridgeRequest extends BridgeRequest {
             // add query string
             request.queryString("page", page.getAndIncrement());
             // make Request
-            HttpResponse<JsonNode> response = request.asJson();
+            final HttpResponse<JsonNode> response = request.asJson();
+            if (!response.isSuccess()) {
+                BridgeErrorHandling.handleBridgeError(response);
+            }
             // add to list
             all.add(response);
             // check next condition

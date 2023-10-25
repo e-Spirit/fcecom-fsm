@@ -1,5 +1,6 @@
 package to.be.renamed.bridge.client;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import kong.unirest.HttpResponse;
 
@@ -9,10 +10,10 @@ import java.util.function.Supplier;
 
 import static de.espirit.common.base.Logging.logError;
 
-public class Cache implements kong.unirest.Cache {
+public class GuavaCache implements kong.unirest.Cache {
 
-    private final com.google.common.cache.Cache<Key, HttpResponse<?>> regular = CacheBuilder.newBuilder().build();
-    private final com.google.common.cache.Cache<Key, CompletableFuture<?>> async = CacheBuilder.newBuilder().build();
+    private final Cache<Key, HttpResponse<?>> regular = CacheBuilder.newBuilder().build();
+    private final Cache<Key, CompletableFuture<?>> async = CacheBuilder.newBuilder().build();
 
     @Override
     public <T> HttpResponse<?> get(Key key, Supplier<HttpResponse<T>> fetcher) {

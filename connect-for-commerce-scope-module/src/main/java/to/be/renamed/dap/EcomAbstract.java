@@ -11,6 +11,7 @@ import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.access.editor.ValueIndexer;
 import de.espirit.firstspirit.agency.Image;
 import de.espirit.firstspirit.agency.ImageAgent;
+import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.ProjectAgent;
 import de.espirit.firstspirit.agency.TransferAgent;
 import de.espirit.firstspirit.client.plugin.dataaccess.DataAccessPlugin;
@@ -40,6 +41,7 @@ import de.espirit.firstspirit.client.plugin.report.ReportContext;
 import de.espirit.firstspirit.client.plugin.report.ReportItem;
 import de.espirit.firstspirit.generate.functions.json.JsonGenerationContext;
 import de.espirit.firstspirit.json.JsonElement;
+import de.espirit.firstspirit.ui.operations.RequestOperation;
 import de.espirit.firstspirit.webedit.plugin.report.WebeditExecutableReportItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +58,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.lang.String.format;
+
 /**
  * Abstract class that provides methods needed in all DataAccessPlugins
  *
@@ -63,8 +67,23 @@ import java.util.Set;
  */
 public abstract class EcomAbstract<T extends EcomId> implements DataAccessPlugin<T>, EcomDataAccessPlugin.Defaults<T> {
 
+    protected static final String ERROR_BRIDGE_CONNECTION = "Error while connecting to bridge";
+    protected static final String ERROR_LOG_MESSAGE = "%s - %s";
     protected final DataAccessAspectMap dataAccessAspects = new DataAccessAspectMap();
     protected EcomConnectScope scope;
+
+    /**
+     * Opens an error dialog with the title "Error while connecting to bridge" in the Content Creator.
+     *
+     * @param message   The Message to display
+     * @param errorCode The error code to display
+     */
+    public void openDialog(String message, String errorCode) {
+        RequestOperation alert = scope.getBroker().requireSpecialist(OperationAgent.TYPE).getOperation(RequestOperation.TYPE);
+        Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
+        alert.setTitle(ERROR_BRIDGE_CONNECTION);
+        alert.perform(format("Errorcode: %s | %s", errorCode, message));
+    }
 
     @Override
     public void setUp(@NotNull BaseContext context) {
