@@ -62,7 +62,7 @@ public class EcomBridgeApi {
         if (categoryIds == null || categoryIds.isEmpty()) {
             return Collections.emptyList();
         }
-        String endpointRoute = "/api/categories/ids/{categoryIds}";
+        String endpointRoute = "/categories/ids/{categoryIds}";
 
         return BridgeRequest.bridgeRequest(
                 unirestConnector.getCachingHttpClient().get(endpointRoute)
@@ -75,7 +75,7 @@ public class EcomBridgeApi {
     }
 
     public List<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang) {
-        GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/categories/");
+        GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/");
 
         if (parentId != null) {
             baseRequest.queryString("parentId", parentId);
@@ -100,7 +100,7 @@ public class EcomBridgeApi {
 
     public Map<String, EcomCategory> getCategoriesTree(String lang) {
         if (categories.isEmpty()) {
-            final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/categories/tree");
+            final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/tree");
 
                 baseRequest.queryString("lang", lang);
 
@@ -114,7 +114,7 @@ public class EcomBridgeApi {
     }
 
     public boolean hasCategoryTree() {
-        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/api/categories/tree")).perform();
+        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/categories/tree")).perform();
         return isStatusOk(status);
     }
 
@@ -122,7 +122,7 @@ public class EcomBridgeApi {
         if (productIds == null || productIds.isEmpty()) {
             return Collections.emptyList();
         }
-        String endpointRoute = "/api/products/ids/{productIds}";
+        String endpointRoute = "/products/ids/{productIds}";
 
         final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get(endpointRoute);
         baseRequest.routeParam("productIds", Strings.implode(productIds, ","));
@@ -139,7 +139,7 @@ public class EcomBridgeApi {
     }
 
     public List<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang) {
-        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/products/");
+        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/products/");
 
         if (q != null) {
             baseRequest.queryString("q", q);
@@ -159,7 +159,7 @@ public class EcomBridgeApi {
     }
 
     public final boolean hasContent() {
-        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/api/content")).perform();
+        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/content")).perform();
         return isStatusOk(status);
     }
 
@@ -168,7 +168,7 @@ public class EcomBridgeApi {
             return Collections.emptyList();
         }
 
-        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/content/ids/{contentIds}");
+        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/content/ids/{contentIds}");
         baseRequest.routeParam("contentIds", Strings.implode(contentIds, ","));
 
         if (lang != null) {
@@ -184,7 +184,7 @@ public class EcomBridgeApi {
 
 
     public List<EcomContent> findContent(@Nullable String q, @Nullable String lang) {
-        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/content/");
+        final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/content/");
 
         if (q != null) {
             baseRequest.queryString("q", q);
@@ -200,7 +200,7 @@ public class EcomBridgeApi {
     }
 
     public String createContent(EcomElementDTO data) {
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().post("/api/content/");
+        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().post("/content/");
 
         return BridgeRequest.bridgeRequest(baseRequest
                 .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
@@ -210,7 +210,7 @@ public class EcomBridgeApi {
     }
 
     public void updateContent(String contentId, EcomElementDTO data) {
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().put("/api/content/{contentId}");
+        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().put("/content/{contentId}");
 
         BridgeRequest.bridgeRequest(baseRequest
                 .header("Content-Type", "application/json")
@@ -220,7 +220,7 @@ public class EcomBridgeApi {
     }
 
     public void deleteContent(String contentId) {
-        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().delete("/api/content/{contentId}");
+        final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().delete("/content/{contentId}");
 
         baseRequest.routeParam("contentId", contentId);
 
@@ -234,7 +234,7 @@ public class EcomBridgeApi {
 
     public String getStoreFrontUrl(EcomId ecomId) {
         if (ecomId.isValid()) {
-            final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/api/storefront-url");
+            final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/storefront-url");
 
             baseRequest.queryString("type", ecomId.getType());
             baseRequest.queryString("id", ecomId.getId());
@@ -252,7 +252,7 @@ public class EcomBridgeApi {
 
     public EcomId resolveStoreFrontUrl(String storeFrontUrl) {
         return EcomId.from(BridgeRequest.bridgeRequest(
-                unirestConnector.getCachingHttpClient().get("/api/lookup-url")
+                unirestConnector.getCachingHttpClient().get("/lookup-url")
                         .queryString("url", storeFrontUrl))
                 .getItem());
     }

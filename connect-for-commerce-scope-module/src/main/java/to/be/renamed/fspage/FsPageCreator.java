@@ -142,7 +142,7 @@ public class FsPageCreator {
             if (!page.isLocked()) {
                 page.setLock(true);
             }
-            setPageDisplayNames(displayNames, projectLanguages, page, id, pageType);
+            setDisplayNames(displayNames, projectLanguages, page, id, pageType);
             for (Language projectLanguage : projectLanguages) {
                 if (getLanguage().equals(projectLanguage)) {
                     if (!page.isTranslated(projectLanguage)) {
@@ -169,7 +169,7 @@ public class FsPageCreator {
             if (!pageRef.isLocked()) {
                 pageRef.setLock(true);
             }
-            setPageRefDisplayNames(displayNames, projectLanguages, pageRef, id, pageType);
+            setDisplayNames(displayNames, projectLanguages, pageRef, id, pageType);
             pageRef.save();
         } catch (Exception e) {
             Logging.logWarning(e.getMessage(), e, getClass());
@@ -203,7 +203,7 @@ public class FsPageCreator {
             if (!page.isLocked()) {
                 page.setLock(true);
             }
-            setPageDisplayNames(displayNames, projectLanguages, page, id, pageType);
+            setDisplayNames(displayNames, projectLanguages, page, id, pageType);
             FormData formData = page.getFormData();
             formData.get(getLanguage(), PAGE_ID_FORM_FIELD).set(id);
             formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
@@ -228,7 +228,7 @@ public class FsPageCreator {
             if (!pageRef.isLocked()) {
                 pageRef.setLock(true);
             }
-            setPageRefDisplayNames(displayNames, projectLanguages, pageRef, id, pageType);
+            setDisplayNames(displayNames, projectLanguages, pageRef, id, pageType);
             pageRef.save();
 
         } catch (Exception e) {
@@ -249,20 +249,20 @@ public class FsPageCreator {
         }
     }
 
-    private static void setPageDisplayNames(Map<String, Object> displayNames, Collection<Language> projectLanguages, Page page, String id, String pageType) {
+    private static void setDisplayNames(Map<String, Object> displayNames, Collection<Language> projectLanguages, IDProvider element, String id, String pageType) {
         for (Language language : projectLanguages) {
-            if (displayNames.containsKey(language.getAbbreviation())) {
-                page.setDisplayName(language, (String) displayNames.get(language.getAbbreviation()));
-            } else page.setDisplayName(language, pageType + "_" + id);
-        }
-
-    }
-
-    private static void setPageRefDisplayNames(Map<String, Object> displayNames, Collection<Language> projectLanguages, PageRef pageRef, String id, String pageType) {
-        for (Language language : projectLanguages) {
-            if (displayNames.containsKey(language.getAbbreviation())) {
-                pageRef.setDisplayName(language, (String) displayNames.get(language.getAbbreviation()));
-            } else pageRef.setDisplayName(language, pageType + "_" + id);
+            boolean displayNameProvided = false;
+            for (Map.Entry<String, Object> entry : displayNames.entrySet()) {
+                String key = entry.getKey();
+                if (key != null && key.equalsIgnoreCase(language.getAbbreviation())) {
+                    element.setDisplayName(language, (String) displayNames.get(key));
+                    displayNameProvided = true;
+                }
+            }
+            if (!displayNameProvided) {
+                element.setDisplayName(language, pageType + "_" + id);
+                Logging.logWarning("No page display name found for project language '" + language.getAbbreviation() + "'", FsPageCreator.class);
+            }
         }
     }
 }

@@ -1,3 +1,14 @@
+## [3.3.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.2.0...v3.3.0) (2023-11-16)
+ 
+### Changes
+
+* Fixed incorrect loading of the ContentCreator extension.
+* More flexible specification of the "Bridge API URL" in the project component.
+* Improved mapping of store languages to FirstSpirit languages.
+
+### UPDATE NOTICE
+ * The path component `/api`, which was previously fixed for bridges and cannot be configured, is now expected as an optional part of the "Bridge API URL" in the configuration of the project component. This enables more flexible hosting of a bridge. To ensure compatibility for existing projects, this adjustment is made automatically when the project component is updated.
+
 ## [3.2.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.1.0...v3.2.0) (2023-10-25)
  
 ### Changes

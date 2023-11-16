@@ -1,6 +1,5 @@
 package to.be.renamed.module;
 
-import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import com.espirit.moddev.components.annotations.PublicComponent;
 
@@ -34,7 +33,15 @@ public class EcomConnectClientResourcePlugin implements ClientResourcePlugin {
     public void setUp(@NotNull BaseContext context) {
         final var projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(context);
         final var projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
-        loaderPath = projectAppConfiguration.getGeneralConfig().getCcExtensionsUrl();
+
+        parseConfiguration(projectAppConfiguration);
+    }
+
+    void parseConfiguration(final ProjectAppConfiguration projectAppConfiguration) {
+        boolean useCCExtensions = projectAppConfiguration.getGeneralConfig().useCCExtensions();
+        if (useCCExtensions) {
+            loaderPath = projectAppConfiguration.getGeneralConfig().getCcExtensionsUrl();
+        }
     }
 
     @Override

@@ -75,7 +75,7 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
                             log.newLine().addTaskDescription("testConnection.task.categoryTree");
                         });
                         SwingUtilities.invokeAndWait(() -> {
-                            log.logResult(funcTest(broker, "/api/categories/tree"));
+                            log.logResult(funcTest(broker, "/categories/tree"));
                             log.newLine().newLine();
                         });
 
@@ -85,7 +85,7 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
                             log.newLine().addTaskDescription("testConnection.task.product");
                         });
                         SwingUtilities.invokeAndWait(() -> {
-                            log.logResult(funcTest(broker, "/api/products/ids"));
+                            log.logResult(funcTest(broker, "/products/ids"));
                             log.newLine().newLine();
                         });
 
@@ -94,7 +94,7 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
                             log.heading(TaskType.CONTENT);
                             log.newLine().addTaskDescription("testConnection.task.content");
                         });
-                        SwingUtilities.invokeAndWait(() -> log.logResult(funcTest(broker, "/api/content")));
+                        SwingUtilities.invokeAndWait(() -> log.logResult(funcTest(broker, "/content")));
 
                         // Log to console
                         SwingUtilities.invokeLater(() -> Logging.logInfo("\nFCECOM TestConnection\n\n" + progressDialog.getFullLog(), getClass()));
