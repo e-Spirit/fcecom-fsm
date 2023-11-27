@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ImageIcon;
 
 import static java.lang.String.format;
 
@@ -49,6 +50,11 @@ public class EcomContentPagesDataAccessPlugin extends EcomAbstract<EcomContent> 
     @Override
     public String getReportSvgIconPath() {
         return EcomConnectWebApp.CONTENT_DAP_ICON;
+    }
+
+    @Override
+    public ImageIcon getReportPngImageIcon() {
+        return new ImageIcon(getClass().getResource("/files-web/fcecom-content.png"));
     }
 
     @Override

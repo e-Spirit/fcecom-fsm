@@ -1,3 +1,11 @@
+## [3.4.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.3.0...v3.4.0) (2023-11-27)
+ 
+### Changes
+
+* Removed unused error codes.
+* Added missing icons to the reports in the SiteArchitect.
+* The unused `name` parameter for some OpenStorefrontUrl types was removed to unify the behavior between different triggers.
+
 ## [3.3.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.2.0...v3.3.0) (2023-11-16)
  
 ### Changes

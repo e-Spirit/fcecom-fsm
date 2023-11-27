@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import javax.swing.ImageIcon;
 
 import static java.lang.String.format;
 
@@ -95,8 +96,9 @@ public abstract class EcomAbstract<T extends EcomId> implements DataAccessPlugin
             dataAccessAspects.put(Reporting.TYPE, active -> {
                 if (context.is(BaseContext.Env.WEBEDIT)) {
                     return context.requireSpecialist(ImageAgent.TYPE).getImageFromUrl(getReportSvgIconPath());
+                } else {
+                    return context.requireSpecialist(ImageAgent.TYPE).getImageFromIcon(getReportPngImageIcon());
                 }
-                return null;
             });
 
             dataAccessAspects.put(ReportItemsProviding.TYPE, new ReportItemsProviding<T>() {
@@ -249,8 +251,8 @@ public abstract class EcomAbstract<T extends EcomId> implements DataAccessPlugin
                             @Override
                             public Image<?> getIcon(@NotNull T item) {
                                 return context.is(BaseContext.Env.WEBEDIT)
-                                       ? context.requireSpecialist(ImageAgent.TYPE).getImageFromUrl(getReportSvgIconPath())
-                                       : null;
+                                    ? context.requireSpecialist(ImageAgent.TYPE).getImageFromUrl(getReportSvgIconPath())
+                                    : context.requireSpecialist(ImageAgent.TYPE).getImageFromIcon(getReportPngImageIcon());
                             }
 
                             @Override
@@ -342,6 +344,8 @@ public abstract class EcomAbstract<T extends EcomId> implements DataAccessPlugin
     public abstract Class<T> getType();
 
     public abstract String getReportSvgIconPath();
+
+    public abstract ImageIcon getReportPngImageIcon();
 
     public abstract String getReportLabel();
 

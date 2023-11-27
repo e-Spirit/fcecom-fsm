@@ -134,7 +134,6 @@ public class EcomConnectScope {
         message
             .add("id", ecomId.getId())
             .add("type", ecomId.getType())
-            .add("name", ecomId.getLabel())
             .apply(broker);
     }
 

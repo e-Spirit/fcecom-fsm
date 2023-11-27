@@ -16,11 +16,8 @@ public enum ErrorCode {
     BRIDGE_AUTH_ERROR("3020"),
     BRIDGE_SERVER_ERROR("3030"),
     BRIDGE_REQUEST_TIMEOUT("3040"),
-    // CC extension errors 
-    MISSING_CC_EXTENSION("3050"),
-    // Shop system connection errors
-    CANNOT_CONNECT_TO_SHOP("4010"),
-    SHOP_AUTH_ERROR("4020");
+    // CC extension errors
+    MISSING_CC_EXTENSION("3050");
 
     private final String code;
 

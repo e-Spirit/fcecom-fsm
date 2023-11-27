@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ImageIcon;
 
 import static java.lang.String.format;
 
@@ -38,6 +39,11 @@ public class EcomCategoryDataAccessPlugin extends EcomAbstract<EcomCategory> {
     @Override
     public String getReportSvgIconPath() {
         return EcomConnectWebApp.CATEGORY_DAP_ICON;
+    }
+
+    @Override
+    public ImageIcon getReportPngImageIcon() {
+        return new ImageIcon(getClass().getResource("/files-web/fcecom-category.png"));
     }
 
     @Override
