@@ -125,10 +125,6 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
         getBridgeInstance(projectId).deleteContent(contentId);
     }
 
-    public boolean hasNewContentEndpoint(Long projectId) {
-        return getBridgeInstance(projectId).hasNewContentEndpoint();
-    }
-
     public String getStoreFrontUrl(Long projectId, EcomId ecomId) {
         return getBridgeInstance(projectId).getStoreFrontUrl(ecomId);
     }

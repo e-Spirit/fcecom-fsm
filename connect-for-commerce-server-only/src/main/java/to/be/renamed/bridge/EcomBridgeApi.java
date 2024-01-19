@@ -28,15 +28,9 @@ public class EcomBridgeApi {
 
     private final UnirestConnector unirestConnector;
 
-    /**
-     * boolean needed to save information if the new Content Endpoint already exists in the Bridge
-     */
-    private boolean hasNewContentEndpoint;
-
     private EcomBridgeApi(BridgeConfig bridgeConfig) {
         unirestConnector = UnirestConnector.create(bridgeConfig);
         unirestConnector.interceptWith(new UnirestInterceptor());
-        this.hasNewContentEndpoint = hasContent();
     }
 
     protected static EcomBridgeApi create(BridgeConfig bridgeConfig) {
@@ -45,7 +39,6 @@ public class EcomBridgeApi {
 
     protected void configure(BridgeConfig bridgeConfig) {
         unirestConnector.configureApiClient(bridgeConfig);
-        hasNewContentEndpoint = hasContent();
     }
 
     void shutDownHttpClient() {
@@ -226,10 +219,6 @@ public class EcomBridgeApi {
 
         BridgeRequest.bridgeRequest(baseRequest)
                 .perform();
-    }
-
-    public boolean hasNewContentEndpoint() {
-        return hasNewContentEndpoint;
     }
 
     public String getStoreFrontUrl(EcomId ecomId) {

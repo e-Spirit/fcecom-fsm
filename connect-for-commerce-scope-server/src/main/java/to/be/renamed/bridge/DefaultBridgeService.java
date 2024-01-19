@@ -170,14 +170,6 @@ public class DefaultBridgeService implements BridgeService {
         bridgeFsService.deleteContent(projectId, contentId);
     }
 
-    /**
-     * Returns the in the bridge instance cached value of hasContent().
-     * @return True is available.
-     */
-    public boolean hasNewContentEndpoint() {
-        return bridgeFsService.hasNewContentEndpoint(projectId);
-    }
-
     // Mapping
 
     /**

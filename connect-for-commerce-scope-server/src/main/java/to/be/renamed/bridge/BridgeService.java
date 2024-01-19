@@ -119,12 +119,6 @@ public interface BridgeService {
      */
     void deleteContent(String contentId);
 
-    /**
-     * Returns the in the bridge instance cached value of hasContent().
-     * @return True is available.
-     */
-    boolean hasNewContentEndpoint();
-
     // Mapping
 
     /**

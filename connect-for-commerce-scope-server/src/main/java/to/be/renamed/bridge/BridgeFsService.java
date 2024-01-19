@@ -132,13 +132,6 @@ public interface BridgeFsService {
      */
     void deleteContent(Long projectId, String contentId);
 
-    /**
-     * Returns the in the bridge instance cached value of hasContent().
-     * @param projectId The id of the project for which the request is executed.
-     * @return True is available.
-     */
-    boolean hasNewContentEndpoint(Long projectId);
-
     // Mapping
 
     /**
