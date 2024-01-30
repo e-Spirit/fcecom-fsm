@@ -5,6 +5,7 @@ import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import to.be.renamed.module.projectconfig.model.GeneralConfig;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.module.projectconfig.model.ReportConfig;
+import to.be.renamed.module.setup.CaasIndexCreator;
 import com.espirit.moddev.components.annotations.ProjectAppComponent;
 
 import de.espirit.common.base.Logging;
@@ -19,9 +20,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-import kong.unirest.json.JSONObject;
-
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -62,20 +60,24 @@ public class EcomConnectProjectApp implements ProjectApp {
             final GeneralConfig generalConfig = new GeneralConfig(props.getProperty("bridge.content-creator-extension"),
                                                                   Boolean.parseBoolean(props.getProperty("general.use-content-creator-extension")),
                                                                   Boolean.parseBoolean(props.getProperty("checkbox.disable-bridge-page-creation")));
-            final BridgeConfig bridgeConfig = new BridgeConfig(props.getProperty("bridge.api-url"), props.getProperty("bridge.username"), props.getProperty("bridge.password"));
+            final BridgeConfig
+                bridgeConfig =
+                new BridgeConfig(props.getProperty("bridge.api-url"), props.getProperty("bridge.username"), props.getProperty("bridge.password"));
 
             int categoryLevels = 3;
             try {
                 categoryLevels = Integer.parseInt(props.getProperty("report.category-levels"));
             } catch (final NumberFormatException nfe) {
-                Logging.logInfo("No value for property report.category-levels found in old configuration file. Migrating to default value: 3", getClass());
+                Logging.logInfo("No value for property report.category-levels found in old configuration file. Migrating to default value: 3",
+                                getClass());
             }
 
             int productLevels = 3;
             try {
                 productLevels = Integer.parseInt(props.getProperty("report.product-levels"));
             } catch (final NumberFormatException nfe) {
-                Logging.logInfo("No value for property report.product-levels found in old configuration file. Migrating to default value: 3", getClass());
+                Logging.logInfo("No value for property report.product-levels found in old configuration file. Migrating to default value: 3",
+                                getClass());
             }
 
             final ReportConfig reportConfig = new ReportConfig(categoryLevels, productLevels);
@@ -95,21 +97,28 @@ public class EcomConnectProjectApp implements ProjectApp {
                 String migratedBridgeApiUrl = bridgeApiUrl + "/api";
 
                 final GeneralConfig generalConfig = projectAppConfiguration.getGeneralConfig();
-                final BridgeConfig bridgeConfig = new BridgeConfig(migratedBridgeApiUrl, projectAppConfiguration.getBridgeConfig().getBridgeUsername(), projectAppConfiguration.getBridgeConfig().getBridgePassword());
+                final BridgeConfig
+                    bridgeConfig =
+                    new BridgeConfig(migratedBridgeApiUrl, projectAppConfiguration.getBridgeConfig().getBridgeUsername(),
+                                     projectAppConfiguration.getBridgeConfig().getBridgePassword());
                 final ReportConfig reportConfig = projectAppConfiguration.getReportConfig();
 
                 final ProjectAppConfiguration migratedConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig);
 
                 storeMigratedConfiguration(migratedConfiguration);
-                Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!", getClass());
+                Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!",
+                                getClass());
             } else {
-                Logging.logInfo("No value for property bridge.api-url found in old configuration file. Leaving value empty." , getClass());
+                Logging.logInfo("No value for property bridge.api-url found in old configuration file. Leaving value empty.", getClass());
             }
         }
+        CaasIndexCreator.create(environment).run();
     }
 
     protected void storeMigratedConfiguration(final ProjectAppConfiguration projectAppConfiguration) {
-        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
+        final ProjectAppConfigurationService
+            projectAppConfigurationService =
+            ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
         projectAppConfigurationService.storeConfiguration(projectAppConfiguration);
     }
 
@@ -127,13 +136,17 @@ public class EcomConnectProjectApp implements ProjectApp {
 
     protected ProjectAppConfiguration loadOldConfigurationFromJson() {
         final FileSystem<? extends FileHandle> fs = environment.getConfDir();
-        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
+        final ProjectAppConfigurationService
+            projectAppConfigurationService =
+            ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
         ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
         return projectAppConfiguration;
     }
 
     protected JsonObject loadOldJsonConfiguration() {
-        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
+        final ProjectAppConfigurationService
+            projectAppConfigurationService =
+            ServiceFactory.getProjectAppConfigurationService(environment.getBroker());
         ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
         projectAppConfigurationService.storeConfiguration(projectAppConfiguration);
         final FileSystem<? extends FileHandle> fs = environment.getConfDir();
@@ -167,10 +180,11 @@ public class EcomConnectProjectApp implements ProjectApp {
             } else if (splittedOldVersionString[0].compareTo(splittedConfigBreakingVersion[0]) == 0
                        && splittedOldVersionString[1].compareTo(splittedConfigBreakingVersion[1]) < 0) {
                 return true;
-            } else
+            } else {
                 return splittedOldVersionString[0].compareTo(splittedConfigBreakingVersion[0]) == 0
                        && splittedOldVersionString[1].compareTo(splittedConfigBreakingVersion[1]) == 0
                        && splittedOldVersionString[2].compareTo(splittedConfigBreakingVersion[2]) < 0;
+            }
         }
 
         return false;

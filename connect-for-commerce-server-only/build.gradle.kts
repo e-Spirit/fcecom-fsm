@@ -1,5 +1,5 @@
 plugins {
-    id ("de.espirit.firstspirit-module-annotations") version "4.4.2"
+    id("de.espirit.firstspirit-module-annotations") version "4.4.2"
 }
 
 dependencies {
@@ -7,8 +7,9 @@ dependencies {
     implementation(project(":connect-for-commerce-scope-server"))
 
     implementation(group = "com.espirit.moddev.fcaf", name = "fcaf-module-scope", version = "1.9.0")
-    implementation(group = "info.clearthought", name= "table-layout", version = "4.3.0")
-    implementation(group = "com.google.guava", name = "guava", version = "30.1-jre")
+    implementation(group = "info.clearthought", name = "table-layout", version = "4.3.0")
+    compileOnly(group = "com.espirit.caas", name = "caas-connect-global", version = "3.44.0", classifier = "all")
+    implementation(group = "com.google.guava", name = "guava", version = "33.0.0-jre")
     implementation(group = "com.konghq", name = "unirest-java", version = "3.13.4")
 
     constraints {
