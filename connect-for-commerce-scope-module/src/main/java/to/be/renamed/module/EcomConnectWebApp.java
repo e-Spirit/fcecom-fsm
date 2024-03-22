@@ -10,6 +10,7 @@ import de.espirit.firstspirit.module.WebApp;
     name = EcomConnectWebApp.WEB_APP_NAME,
     displayName = EcomConnectWebApp.WEB_APP_NAME,
     webXml = "files-web/web.xml",
+    xmlSchemaVersion = "6.0",
     webResources = {
         @WebResource(name = "com.espirit.firstspirit.ecom.connect.fcecom.web", version = "1", path = "files-web/", targetPath = "/"),
     }

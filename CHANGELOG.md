@@ -1,3 +1,9 @@
+## [3.6.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.5.0...v3.6.0) (2024-03-22)
+
+### Changes
+
+* Updated dependencies.
+
 ## [3.5.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.4.1...v3.5.0) (2024-01-30)
 
 ### Changes

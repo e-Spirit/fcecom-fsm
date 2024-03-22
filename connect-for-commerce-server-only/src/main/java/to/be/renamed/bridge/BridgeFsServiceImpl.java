@@ -5,6 +5,7 @@ import to.be.renamed.module.ServiceFactory;
 import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import com.espirit.moddev.components.annotations.ServiceComponent;
+
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.module.ServerEnvironment;
@@ -12,7 +13,8 @@ import de.espirit.firstspirit.module.Service;
 import de.espirit.firstspirit.module.ServiceProxy;
 import de.espirit.firstspirit.module.descriptor.ServiceDescriptor;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import static to.be.renamed.bridge.BridgeFsServiceImpl.SERVICE_NAME;
  */
 @ServiceComponent(name = SERVICE_NAME, displayName = ProjectAppHelper.MODULE_NAME + " - Service: Bridge")
 public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsService> {
+
     protected static final String SERVICE_NAME = ProjectAppHelper.MODULE_NAME + " BridgeFsService";
 
     private boolean running;
@@ -44,9 +47,9 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
             bridges.computeIfAbsent(projectId, pId -> {
                 Logging.logDebug(String.format("Creating Bridge for project '%s'", projectId), getClass());
                 return bridges.put(pId, EcomBridgeApi.create(ServiceFactory
-                        .getProjectAppConfigurationService(broker, pId)
-                        .loadConfiguration()
-                        .getBridgeConfig()));
+                                                                 .getProjectAppConfigurationService(broker, pId)
+                                                                 .loadConfiguration()
+                                                                 .getBridgeConfig()));
             });
         } catch (ConcurrentModificationException e) {
             Logging.logDebug(String.format("%s %s Map already being computed, trying again.", e.getClass().getName(), e.getMessage()), getClass());

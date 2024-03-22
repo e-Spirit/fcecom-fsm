@@ -4,8 +4,8 @@ val fsDescription: String by project
 val fsVendor: String by project
 
 plugins {
-    id ("de.espirit.firstspirit-module") version "4.4.2"
-    id ("maven-publish")
+    id("de.espirit.firstspirit-module") version "6.0.0"
+    id("maven-publish")
 }
 
 dependencies {

@@ -6,12 +6,15 @@ import to.be.renamed.bridge.client.UnirestConnector;
 import to.be.renamed.bridge.client.UnirestInterceptor;
 import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
+
 import de.espirit.common.tools.Strings;
+
+import org.jetbrains.annotations.Nullable;
+
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
 import kong.unirest.HttpStatus;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -59,12 +62,12 @@ public class EcomBridgeApi {
 
         return BridgeRequest.bridgeRequest(
                 unirestConnector.getCachingHttpClient().get(endpointRoute)
-                        .routeParam("categoryIds", Strings.implode(categoryIds, ","))
-                        .queryString("lang", lang))
-                .getItems()
-                .stream().map(category -> new EcomCategory(new Json(category)))
-                .filter(EcomCategory::isValid)
-                .collect(toList());
+                    .routeParam("categoryIds", Strings.implode(categoryIds, ","))
+                    .queryString("lang", lang))
+            .getItems()
+            .stream().map(category -> new EcomCategory(new Json(category)))
+            .filter(EcomCategory::isValid)
+            .collect(toList());
     }
 
     public List<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang) {
@@ -77,11 +80,11 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
-                .getItems()
-                .stream()
-                .map(category -> new EcomCategory(new Json(category)))
-                .filter(EcomCategory::isValid)
-                .collect(Collectors.toList());
+            .getItems()
+            .stream()
+            .map(category -> new EcomCategory(new Json(category)))
+            .filter(EcomCategory::isValid)
+            .collect(Collectors.toList());
     }
 
     private void flattenCategories(List<EcomCategory> input, Map<String, EcomCategory> output) {
@@ -95,13 +98,13 @@ public class EcomBridgeApi {
         if (categories.isEmpty()) {
             final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/tree");
 
-                baseRequest.queryString("lang", lang);
+            baseRequest.queryString("lang", lang);
 
             flattenCategories(BridgeRequest.bridgeRequest(baseRequest)
-                    .getItems()
-                    .stream().map(category -> new EcomCategory(new Json(category)))
-                    .filter(EcomCategory::isValid)
-                    .collect(toList()), categories);
+                                  .getItems()
+                                  .stream().map(category -> new EcomCategory(new Json(category)))
+                                  .filter(EcomCategory::isValid)
+                                  .collect(toList()), categories);
         }
         return categories;
     }
@@ -125,10 +128,10 @@ public class EcomBridgeApi {
         }
 
         return BridgeRequest.bridgeRequest(baseRequest)
-                .getItems()
-                .stream().map(product -> new EcomProduct(new Json(product)))
-                .filter(EcomProduct::isValid)
-                .collect(toList());
+            .getItems()
+            .stream().map(product -> new EcomProduct(new Json(product)))
+            .filter(EcomProduct::isValid)
+            .collect(toList());
     }
 
     public List<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang) {
@@ -145,10 +148,10 @@ public class EcomBridgeApi {
         }
 
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
-                .getItems()
-                .stream().map(product -> new EcomProduct(new Json(product)))
-                .filter(EcomProduct::isValid)
-                .collect(toList());
+            .getItems()
+            .stream().map(product -> new EcomProduct(new Json(product)))
+            .filter(EcomProduct::isValid)
+            .collect(toList());
     }
 
     public final boolean hasContent() {
@@ -169,10 +172,10 @@ public class EcomBridgeApi {
         }
 
         return BridgeRequest.bridgeRequest(baseRequest)
-                .getItems()
-                .stream().map(content -> new EcomContent(new Json(content)))
-                .filter(EcomContent::isValid)
-                .collect(toList());
+            .getItems()
+            .stream().map(content -> new EcomContent(new Json(content)))
+            .filter(EcomContent::isValid)
+            .collect(toList());
     }
 
 
@@ -186,30 +189,30 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
-                .getItems()
-                .stream().map(content -> new EcomContent(new Json(content)))
-                .filter(EcomContent::isValid)
-                .collect(toList());
+            .getItems()
+            .stream().map(content -> new EcomContent(new Json(content)))
+            .filter(EcomContent::isValid)
+            .collect(toList());
     }
 
     public String createContent(EcomElementDTO data) {
         final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().post("/content/");
 
         return BridgeRequest.bridgeRequest(baseRequest
-                .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
-                .header("Content-Type", "application/json"))
-                .getItem()
-                .get("id");
+                                               .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
+                                               .header("Content-Type", "application/json"))
+            .getItem()
+            .get("id");
     }
 
     public void updateContent(String contentId, EcomElementDTO data) {
         final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().put("/content/{contentId}");
 
         BridgeRequest.bridgeRequest(baseRequest
-                .header("Content-Type", "application/json")
-                .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
-                .routeParam("contentId", contentId))
-                .perform();
+                                        .header("Content-Type", "application/json")
+                                        .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
+                                        .routeParam("contentId", contentId))
+            .perform();
     }
 
     public void deleteContent(String contentId) {
@@ -218,7 +221,7 @@ public class EcomBridgeApi {
         baseRequest.routeParam("contentId", contentId);
 
         BridgeRequest.bridgeRequest(baseRequest)
-                .perform();
+            .perform();
     }
 
     public String getStoreFrontUrl(EcomId ecomId) {
@@ -233,8 +236,8 @@ public class EcomBridgeApi {
             }
 
             return BridgeRequest.bridgeRequest(baseRequest)
-                    .getItem()
-                    .get("url");
+                .getItem()
+                .get("url");
         }
         return null;
     }
@@ -242,8 +245,8 @@ public class EcomBridgeApi {
     public EcomId resolveStoreFrontUrl(String storeFrontUrl) {
         return EcomId.from(BridgeRequest.bridgeRequest(
                 unirestConnector.getCachingHttpClient().get("/lookup-url")
-                        .queryString("url", storeFrontUrl))
-                .getItem());
+                    .queryString("url", storeFrontUrl))
+                               .getItem());
     }
 
     public static BridgeTestResult testConnection(UnirestConnector connector, TestConnectionRequest params) {
@@ -257,6 +260,7 @@ public class EcomBridgeApi {
 
     /**
      * Returns true if the given status code is between 200 and 300
+     *
      * @param statusCode Input to evaluate
      * @return Result
      */
