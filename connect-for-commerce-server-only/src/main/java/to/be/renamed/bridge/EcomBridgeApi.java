@@ -7,7 +7,9 @@ import to.be.renamed.bridge.client.UnirestInterceptor;
 import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 
+import de.espirit.common.base.Logging;
 import de.espirit.common.tools.Strings;
+import de.espirit.firstspirit.agency.TrackingAgent;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static to.be.renamed.bridge.TrackingEndpoints.DELETE_CONTENT;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_CATEGORIES;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_CATEGORIES_IDS;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_CATEGORIES_TREE;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_CONTENT;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_CONTENT_IDS;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_LOOKUP_URL;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_PRODUCTS;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_PRODUCTS_IDS;
+import static to.be.renamed.bridge.TrackingEndpoints.GET_STOREFRONT_URL;
+import static to.be.renamed.bridge.TrackingEndpoints.HEAD_CATEGORIES_TREE;
+import static to.be.renamed.bridge.TrackingEndpoints.HEAD_CONTENT;
+import static to.be.renamed.bridge.TrackingEndpoints.POST_CONTENT;
+import static to.be.renamed.bridge.TrackingEndpoints.PUT_CONTENT;
 import static to.be.renamed.bridge.client.PagedBridgeRequest.pagedBridgeRequest;
 import static java.util.stream.Collectors.toList;
 
@@ -31,13 +47,20 @@ public class EcomBridgeApi {
 
     private final UnirestConnector unirestConnector;
 
-    private EcomBridgeApi(BridgeConfig bridgeConfig) {
+    private final TrackingAgent trackingAgent;
+
+    private EcomBridgeApi(BridgeConfig bridgeConfig, TrackingAgent trackingAgent) {
         unirestConnector = UnirestConnector.create(bridgeConfig);
         unirestConnector.interceptWith(new UnirestInterceptor());
+        this.trackingAgent = trackingAgent;
+    }
+
+    protected static EcomBridgeApi create(BridgeConfig bridgeConfig, TrackingAgent trackingAgent) {
+        return new EcomBridgeApi(bridgeConfig, trackingAgent);
     }
 
     protected static EcomBridgeApi create(BridgeConfig bridgeConfig) {
-        return new EcomBridgeApi(bridgeConfig);
+        return new EcomBridgeApi(bridgeConfig, null);
     }
 
     protected void configure(BridgeConfig bridgeConfig) {
@@ -60,6 +83,8 @@ public class EcomBridgeApi {
         }
         String endpointRoute = "/categories/ids/{categoryIds}";
 
+        track(GET_CATEGORIES_IDS);
+
         return BridgeRequest.bridgeRequest(
                 unirestConnector.getCachingHttpClient().get(endpointRoute)
                     .routeParam("categoryIds", Strings.implode(categoryIds, ","))
@@ -79,6 +104,9 @@ public class EcomBridgeApi {
         if (lang != null) {
             baseRequest.queryString("lang", lang);
         }
+
+        track(GET_CATEGORIES);
+
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
             .getItems()
             .stream()
@@ -100,6 +128,8 @@ public class EcomBridgeApi {
 
             baseRequest.queryString("lang", lang);
 
+            track(GET_CATEGORIES_TREE);
+
             flattenCategories(BridgeRequest.bridgeRequest(baseRequest)
                                   .getItems()
                                   .stream().map(category -> new EcomCategory(new Json(category)))
@@ -110,6 +140,8 @@ public class EcomBridgeApi {
     }
 
     public boolean hasCategoryTree() {
+        track(HEAD_CATEGORIES_TREE);
+
         final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/categories/tree")).perform();
         return isStatusOk(status);
     }
@@ -126,6 +158,8 @@ public class EcomBridgeApi {
         if (lang != null) {
             baseRequest.queryString("lang", lang);
         }
+
+        track(GET_PRODUCTS_IDS);
 
         return BridgeRequest.bridgeRequest(baseRequest)
             .getItems()
@@ -147,6 +181,8 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
 
+        track(GET_PRODUCTS);
+
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
             .getItems()
             .stream().map(product -> new EcomProduct(new Json(product)))
@@ -155,6 +191,8 @@ public class EcomBridgeApi {
     }
 
     public final boolean hasContent() {
+        track(HEAD_CONTENT);
+
         final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/content")).perform();
         return isStatusOk(status);
     }
@@ -170,6 +208,8 @@ public class EcomBridgeApi {
         if (lang != null) {
             baseRequest.queryString("lang", lang);
         }
+
+        track(GET_CONTENT_IDS);
 
         return BridgeRequest.bridgeRequest(baseRequest)
             .getItems()
@@ -188,6 +228,9 @@ public class EcomBridgeApi {
         if (lang != null) {
             baseRequest.queryString("lang", lang);
         }
+
+        track(GET_CONTENT);
+
         return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
             .getItems()
             .stream().map(content -> new EcomContent(new Json(content)))
@@ -198,6 +241,8 @@ public class EcomBridgeApi {
     public String createContent(EcomElementDTO data) {
         final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().post("/content/");
 
+        track(POST_CONTENT);
+
         return BridgeRequest.bridgeRequest(baseRequest
                                                .body(BridgeUtilities.toJSONObject(data.getJsonModel()))
                                                .header("Content-Type", "application/json"))
@@ -207,6 +252,8 @@ public class EcomBridgeApi {
 
     public void updateContent(String contentId, EcomElementDTO data) {
         final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().put("/content/{contentId}");
+
+        track(PUT_CONTENT);
 
         BridgeRequest.bridgeRequest(baseRequest
                                         .header("Content-Type", "application/json")
@@ -219,6 +266,8 @@ public class EcomBridgeApi {
         final HttpRequestWithBody baseRequest = unirestConnector.getHttpClientWithoutCache().delete("/content/{contentId}");
 
         baseRequest.routeParam("contentId", contentId);
+
+        track(DELETE_CONTENT);
 
         BridgeRequest.bridgeRequest(baseRequest)
             .perform();
@@ -235,6 +284,8 @@ public class EcomBridgeApi {
                 baseRequest.queryString("lang", ecomId.getLang());
             }
 
+            track(GET_STOREFRONT_URL);
+
             return BridgeRequest.bridgeRequest(baseRequest)
                 .getItem()
                 .get("url");
@@ -243,6 +294,8 @@ public class EcomBridgeApi {
     }
 
     public EcomId resolveStoreFrontUrl(String storeFrontUrl) {
+        track(GET_LOOKUP_URL);
+
         return EcomId.from(BridgeRequest.bridgeRequest(
                 unirestConnector.getCachingHttpClient().get("/lookup-url")
                     .queryString("url", storeFrontUrl))
@@ -266,5 +319,16 @@ public class EcomBridgeApi {
      */
     private static boolean isStatusOk(int statusCode) {
         return statusCode >= HttpStatus.OK && statusCode < HttpStatus.MULTIPLE_CHOICE;
+    }
+
+    private void track(final TrackingEndpoints trackingEndpoint) {
+        String logMessage;
+        if (trackingAgent != null) {
+            logMessage = "Tracking endpoint usage: " + trackingEndpoint;
+            trackingAgent.track(trackingEndpoint.uuid, trackingEndpoint.label, trackingEndpoint.categoryName);
+        } else {
+            logMessage = "Tracking failed: TrackingAgent not available!";
+        }
+        Logging.logDebug(logMessage, EcomBridgeApi.class);
     }
 }

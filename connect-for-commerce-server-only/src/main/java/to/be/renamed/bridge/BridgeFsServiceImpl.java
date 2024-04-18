@@ -8,6 +8,7 @@ import com.espirit.moddev.components.annotations.ServiceComponent;
 
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.agency.TrackingAgent;
 import de.espirit.firstspirit.module.ServerEnvironment;
 import de.espirit.firstspirit.module.Service;
 import de.espirit.firstspirit.module.ServiceProxy;
@@ -49,7 +50,8 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
                 return bridges.put(pId, EcomBridgeApi.create(ServiceFactory
                                                                  .getProjectAppConfigurationService(broker, pId)
                                                                  .loadConfiguration()
-                                                                 .getBridgeConfig()));
+                                                                 .getBridgeConfig(),
+                                                             broker.requireSpecialist(TrackingAgent.TYPE)));
             });
         } catch (ConcurrentModificationException e) {
             Logging.logDebug(String.format("%s %s Map already being computed, trying again.", e.getClass().getName(), e.getMessage()), getClass());

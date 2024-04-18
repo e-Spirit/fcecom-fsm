@@ -1,3 +1,15 @@
+## [3.7.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.6.0...v3.7.0) (2024-04-18)
+
+### Changes
+
+* Updated dependencies.
+* Added anonymous tracking of Bridge API usage.
+
+### UPDATE NOTICE
+
+* The FirstSpirit module now anonymously logs the internal use of various Bridge API features.
+  This serves the sole purpose of concentrating the further development of the module on utilized functions.
+
 ## [3.6.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.5.0...v3.6.0) (2024-03-22)
 
 ### Changes
