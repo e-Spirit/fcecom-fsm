@@ -1,3 +1,9 @@
+## [3.8.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.7.0...v3.8.0) (2024-05-17)
+
+### Changes
+
+* Extended Test Connection with request to `/categories/ids`
+
 ## [3.7.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.6.0...v3.7.0) (2024-04-18)
 
 ### Changes

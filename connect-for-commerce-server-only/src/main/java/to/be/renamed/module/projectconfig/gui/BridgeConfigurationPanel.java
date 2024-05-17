@@ -10,13 +10,6 @@ import to.be.renamed.module.projectconfig.connectiontest.EcomTestConnectionResul
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
-import kong.unirest.HttpMethod;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -24,6 +17,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import kong.unirest.HttpMethod;
 
 /**
  * Configuration panel for bridge related configuration tab.
@@ -36,7 +35,6 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
 
     /**
      * Creates a configuration panel for the bridge related configuration tab.
-     *
      * @param bridgeConfig The current bridge configuration values
      */
     BridgeConfigurationPanel(final BridgeConfig bridgeConfig, SpecialistsBroker broker) {
@@ -69,9 +67,17 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
 
                 executorService.execute(() -> {
                     try {
-                        // Category Tree
+                        // Category
                         SwingUtilities.invokeAndWait(() -> {
                             log.heading(TaskType.CATEGORY);
+                            log.newLine().addTaskDescription("testConnection.task.category");
+                        });
+                        SwingUtilities.invokeAndWait(() -> {
+                            log.logResult(funcTest(broker, "/categories/ids"));
+                        });
+
+                        // Category Tree
+                        SwingUtilities.invokeAndWait(() -> {
                             log.newLine().addTaskDescription("testConnection.task.categoryTree");
                         });
                         SwingUtilities.invokeAndWait(() -> {
