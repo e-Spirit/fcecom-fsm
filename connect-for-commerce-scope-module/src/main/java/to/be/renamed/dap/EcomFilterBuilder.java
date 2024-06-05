@@ -27,15 +27,6 @@ public class EcomFilterBuilder {
         return addTextField(name, placeholder, "");
     }
 
-    public EcomFilterBuilder addCheckbox(String name, String label, Boolean defaultValue) {
-        filters.add(Parameter.Factory.createBoolean(name, label, defaultValue));
-        return this;
-    }
-
-    public EcomFilterBuilder addCheckbox(String name, String label) {
-        return addCheckbox(name, label, null);
-    }
-
     public EcomFilterBuilder addSelect(String name, Map<String, String> items, String defaultValue) {
         if (!items.isEmpty()) {
             filters.add(Parameter.Factory.createSelect(
@@ -67,11 +58,11 @@ public class EcomFilterBuilder {
 
     }
 
-    Map<String, String> getFilter() {
+    public Map<String, String> getFilter() {
         return values;
     }
 
-    Filterable asFilterable() {
+    public Filterable asFilterable() {
         return new Filterable() {
 
             @Override

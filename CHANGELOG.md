@@ -1,3 +1,9 @@
+## [3.8.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.8.0...v3.8.1) (2024-06-05)
+
+### Changes
+
+* Refactoring of DAP classes.
+
 ## [3.8.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.7.0...v3.8.0) (2024-05-17)
 
 ### Changes
