@@ -43,9 +43,10 @@ public interface BridgeService {
      *
      * @param parentId Filter by parentId. It returns all related categories and subcategories from the category tree.
      * @param lang     The language of the result.
+     * @param page     The current page of the search results.
      * @return The available categories from the shop backend in the specified language.
      */
-    List<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang);
+    EcomSearchResult<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang, final int page);
 
     /**
      * Returns the category tree in the specified language.
@@ -79,9 +80,10 @@ public interface BridgeService {
      * @param q          Fulltext search query string.
      * @param categoryId Filter by categoryId.
      * @param lang       The language of the result.
+     * @param page       The current page of the search results.
      * @return A list of products from the shop backend which match the given filters.
      */
-    List<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang);
+    EcomSearchResult<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang, final int page);
 
     // Content
 
@@ -106,9 +108,10 @@ public interface BridgeService {
      *
      * @param q    Fulltext search query string.
      * @param lang The language of the result.
+     * @param page The current page of the search results.
      * @return A list of content pages which match the given filters.
      */
-    List<EcomContent> findContent(@Nullable String q, @Nullable String lang);
+    EcomSearchResult<EcomContent> findContent(@Nullable String q, @Nullable String lang, final int page);
 
     /**
      * Creates a new page in the shop system.

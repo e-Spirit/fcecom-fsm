@@ -82,8 +82,8 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
         return getBridgeInstance(projectId).getCategories(categoryIds, lang);
     }
 
-    public List<EcomCategory> findCategories(Long projetId, @Nullable String parentId, @Nullable String lang) {
-        return getBridgeInstance(projetId).findCategories(parentId, lang);
+    public EcomSearchResult<EcomCategory> findCategories(Long projetId, @Nullable String parentId, @Nullable String lang, final int page) {
+        return getBridgeInstance(projetId).findCategories(parentId, lang, page);
     }
 
     public Map<String, EcomCategory> getCategoriesTree(Long projectId, String lang) {
@@ -100,8 +100,8 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
         return getBridgeInstance(projectId).getProducts(productIds, lang);
     }
 
-    public List<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang) {
-        return getBridgeInstance(projectId).findProducts(q, categoryId, lang);
+    public EcomSearchResult<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang, final int page) {
+        return getBridgeInstance(projectId).findProducts(q, categoryId, lang, page);
     }
 
     // Content
@@ -114,8 +114,8 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
         return getBridgeInstance(projectId).getContent(contentIds, lang);
     }
 
-    public List<EcomContent> findContent(Long projectId, @Nullable String q, @Nullable String lang) {
-        return getBridgeInstance(projectId).findContent(q, lang);
+    public EcomSearchResult<EcomContent> findContent(Long projectId, @Nullable String q, @Nullable String lang, final int page) {
+        return getBridgeInstance(projectId).findContent(q, lang, page);
     }
 
     public String createContent(Long projectId, EcomElementDTO data) {

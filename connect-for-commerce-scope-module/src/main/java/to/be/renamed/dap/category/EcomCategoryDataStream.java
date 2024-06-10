@@ -2,9 +2,11 @@ package to.be.renamed.dap.category;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomCategory;
+import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
 import to.be.renamed.error.BridgeConnectionException;
+import to.be.renamed.error.BridgeException;
 import to.be.renamed.module.ServiceFactory;
 
 import de.espirit.common.base.Logging;
@@ -24,38 +26,45 @@ import static java.lang.String.format;
 
 public class EcomCategoryDataStream implements DataStream<EcomCategory> {
 
-    private final Iterator<EcomCategory> iterator;
-    private final int[] total = {0};
     private final EcomConnectScope scope;
+    private final Map<String, String> filter;
+    private int total;
+    private int page = 1;
+    private int count = 0;
+    private Iterator<EcomCategory> iterator;
 
     public EcomCategoryDataStream(final EcomConnectScope scope, final EcomFilterBuilder filterBuilder) {
         this.scope = scope;
-        iterator = getItems(filterBuilder.getFilter());
+        this.filter = filterBuilder.getFilter();
+        EcomSearchResult<EcomCategory> searchResult = getItems(filter, page);
+        iterator = searchResult.getIterator();
+        total = searchResult.getTotal();
     }
 
 
     @Override
     public @NotNull List<EcomCategory> getNext(int count) {
-        count = Math.max(count, 30);
-
         Set<EcomCategory> items = new LinkedHashSet<>();
-        while (count >= 1 && iterator.hasNext()) {
+        if (!iterator.hasNext() && this.hasNext()) {
+            page++;
+            iterator = getItems(filter, page).getIterator();
+        }
+        while (iterator.hasNext()) {
             items.add(iterator.next());
-            count--;
+            this.count++;
         }
 
-        total[0] += items.size();
         return new ArrayList<>(items);
     }
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext();
+        return count < getTotal();
     }
 
     @Override
     public int getTotal() {
-        return hasNext() ? -1 : total[0];
+        return total;
     }
 
     @Override
@@ -63,13 +72,18 @@ public class EcomCategoryDataStream implements DataStream<EcomCategory> {
         // No need to close the Iterator
     }
 
-    public Iterator<EcomCategory> getItems(Map<String, String> filters) {
+    private EcomSearchResult<EcomCategory> getItems(Map<String, String> filters, int page) {
         try {
-            return ServiceFactory.getBridgeService(scope.getBroker()).findCategories(filters.get(EcomDapUtilities.FILTER_PARENT_ID), scope.getLang()).iterator();
+            return ServiceFactory.getBridgeService(scope.getBroker()).findCategories(filters.get(EcomDapUtilities.FILTER_PARENT_ID), scope.getLang(), page);
         } catch (BridgeConnectionException e) {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
-            return Collections.emptyIterator();
+            return new EcomSearchResult<>(Collections.emptyList(), 0);
+        } catch (BridgeException e) {
+            // Workaround for a bug in the Salesforce bridge
+            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            total--;
+            return new EcomSearchResult<>(Collections.emptyList(), 0);
         }
     }
 }

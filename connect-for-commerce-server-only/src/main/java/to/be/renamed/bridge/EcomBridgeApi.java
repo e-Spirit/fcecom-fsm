@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
 import kong.unirest.HttpStatus;
+import kong.unirest.UnirestInstance;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static to.be.renamed.bridge.TrackingEndpoints.DELETE_CONTENT;
 import static to.be.renamed.bridge.TrackingEndpoints.GET_CATEGORIES;
@@ -38,7 +38,6 @@ import static to.be.renamed.bridge.TrackingEndpoints.HEAD_CATEGORIES_TREE;
 import static to.be.renamed.bridge.TrackingEndpoints.HEAD_CONTENT;
 import static to.be.renamed.bridge.TrackingEndpoints.POST_CONTENT;
 import static to.be.renamed.bridge.TrackingEndpoints.PUT_CONTENT;
-import static to.be.renamed.bridge.client.PagedBridgeRequest.pagedBridgeRequest;
 import static java.util.stream.Collectors.toList;
 
 public class EcomBridgeApi {
@@ -95,7 +94,7 @@ public class EcomBridgeApi {
             .collect(toList());
     }
 
-    public List<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang) {
+    public EcomSearchResult<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang, int page) {
         GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/");
 
         if (parentId != null) {
@@ -105,14 +104,17 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
 
+        baseRequest.queryString("page", page);
+
         track(GET_CATEGORIES);
 
-        return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
+        final BridgeRequest bridgeRequest = BridgeRequest.bridgeRequest(baseRequest);
+        List<EcomCategory> result = bridgeRequest
             .getItems()
-            .stream()
-            .map(category -> new EcomCategory(new Json(category)))
+            .stream().map(category -> new EcomCategory(new Json(category)))
             .filter(EcomCategory::isValid)
-            .collect(Collectors.toList());
+            .collect(toList());
+        return new EcomSearchResult<>(result, bridgeRequest.getTotal());
     }
 
     private void flattenCategories(List<EcomCategory> input, Map<String, EcomCategory> output) {
@@ -142,7 +144,8 @@ public class EcomBridgeApi {
     public boolean hasCategoryTree() {
         track(HEAD_CATEGORIES_TREE);
 
-        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/categories/tree")).perform();
+        UnirestInstance httpClientWithoutCache = unirestConnector.getHttpClientWithoutCache();
+        final int status = BridgeRequest.bridgeRequest(httpClientWithoutCache.head("/categories/tree")).perform();
         return isStatusOk(status);
     }
 
@@ -168,7 +171,7 @@ public class EcomBridgeApi {
             .collect(toList());
     }
 
-    public List<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang) {
+    public EcomSearchResult<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang, int page) {
         final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/products/");
 
         if (q != null) {
@@ -181,19 +184,24 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
 
+        baseRequest.queryString("page", page);
+
         track(GET_PRODUCTS);
 
-        return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
+        final BridgeRequest bridgeRequest = BridgeRequest.bridgeRequest(baseRequest);
+        List<EcomProduct> result = bridgeRequest
             .getItems()
             .stream().map(product -> new EcomProduct(new Json(product)))
             .filter(EcomProduct::isValid)
             .collect(toList());
+        return new EcomSearchResult<>(result, bridgeRequest.getTotal());
     }
 
     public final boolean hasContent() {
         track(HEAD_CONTENT);
 
-        final int status = BridgeRequest.bridgeRequest(unirestConnector.getHttpClientWithoutCache().head("/content")).perform();
+        UnirestInstance httpClientWithoutCache = unirestConnector.getHttpClientWithoutCache();
+        final int status = BridgeRequest.bridgeRequest(httpClientWithoutCache.head("/content")).perform();
         return isStatusOk(status);
     }
 
@@ -219,7 +227,7 @@ public class EcomBridgeApi {
     }
 
 
-    public List<EcomContent> findContent(@Nullable String q, @Nullable String lang) {
+    public EcomSearchResult<EcomContent> findContent(@Nullable String q, @Nullable String lang, int page) {
         final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/content/");
 
         if (q != null) {
@@ -229,13 +237,17 @@ public class EcomBridgeApi {
             baseRequest.queryString("lang", lang);
         }
 
+        baseRequest.queryString("page", page);
+
         track(GET_CONTENT);
 
-        return pagedBridgeRequest(baseRequest, unirestConnector.getCachingHttpClient())
+        final BridgeRequest bridgeRequest = BridgeRequest.bridgeRequest(baseRequest);
+        List<EcomContent> result = bridgeRequest
             .getItems()
             .stream().map(content -> new EcomContent(new Json(content)))
             .filter(EcomContent::isValid)
             .collect(toList());
+        return new EcomSearchResult<>(result, bridgeRequest.getTotal());
     }
 
     public String createContent(EcomElementDTO data) {

@@ -47,9 +47,10 @@ public interface BridgeFsService {
      * @param projectId The id of the project for which the request is executed.
      * @param parentId  Filter by parentId. It returns all related categories and subcategories from the category tree.
      * @param lang      The language of the result.
+     * @param page      The current page of the search results.
      * @return The available categories from the shop backend in the specified language.
      */
-    List<EcomCategory> findCategories(Long projectId, @Nullable String parentId, @Nullable String lang);
+    EcomSearchResult<EcomCategory> findCategories(Long projectId, @Nullable String parentId, @Nullable String lang, final int page);
 
     /**
      * Returns the category tree in the specified language.
@@ -87,9 +88,10 @@ public interface BridgeFsService {
      * @param q          Fulltext search query string.
      * @param categoryId Filter by categoryId.
      * @param lang       The language of the result.
+     * @param page       The current page of the search results.
      * @return A list of products from the shop backend which match the given filters.
      */
-    List<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang);
+    EcomSearchResult<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang, final int page);
 
     // Content
 
@@ -117,9 +119,10 @@ public interface BridgeFsService {
      * @param projectId The id of the project for which the request is executed.
      * @param q         Fulltext search query string.
      * @param lang      The language of the result.
+     * @param page      The current page of the search results.
      * @return A list of content pages which match the given filters.
      */
-    List<EcomContent> findContent(Long projectId, @Nullable String q, @Nullable String lang);
+    EcomSearchResult<EcomContent> findContent(Long projectId, @Nullable String q, @Nullable String lang, final int page);
 
     /**
      * Creates a new page in the shop system.

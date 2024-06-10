@@ -3,6 +3,8 @@ package to.be.renamed.bridge.client;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import de.espirit.common.base.Logging;
+
 import kong.unirest.HttpRequest;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -16,6 +18,7 @@ import static java.util.Collections.emptyList;
 
 public class BridgeRequest {
 
+    private int total;
     final HttpRequest<?> baseRequest;
 
     BridgeRequest(HttpRequest<?> baseRequest) {
@@ -86,10 +89,20 @@ public class BridgeRequest {
             return emptyList();
         }
 
+        try {
+            total = Integer.parseInt(response.getHeaders().getFirst("x-total"));
+        } catch(final Exception e) {
+            Logging.logInfo("Response doesn't provide x-total header.", e, getClass());
+        }
+
         final JsonNode body = response.getBody();
 
         List<JsonElement> items = new ArrayList<>();
         body.getArray().forEach(item -> items.add(toJsonElement(item)));
         return items;
+    }
+
+    public int getTotal() {
+        return total;
     }
 }

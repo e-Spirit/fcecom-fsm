@@ -72,10 +72,11 @@ public class DefaultBridgeService implements BridgeService {
      *
      * @param parentId Filter by parentId. It returns all related categories and subcategories from the category tree.
      * @param lang     The language of the result.
+     * @param page     The current page of the search results.
      * @return The available categories from the shop backend in the specified language.
      */
-    public List<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang) {
-        return bridgeFsService.findCategories(projectId, parentId, lang);
+    public EcomSearchResult<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang, final int page) {
+        return bridgeFsService.findCategories(projectId, parentId, lang, page);
     }
 
     /**
@@ -116,10 +117,11 @@ public class DefaultBridgeService implements BridgeService {
      * @param q          Fulltext search query string.
      * @param categoryId Filter by categoryId.
      * @param lang       The language of the result.
+     * @param page       The current page of the search results.
      * @return A list of products from the shop backend which match the given filters.
      */
-    public List<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang) {
-        return bridgeFsService.findProducts(projectId, q, categoryId, lang);
+    public EcomSearchResult<EcomProduct> findProducts(@Nullable String q, @Nullable String categoryId, @Nullable String lang, final int page) {
+        return bridgeFsService.findProducts(projectId, q, categoryId, lang, page);
     }
 
     // Content
@@ -149,10 +151,11 @@ public class DefaultBridgeService implements BridgeService {
      *
      * @param q    Fulltext search query string.
      * @param lang The language of the result.
+     * @param page The current page of the search results.
      * @return A list of content pages which match the given filters.
      */
-    public List<EcomContent> findContent(@Nullable String q, @Nullable String lang) {
-        return bridgeFsService.findContent(projectId, q, lang);
+    public EcomSearchResult<EcomContent> findContent(@Nullable String q, @Nullable String lang, final int page) {
+        return bridgeFsService.findContent(projectId, q, lang, page);
     }
 
     /**

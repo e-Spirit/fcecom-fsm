@@ -1,3 +1,11 @@
+## [3.9.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.8.1...v3.9.0) (2024-06-10)
+
+### Changes
+
+* Added paginated loading of report items.
+* Removed PagedBridgeRequest class.
+* Fixed the displaying of the number of search results in the reports.
+
 ## [3.8.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.8.0...v3.8.1) (2024-06-05)
 
 ### Changes

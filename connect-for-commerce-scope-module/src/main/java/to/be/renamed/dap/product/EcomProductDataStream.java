@@ -4,6 +4,7 @@ import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomProduct;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
+import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.error.BridgeConnectionException;
 import to.be.renamed.module.ServiceFactory;
 
@@ -24,38 +25,46 @@ import static java.lang.String.format;
 
 public class EcomProductDataStream implements DataStream<EcomProduct> {
 
-    private final Iterator<EcomProduct> iterator;
-    private final int[] total = {0};
     private final EcomConnectScope scope;
+    private final Map<String, String> filter;
+    private final int total;
+    private int page = 1;
+    private int count = 0;
+    private Iterator<EcomProduct> iterator;
+
 
     public EcomProductDataStream(final EcomConnectScope scope, final EcomFilterBuilder filterBuilder) {
         this.scope = scope;
-        iterator = getItems(filterBuilder.getFilter());
+        this.filter = filterBuilder.getFilter();
+        EcomSearchResult<EcomProduct> searchResult = getItems(filter, page);
+        iterator = searchResult.getIterator();
+        total = searchResult.getTotal();
     }
 
 
     @Override
     public @NotNull List<EcomProduct> getNext(int count) {
-        count = Math.max(count, 30);
-
         Set<EcomProduct> items = new LinkedHashSet<>();
-        while (count >= 1 && iterator.hasNext()) {
+        if (!iterator.hasNext() && this.hasNext()) {
+            page++;
+            iterator = getItems(filter, page).getIterator();
+        }
+        while (iterator.hasNext()) {
             items.add(iterator.next());
-            count--;
+            this.count++;
         }
 
-        total[0] += items.size();
         return new ArrayList<>(items);
     }
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext();
+        return count < getTotal();
     }
 
     @Override
     public int getTotal() {
-        return hasNext() ? -1 : total[0];
+        return total;
     }
 
     @Override
@@ -63,14 +72,14 @@ public class EcomProductDataStream implements DataStream<EcomProduct> {
         // No need to close the Iterator
     }
 
-    private Iterator<EcomProduct> getItems(Map<String, String> filters) {
+    private EcomSearchResult<EcomProduct> getItems(Map<String, String> filters, int page) {
         try {
             return ServiceFactory.getBridgeService(scope.getBroker())
-                .findProducts(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_CATEGORY), scope.getLang()).iterator();
+                .findProducts(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_CATEGORY), scope.getLang(), page);
         } catch (BridgeConnectionException e) {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
-            return Collections.emptyIterator();
+            return new EcomSearchResult<>(Collections.emptyList(), 0);
         }
     }
 }
