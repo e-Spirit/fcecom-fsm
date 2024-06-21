@@ -94,9 +94,12 @@ public class EcomBridgeApi {
             .collect(toList());
     }
 
-    public EcomSearchResult<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang, int page) {
+    public EcomSearchResult<EcomCategory> findCategories(@Nullable String q, @Nullable String parentId, @Nullable String lang, int page) {
         GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/");
 
+        if (q != null) {
+            baseRequest.queryString("q", q);
+        }
         if (parentId != null) {
             baseRequest.queryString("parentId", parentId);
         }

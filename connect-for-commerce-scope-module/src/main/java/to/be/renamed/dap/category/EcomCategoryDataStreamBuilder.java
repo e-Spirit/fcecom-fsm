@@ -50,6 +50,7 @@ public class EcomCategoryDataStreamBuilder implements DataStreamBuilder<EcomCate
     }
 
     private void getReportFilter(EcomFilterBuilder filterBuilder) {
+        filterBuilder.addTextField(EcomDapUtilities.FILTER_QUERY, scope.getLabel("report.products.filter.q"));
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
         if (!bridgeService.hasCategoryTree()) {
             return;
@@ -65,7 +66,8 @@ public class EcomCategoryDataStreamBuilder implements DataStreamBuilder<EcomCate
         try {
             categoryTree = bridgeService.getCategoriesTree(scope.getLang());
         } catch (BridgeConnectionException e) {
-            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
+                             this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
             categoryTree = Collections.emptyMap();
         }

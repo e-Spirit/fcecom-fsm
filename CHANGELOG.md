@@ -1,3 +1,14 @@
+## [3.10.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.9.0...v3.10.0) (2024-06-20)
+
+### Changes
+
+* Added a search by category name to the category report.
+
+### UPDATE NOTICE
+
+* Keep in mind that your bridge must support a search query for the `/categories` endpoint.
+The bridges since version 2.5.0 support this.
+
 ## [3.9.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.8.1...v3.9.0) (2024-06-10)
 
 ### Changes

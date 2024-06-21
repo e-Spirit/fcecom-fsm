@@ -45,12 +45,14 @@ public interface BridgeFsService {
      * Returns all available categories from the shop backend in the specified language.
      *
      * @param projectId The id of the project for which the request is executed.
+     * @param q         Filter by category name. All categories which names match the query will be returned.
      * @param parentId  Filter by parentId. It returns all related categories and subcategories from the category tree.
      * @param lang      The language of the result.
      * @param page      The current page of the search results.
      * @return The available categories from the shop backend in the specified language.
      */
-    EcomSearchResult<EcomCategory> findCategories(Long projectId, @Nullable String parentId, @Nullable String lang, final int page);
+    EcomSearchResult<EcomCategory> findCategories(Long projectId, @Nullable String q, @Nullable String parentId, @Nullable String lang,
+                                                  final int page);
 
     /**
      * Returns the category tree in the specified language.
@@ -91,7 +93,8 @@ public interface BridgeFsService {
      * @param page       The current page of the search results.
      * @return A list of products from the shop backend which match the given filters.
      */
-    EcomSearchResult<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang, final int page);
+    EcomSearchResult<EcomProduct> findProducts(Long projectId, @Nullable String q, @Nullable String categoryId, @Nullable String lang,
+                                               final int page);
 
     // Content
 

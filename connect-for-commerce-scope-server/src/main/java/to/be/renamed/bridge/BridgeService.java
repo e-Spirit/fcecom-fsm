@@ -41,12 +41,13 @@ public interface BridgeService {
     /**
      * Returns all available categories from the shop backend in the specified language.
      *
+     * @param q        Filter by category name. All categories which names match the query will be returned.
      * @param parentId Filter by parentId. It returns all related categories and subcategories from the category tree.
      * @param lang     The language of the result.
      * @param page     The current page of the search results.
      * @return The available categories from the shop backend in the specified language.
      */
-    EcomSearchResult<EcomCategory> findCategories(@Nullable String parentId, @Nullable String lang, final int page);
+    EcomSearchResult<EcomCategory> findCategories(@Nullable String q, @Nullable String parentId, @Nullable String lang, final int page);
 
     /**
      * Returns the category tree in the specified language.
