@@ -29,11 +29,13 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 
 public class FsPageCreator {
-    private static final String CATEGORY_PAGE_TYPE = "category";
-    private static final String PRODUCT_PAGE_TYPE = "product";
+    public static final String CATEGORY_PAGE_TYPE = "category";
+    public static final String PRODUCT_PAGE_TYPE = "product";
     private static final String CONTENT_PAGE_TYPE = "content";
     private static final String PAGE_ID_FORM_FIELD = "id";
     private static final String PAGE_TYPE_FORM_FIELD = "type";
+    private static final String PRODUCTS_SUBFOLDER_PREFIX = "p_";
+    private static final String CATEGORIES_SUBFOLDER_PREFIX = "c_";
 
     private static final String TEMPLATE_NOT_FOUND = "Template with uid '%s' not found!";
     private static final String INCORRECT_PAGE_TYPE = "Type '%s' does  not match product, category or content!";
@@ -99,10 +101,13 @@ public class FsPageCreator {
         return pageRef;
     }
 
-    public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames) {
+    public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames, String folder, boolean release, boolean isBulkCreation) {
         if (getPageRef(id) != null) {
             Logging.logWarning(format(PAGE_ALREADY_EXISTS, id), this.getClass());
-            throw new CreatePageException(format(PAGE_ALREADY_EXISTS, id), null, ErrorCode.PAGE_ALREADY_EXISTS.get());
+            if (!isBulkCreation) {
+                throw new CreatePageException(format(PAGE_ALREADY_EXISTS, id), null, ErrorCode.PAGE_ALREADY_EXISTS.get());
+            }
+            return pageRef;
         }
 
         StoreAgent storeAgent = scope.getBroker().requireSpecialist(StoreAgent.TYPE);
@@ -120,13 +125,17 @@ public class FsPageCreator {
         Language masterLanguage = languageAgent.getMasterLanguage();
 
         if (pageType.equals(CATEGORY_PAGE_TYPE) || pageType.equals(PRODUCT_PAGE_TYPE)) {
-            return createCategoryOrProductPage(id, pageType, displayNames, storeAgent, template, projectLanguages, masterLanguage);
+            return createCategoryOrProductPage(id, pageType, displayNames, storeAgent, template, projectLanguages, masterLanguage, folder, release);
         } else if (pageType.equals(CONTENT_PAGE_TYPE)) {
             return createContentPage(id, pageType, displayNames, storeAgent, template, projectLanguages, masterLanguage);
         } else {
             Logging.logError(format(INCORRECT_PAGE_TYPE, pageType), getClass());
             throw new CreatePageException(format(INCORRECT_PAGE_TYPE, pageType), null, ErrorCode.INCORRECT_PAGE_TYPE.get());
         }
+    }
+
+    public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames) {
+        return create(id, fsPageTemplate, pageType, displayNames, null, false, false);
     }
 
     private PageRef createContentPage(String id, String pageType, Map<String, Object> displayNames, StoreAgent storeAgent, PageTemplate template, Collection<Language> projectLanguages, Language masterLanguage) {
@@ -184,19 +193,33 @@ public class FsPageCreator {
                                                 StoreAgent storeAgent,
                                                 PageTemplate template,
                                                 Collection<Language> projectLanguages,
-                                                Language masterLanguage) {
+                                                Language masterLanguage,
+                                                String folder,
+                                                boolean release) {
         String containerUid = '_' + (pageType.equals(CATEGORY_PAGE_TYPE) ? (pageType.substring(0, pageType.length() - 1) + "ies") : (pageType + 's'));
         Map<Language, String> lang2DisplayName = Collections.singletonMap(masterLanguage, '[' + containerUid.substring(1) + ']');
 
+        PageFolder pagesRootContainer;
         PageFolder pagesContainer = null;
-        Page page = null;
+        PageRefFolder pageRefsRootContainer = null;
         PageRefFolder pageRefsContainer = null;
+        Page page = null;
+        String technicalFolderName = (pageType.equals(CATEGORY_PAGE_TYPE) ? CATEGORIES_SUBFOLDER_PREFIX : PRODUCTS_SUBFOLDER_PREFIX) + folder;
 
         try {
             PageStoreRoot pages = (PageStoreRoot) storeAgent.getStore(Store.Type.PAGESTORE);
-            pagesContainer = (PageFolder) pages.getStoreElement(containerUid, PageFolder.UID_TYPE);
-            if (pagesContainer == null) {
-                pagesContainer = pages.createPageFolder(containerUid, lang2DisplayName, false);
+            pagesRootContainer = (PageFolder) pages.getStoreElement(containerUid, PageFolder.UID_TYPE);
+            if (pagesRootContainer == null) {
+                pagesRootContainer = pages.createPageFolder(containerUid, lang2DisplayName, false);
+            }
+
+            if (folder != null) {
+                pagesContainer = (PageFolder) pages.getStoreElement(technicalFolderName, PageFolder.UID_TYPE);
+                if (pagesContainer == null) {
+                    pagesContainer = pagesRootContainer.createPageFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder),false);
+                }
+            } else {
+                pagesContainer = pagesRootContainer;
             }
 
             page = pagesContainer.createPage(pageType, template, true);
@@ -209,19 +232,38 @@ public class FsPageCreator {
             formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
             page.setFormData(formData);
             page.save();
+            if (release) {
+                page.release();
+            }
             page.setLock(false);
 
             SiteStoreRoot sites = (SiteStoreRoot) storeAgent.getStore(Store.Type.SITESTORE);
-            pageRefsContainer = (PageRefFolder) sites.getStoreElement(containerUid, SiteStoreFolder.UID_TYPE);
-            if (pageRefsContainer == null) {
-                pageRefsContainer = sites.createPageRefFolder(containerUid, lang2DisplayName, false);
-                pageRefsContainer.setLock(true, true);
+            pageRefsRootContainer = (PageRefFolder) sites.getStoreElement(containerUid, SiteStoreFolder.UID_TYPE);
+            if (pageRefsRootContainer == null) {
+                pageRefsRootContainer = sites.createPageRefFolder(containerUid, lang2DisplayName, false);
+                pageRefsRootContainer.setLock(true, true);
                 for (Language projectLanguage : projectLanguages) {
-                    FolderLangSpec folderLangSpec = pageRefsContainer.getFolderLangSpec(projectLanguage);
+                    FolderLangSpec folderLangSpec = pageRefsRootContainer.getFolderLangSpec(projectLanguage);
                     folderLangSpec.setShowInSiteMap(false);
                     folderLangSpec.setVisible(false);
                 }
-                pageRefsContainer.save();
+                pageRefsRootContainer.save();
+            }
+
+            if (folder != null) {
+                pageRefsContainer = (PageRefFolder) sites.getStoreElement(technicalFolderName, SiteStoreFolder.UID_TYPE);
+                if (pageRefsContainer == null) {
+                    pageRefsContainer = pageRefsRootContainer.createPageRefFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder),false);
+                    pageRefsContainer.setLock(true, true);
+                    for (Language projectLanguage : projectLanguages) {
+                        FolderLangSpec folderLangSpec = pageRefsContainer.getFolderLangSpec(projectLanguage);
+                        folderLangSpec.setShowInSiteMap(false);
+                        folderLangSpec.setVisible(false);
+                    }
+                    pageRefsContainer.save();
+                }
+            } else {
+                pageRefsContainer = pageRefsRootContainer;
             }
 
             pageRef = pageRefsContainer.createPageRef(page.getUid(), page, true);
@@ -230,11 +272,14 @@ public class FsPageCreator {
             }
             setDisplayNames(displayNames, projectLanguages, pageRef, id, pageType);
             pageRef.save();
+            if (release) {
+                pageRef.release();
+            }
 
         } catch (Exception e) {
             Logging.logWarning(e.getMessage(), e, getClass());
         } finally {
-            Stream.of(pagesContainer, page, pageRefsContainer, pageRef).forEach(this::unlockElement);
+            Stream.of(page, pageRefsContainer, pageRefsRootContainer, pageRef).forEach(this::unlockElement);
         }
         return pageRef;
     }

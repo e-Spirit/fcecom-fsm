@@ -1,3 +1,11 @@
+## [3.11.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.10.0...v3.11.0) (2024-07-10)
+
+### Changes
+
+* Added executables for bulk page creation of product and category pages.
+* Fixed a bug in the config migration which caused unnecessary migration.
+* Small internal changes.
+
 ## [3.10.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.9.0...v3.10.0) (2024-06-20)
 
 ### Changes

@@ -18,6 +18,7 @@ import de.espirit.firstspirit.module.descriptor.ProjectAppDescriptor;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Properties;
 
 import com.google.gson.JsonObject;
@@ -174,20 +175,35 @@ public class EcomConnectProjectApp implements ProjectApp {
             // Splitting the breaking version string at the dots
             String[] splittedConfigBreakingVersion = newVersionString.split("\\.");
 
-            // Compare major, minor and patch version of the old version and the breaking version
-            if (splittedOldVersionString[0].compareTo(splittedConfigBreakingVersion[0]) < 0) {
-                return true;
-            } else if (splittedOldVersionString[0].compareTo(splittedConfigBreakingVersion[0]) == 0
-                       && splittedOldVersionString[1].compareTo(splittedConfigBreakingVersion[1]) < 0) {
-                return true;
-            } else {
-                return splittedOldVersionString[0].compareTo(splittedConfigBreakingVersion[0]) == 0
-                       && splittedOldVersionString[1].compareTo(splittedConfigBreakingVersion[1]) == 0
-                       && splittedOldVersionString[2].compareTo(splittedConfigBreakingVersion[2]) < 0;
+            try {
+                // Parse split versions as integer
+                int[] splittedOldVersionInt = parseStringArrayToIntArray(splittedOldVersionString);
+                int[] splittedConfigBreakingVersionInt = parseStringArrayToIntArray(splittedConfigBreakingVersion);
+
+                // Compare major, minor and patch version of the old version and the breaking version
+                if (splittedOldVersionInt[0] < splittedConfigBreakingVersionInt[0]) {
+                    return true;
+                } else if (splittedOldVersionInt[0] == splittedConfigBreakingVersionInt[0]
+                           && splittedOldVersionInt[1] < splittedConfigBreakingVersionInt[1]) {
+                    return true;
+                } else {
+                    return splittedOldVersionInt[0] == splittedConfigBreakingVersionInt[0]
+                           && splittedOldVersionInt[1] == splittedConfigBreakingVersionInt[1]
+                           && splittedOldVersionInt[2] < splittedConfigBreakingVersionInt[2];
+                }
+            } catch (NumberFormatException e) {
+                Logging.logError("Could not determine if migration is needed, because version is not readable.", e, getClass());
+                return false;
             }
         }
 
         return false;
+    }
+
+    protected int[] parseStringArrayToIntArray(String[] stringArray) throws NumberFormatException {
+        return Arrays.stream(stringArray)
+            .mapToInt(Integer::parseInt)
+            .toArray();
     }
 }
 

@@ -57,7 +57,7 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
 
         try {
             String topic = requireParam(TOPIC_PARAM);
-            scope = new EcomConnectScope(context);
+            scope = EcomConnectScope.create(context);
             switch (topic) {
                 case "updatedStoreFrontUrl":
                     updatedStoreFrontUrl(requireParam(STOREFRONT_URL_PARAM));
@@ -90,7 +90,7 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
         return null;
     }
 
-
+    // TODO: I don't think that this is really needed. Should be removed if not. Also check in Frontend API.
     private void updatedStoreFrontUrl(String storeFrontUrl) {
         EcomId ecomId = ServiceFactory.getBridgeService(scope.getBroker()).resolveStoreFrontUrl(storeFrontUrl);
         if (ecomId != null) {

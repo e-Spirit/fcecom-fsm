@@ -58,6 +58,10 @@ public class EcomConnectScope {
         }
     }
 
+    public static EcomConnectScope create(SpecialistsBroker broker) {
+        return new EcomConnectScope(broker);
+    }
+
     public SpecialistsBroker getBroker() {
         return broker;
     }
