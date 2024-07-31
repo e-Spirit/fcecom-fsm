@@ -10,6 +10,13 @@ import to.be.renamed.module.projectconfig.connectiontest.EcomTestConnectionResul
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
+import kong.unirest.HttpMethod;
+
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -17,12 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import kong.unirest.HttpMethod;
 
 /**
  * Configuration panel for bridge related configuration tab.
@@ -32,12 +33,14 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
     private final JTextField bridgeApiUrlTextField;
     private final JTextField bridgeApiUsernameTextField;
     private final JPasswordField bridgeApiPasswordPasswordField;
+    private final CacheConfigurationPanel cacheConfigurationPanel;
 
     /**
      * Creates a configuration panel for the bridge related configuration tab.
+     *
      * @param bridgeConfig The current bridge configuration values
      */
-    BridgeConfigurationPanel(final BridgeConfig bridgeConfig, SpecialistsBroker broker) {
+    BridgeConfigurationPanel(final BridgeConfig bridgeConfig, SpecialistsBroker broker, CacheConfigurationPanel cacheConfigurationPanel) {
         super();
 
         bridgeApiUrlTextField = new JTextField(bridgeConfig.getBridgeApiUrl(), TEXTFIELD_COLUMNS);
@@ -48,6 +51,8 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
 
         bridgeApiPasswordPasswordField = new JPasswordField(bridgeConfig.getBridgePassword(), TEXTFIELD_COLUMNS);
         addComponent(bridgeApiPasswordPasswordField, Label.BRIDGE_PASSWORD);
+
+        this.cacheConfigurationPanel = cacheConfigurationPanel;
 
         Consumer<ActionEvent> buttonAction = e -> {
             final JDialog jOptionPane = new JOptionPane().createDialog("hello");
@@ -144,6 +149,6 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
      */
     @Override
     BridgeConfig getValue() {
-        return BridgeConfig.fromValues(bridgeApiUrlTextField.getText(), bridgeApiUsernameTextField.getText(), bridgeApiPasswordPasswordField.getPassword());
+        return BridgeConfig.fromValues(bridgeApiUrlTextField.getText(), bridgeApiUsernameTextField.getText(), bridgeApiPasswordPasswordField.getPassword(), cacheConfigurationPanel.getValue());
     }
 }

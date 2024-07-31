@@ -14,9 +14,12 @@ public enum Label {
     BRIDGE_TEST_CONNECTION("projectApp.configuration.actions.bridge-test.button.label"),
     REPORT_CATEGORY_LEVELS("projectApp.configuration.items.category-levels.label"),
     REPORT_PRODUCT_LEVELS("projectApp.configuration.items.product-levels.label"),
+    CACHE_SIZE("projectApp.configuration.items.cache-size.label"),
+    CACHE_AGE("projectApp.configuration.items.cache-age.label"),
     GENERAL_TAB_TITLE("projectApp.configuration.sections.general.label"),
     BRIDGE_TAB_TITLE("projectApp.configuration.sections.bridge.label"),
-    REPORT_TAB_TITLE("projectApp.configuration.sections.report.label");
+    REPORT_TAB_TITLE("projectApp.configuration.sections.report.label"),
+    CACHE_TAB_TITLE("projectApp.configuration.sections.cache.label");
 
     private final String resourceBundleKey;
 

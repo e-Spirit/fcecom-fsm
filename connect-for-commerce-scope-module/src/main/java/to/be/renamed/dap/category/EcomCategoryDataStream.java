@@ -6,7 +6,6 @@ import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
 import to.be.renamed.error.BridgeConnectionException;
-import to.be.renamed.error.BridgeException;
 import to.be.renamed.module.ServiceFactory;
 
 import de.espirit.common.base.Logging;
@@ -80,12 +79,6 @@ public class EcomCategoryDataStream implements DataStream<EcomCategory> {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
                              this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
-            return new EcomSearchResult<>(Collections.emptyList(), 0);
-        } catch (BridgeException e) {
-            // Workaround for a bug in the Salesforce bridge
-            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
-                             this.getClass());
-            total--;
             return new EcomSearchResult<>(Collections.emptyList(), 0);
         }
     }

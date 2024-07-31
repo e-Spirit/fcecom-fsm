@@ -6,6 +6,8 @@ import de.espirit.firstspirit.client.plugin.report.Parameter;
 import de.espirit.firstspirit.client.plugin.report.ParameterBoolean;
 import de.espirit.firstspirit.client.plugin.report.ParameterMap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -66,12 +68,12 @@ public class EcomFilterBuilder {
         return new Filterable() {
 
             @Override
-            public List<Parameter<?>> getDefinedParameters() {
+            public @NotNull List<Parameter<?>> getDefinedParameters() {
                 return new ArrayList<>(filters);
             }
 
             @Override
-            public void setFilter(ParameterMap filterMap) {
+            public void setFilter(@NotNull ParameterMap filterMap) {
                 setFilterMap(filterMap);
             }
         };

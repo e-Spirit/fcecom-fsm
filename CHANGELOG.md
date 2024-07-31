@@ -1,3 +1,12 @@
+## [3.12.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.11.0...v3.12.0) (2024-07-31)
+
+### Changes
+
+* Made cache configurable in the project app configuration.
+* Removed workaround that was previously required to fix the x-total header.
+
+### UPDATE NOTICE
+
 ## [3.11.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.10.0...v3.11.0) (2024-07-10)
 
 ### Changes

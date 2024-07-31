@@ -4,10 +4,7 @@ import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import to.be.renamed.module.projectconfig.model.GeneralConfig;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.module.projectconfig.model.ReportConfig;
-
-import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
-
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -22,6 +19,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
     private final GeneralConfigurationPanel generalTab;
     private final BridgeConfigurationPanel bridgeTab;
     private final ReportConfigurationPanel reportTab;
+    private final CacheConfigurationPanel cacheTab;
     private final JPanel configurationPanel;
 
     /**
@@ -32,7 +30,8 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
     public ConfigurationAppPanel(final ProjectAppConfiguration projectAppConfiguration, SpecialistsBroker broker) {
         super();
         generalTab = new GeneralConfigurationPanel(projectAppConfiguration.getGeneralConfig());
-        bridgeTab = new BridgeConfigurationPanel(projectAppConfiguration.getBridgeConfig(), broker);
+        cacheTab = new CacheConfigurationPanel(projectAppConfiguration.getBridgeConfig().getCacheConfig());
+        bridgeTab = new BridgeConfigurationPanel(projectAppConfiguration.getBridgeConfig(), broker, cacheTab);
         reportTab = new ReportConfigurationPanel(projectAppConfiguration.getReportConfig());
 
         configurationPanel = new JPanel();
@@ -41,6 +40,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
         jTabbedPane.addTab(labels.getString(Label.GENERAL_TAB_TITLE.getResourceBundleKey()), generalTab.getPanel());
         jTabbedPane.addTab(labels.getString(Label.BRIDGE_TAB_TITLE.getResourceBundleKey()), bridgeTab.getPanel());
         jTabbedPane.addTab(labels.getString(Label.REPORT_TAB_TITLE.getResourceBundleKey()), reportTab.getPanel());
+        jTabbedPane.addTab(labels.getString(Label.CACHE_TAB_TITLE.getResourceBundleKey()), cacheTab.getPanel());
         configurationPanel.add(jTabbedPane);
     }
 
