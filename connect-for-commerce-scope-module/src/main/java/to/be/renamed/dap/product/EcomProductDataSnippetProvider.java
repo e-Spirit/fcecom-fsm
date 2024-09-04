@@ -1,7 +1,6 @@
 package to.be.renamed.dap.product;
 
 import to.be.renamed.bridge.EcomProduct;
-import to.be.renamed.module.EcomConnectWebApp;
 
 import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.access.BaseContext;
@@ -11,6 +10,8 @@ import de.espirit.firstspirit.agency.ImageAgent;
 import de.espirit.firstspirit.client.plugin.dataaccess.DataSnippetProvider;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
@@ -22,11 +23,18 @@ public class EcomProductDataSnippetProvider implements DataSnippetProvider<EcomP
         this.baseContext = baseContext;
     }
 
+    private Image<?> getImage(EcomProductReportIcon icon) {
+        return baseContext.is(BaseContext.Env.WEBEDIT)
+               ? baseContext.requireSpecialist(ImageAgent.TYPE)
+                   .getImageFromUrl(icon.webEditFile())
+               : baseContext.requireSpecialist(ImageAgent.TYPE)
+                   .getImageFromIcon(new ImageIcon(Objects.requireNonNull(
+                       getClass().getResource(icon.siteArchitectFile()))));
+    }
+
     @Override
     public Image<?> getIcon(@NotNull EcomProduct item) {
-        return baseContext.is(BaseContext.Env.WEBEDIT)
-               ? baseContext.requireSpecialist(ImageAgent.TYPE).getImageFromUrl(EcomConnectWebApp.PRODUCT_DAP_ICON)
-               : baseContext.requireSpecialist(ImageAgent.TYPE).getImageFromIcon(new ImageIcon(getClass().getResource("/files-web/fcecom-product.png")));
+        return getImage(EcomProductReportIcon.managed(item.isManaged()));
     }
 
     @Override

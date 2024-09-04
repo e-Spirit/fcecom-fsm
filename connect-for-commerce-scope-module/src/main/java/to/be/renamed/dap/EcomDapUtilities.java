@@ -1,10 +1,20 @@
 package to.be.renamed.dap;
 
-import to.be.renamed.EcomConnectScope;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
+import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.EcomId;
+import to.be.renamed.bridge.EcomSearchResult;
+
+import de.espirit.common.TypedFilter;
+import de.espirit.firstspirit.access.store.Store;
+import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.agency.OperationAgent;
+import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.ui.operations.RequestOperation;
 
+import java.io.Serial;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -31,5 +41,46 @@ public class EcomDapUtilities {
         Objects.requireNonNull(alert).setKind(RequestOperation.Kind.ERROR);
         alert.setTitle(ERROR_BRIDGE_CONNECTION);
         alert.perform(format("Errorcode: %s | %s", errorCode, message));
+    }
+
+    /**
+     * Fetches FirstSpirit pages and searches for shop driven pages
+     * managed by FirstSpirit, then sets the {isManaged} flag.
+     *
+     * @param items Processed Bridge response items.
+     * @param scope EcomConnectScope needed for FS page fetch.
+     * @param <T>   Any subtype of EcomId
+     * @return Altered provided items list with managed flags.
+     */
+    public static <T extends EcomId> EcomSearchResult<T> applyManagedFlag(EcomSearchResult<T> items, EcomConnectScope scope) {
+        // Bridge Results as map with the ID as Key
+        final ImmutableMap<String, T> bridgeItems = Maps.uniqueIndex(items.getResults(), EcomId::getId);
+
+        TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
+            @Serial
+            private static final long serialVersionUID = 278619144342422965L;
+
+            @Override
+            public boolean accept(Page page) {
+                return bridgeItems.containsKey(EcomId.getPageId(page, null));
+            }
+        };
+
+        // Has FirstSpirit page &
+        scope.getBroker().requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.PAGESTORE)
+
+            // Get all FirstSpirit Pages
+            .getChildren(pageFilter, true).toStream()
+
+            // Only pages with existing PageReferences
+            .filter(fsPage -> !fsPage.getPageRefs().isEmpty())
+
+            // Get item from Bridge Results
+            .forEach(fsPage -> Objects.requireNonNull(bridgeItems.get(EcomId.getPageId(fsPage, null)))
+
+                // Set managed flag
+                .setManaged(true));
+
+        return items;
     }
 }

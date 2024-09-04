@@ -4,7 +4,7 @@ import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomCategory;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.product.EcomProductDataAccessPlugin;
-import to.be.renamed.module.EcomConnectWebApp;
+import to.be.renamed.dap.product.EcomProductReportIcon;
 
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.client.plugin.report.JavaClientExecutableReportItem;
@@ -40,7 +40,7 @@ public class EcomCategoryReportItemAction implements WebeditExecutableReportItem
 
     @Override
     public String getIconPath(@NotNull ReportContext<EcomCategory> context) {
-        return EcomConnectWebApp.PRODUCT_DAP_ICON;
+        return EcomProductReportIcon.standard().webEditFile();
     }
 
     @Override

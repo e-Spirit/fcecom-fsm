@@ -1,7 +1,6 @@
 package to.be.renamed.dap.category;
 
 import to.be.renamed.bridge.EcomCategory;
-import to.be.renamed.module.EcomConnectWebApp;
 
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Language;
@@ -10,6 +9,8 @@ import de.espirit.firstspirit.agency.ImageAgent;
 import de.espirit.firstspirit.client.plugin.dataaccess.DataSnippetProvider;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
@@ -21,11 +22,18 @@ public class EcomCategoryDataSnippetProvider implements DataSnippetProvider<Ecom
         this.baseContext = baseContext;
     }
 
+    private Image<?> getImage(EcomCategoryReportIcon icon) {
+        return baseContext.is(BaseContext.Env.WEBEDIT)
+               ? baseContext.requireSpecialist(ImageAgent.TYPE)
+                   .getImageFromUrl(icon.webEditFile())
+               : baseContext.requireSpecialist(ImageAgent.TYPE)
+                   .getImageFromIcon(new ImageIcon(Objects.requireNonNull(
+                       getClass().getResource(icon.siteArchitectFile()))));
+    }
+
     @Override
     public Image<?> getIcon(@NotNull EcomCategory item) {
-        return baseContext.is(BaseContext.Env.WEBEDIT)
-               ? baseContext.requireSpecialist(ImageAgent.TYPE).getImageFromUrl(EcomConnectWebApp.CATEGORY_DAP_ICON)
-               : baseContext.requireSpecialist(ImageAgent.TYPE).getImageFromIcon(new ImageIcon(getClass().getResource("/files-web/fcecom-category.png")));
+        return getImage(EcomCategoryReportIcon.managed(item.isManaged()));
     }
 
     @Override

@@ -68,7 +68,12 @@ public class BridgeFsServiceImpl implements BridgeFsService, Service<BridgeFsSer
     // Utility
 
     public void configureBridge(Long projectId, BridgeConfig bridgeConfig) {
-        getBridgeInstance(projectId).configure(bridgeConfig);
+        Logging.logDebug(String.format("Configuring Bridge for project '%s'", projectId), getClass());
+        bridges.put(projectId, EcomBridgeApi.create(bridgeConfig, broker.requireSpecialist(TrackingAgent.TYPE)));
+    }
+
+    public Map<Long, EcomBridgeApi> getBridges() {
+        return bridges;
     }
 
     public void invalidateCache(Long projectId) {

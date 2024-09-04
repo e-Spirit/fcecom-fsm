@@ -2,9 +2,9 @@ package to.be.renamed.dap.product;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomProduct;
+import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
-import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.error.BridgeConnectionException;
 import to.be.renamed.module.ServiceFactory;
 
@@ -74,10 +74,13 @@ public class EcomProductDataStream implements DataStream<EcomProduct> {
 
     private EcomSearchResult<EcomProduct> getItems(Map<String, String> filters, int page) {
         try {
-            return ServiceFactory.getBridgeService(scope.getBroker())
-                .findProducts(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_CATEGORY), scope.getLang(), page);
+            return EcomDapUtilities.applyManagedFlag(
+                ServiceFactory.getBridgeService(scope.getBroker())
+                    .findProducts(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_CATEGORY), scope.getLang(), page),
+                scope);
         } catch (BridgeConnectionException e) {
-            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
+                             this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
             return new EcomSearchResult<>(Collections.emptyList(), 0);
         }

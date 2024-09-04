@@ -30,14 +30,17 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class EcomConnectScope {
 
     private static final String COULD_NOT_GET_URL = "Could not get URL from bridge, check bridge logs";
 
-    private static final Map<Locale, ResourceBundle> BUNDLES = new HashMap<>();
+    private static final Map<Locale, ResourceBundle> BUNDLES = new ConcurrentHashMap<>();
     private static final String BUNDLE_NAME = "reports";
     private final SpecialistsBroker broker;
     private Language language;
@@ -56,6 +59,8 @@ public class EcomConnectScope {
         if (language == null) {
             language = broker.requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
         }
+
+        EcomReportListener.register(broker);
     }
 
     public static EcomConnectScope create(SpecialistsBroker broker) {
@@ -72,6 +77,24 @@ public class EcomConnectScope {
 
     public Language getLanguage() {
         return language;
+    }
+
+    /**
+     * Gets the current selected UI Language.
+     * This method is not context-aware, so it has to do some hacky stuff,
+     * to check if the current client is the SiteArchitect or the Content Creator.
+     * <br>
+     * Therefore, the according specialists are requested with some null-safety.
+     * If any client is available, the according displayLanguage is fetched.
+     * If not, the language field will be used as fallback.
+     *
+     * @return DisplayLanguage currently active in the users' session.
+     */
+    public Language getDisplayLanguage() {
+        final AtomicReference<Language> language = new AtomicReference<>(this.language);
+        Optional.ofNullable(broker.requestSpecialist(UIAgent.TYPE)).ifPresent(specialist -> language.set(specialist.getDisplayLanguage()));
+        Optional.ofNullable(broker.requestSpecialist(WebeditUiAgent.TYPE)).ifPresent(specialist -> language.set(specialist.getDisplayLanguage()));
+        return language.get();
     }
 
     public static String getLang(Language language) {
@@ -145,6 +168,13 @@ public class EcomConnectScope {
     public void setContentCreatorPreviewElement(SpecialistsBroker broker, EcomId ecomId) {
         EcomContentCreatorMessage message = EcomContentCreatorMessage.create("setContentCreatorPreviewElement");
 
+        TypedFilter<PageTemplate> pageTemplateFilter = new TypedFilter<>(PageTemplate.class) {
+            @Override
+            public boolean accept(PageTemplate template) {
+                return !template.isHidden();
+            }
+        };
+
         try {
             message.add("url", ServiceFactory.getBridgeService(broker).getStoreFrontUrl(ecomId));
         } catch (BridgeException e) {
@@ -162,12 +192,7 @@ public class EcomConnectScope {
                 message.add("templates", ((TemplateStoreRoot) broker.requireSpecialist(StoreAgent.TYPE)
                     .getStore(Store.Type.TEMPLATESTORE))
                     .getPageTemplates()
-                    .getChildren(new TypedFilter<>(PageTemplate.class) {
-                        @Override
-                        public boolean accept(PageTemplate template) {
-                            return !template.isHidden();
-                        }
-                    }, true).toList().stream()
+                    .getChildren(pageTemplateFilter, true).toList().stream()
                     .map(template -> Map.of("id", template.getUid(),
                                             "label", template.getDisplayName(getLanguage())))
                     .collect(Collectors.toList())
@@ -207,7 +232,7 @@ public class EcomConnectScope {
             Map<String, String> fsid = new HashMap<>();
             fsid.put("id", String.valueOf(pageRef.getId()));
             fsid.put("store", pageRef.getStore().getType().getName());
-            fsid.put("language", getLanguage().getAbbreviation());
+            fsid.put("language", getLang());
             return fsid;
         }
         return Collections.emptyMap();

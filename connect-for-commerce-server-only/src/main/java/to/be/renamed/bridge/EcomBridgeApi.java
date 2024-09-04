@@ -13,16 +13,16 @@ import de.espirit.firstspirit.agency.TrackingAgent;
 
 import org.jetbrains.annotations.Nullable;
 
-import kong.unirest.GetRequest;
-import kong.unirest.HttpRequestWithBody;
-import kong.unirest.HttpStatus;
-import kong.unirest.UnirestInstance;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import kong.unirest.GetRequest;
+import kong.unirest.HttpRequestWithBody;
+import kong.unirest.HttpStatus;
+import kong.unirest.UnirestInstance;
 
 import static to.be.renamed.bridge.TrackingEndpoints.DELETE_CONTENT;
 import static to.be.renamed.bridge.TrackingEndpoints.GET_CATEGORIES;
@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toList;
 
 public class EcomBridgeApi {
 
-    private final Map<String, EcomCategory> categories = new LinkedHashMap<>();
+    private final Map<String, Map<String, EcomCategory>> categories = new LinkedHashMap<>();
 
     private final UnirestConnector unirestConnector;
 
@@ -128,7 +128,8 @@ public class EcomBridgeApi {
     }
 
     public Map<String, EcomCategory> getCategoriesTree(String lang) {
-        if (categories.isEmpty()) {
+        categories.putIfAbsent(lang, new LinkedHashMap<>());
+        if (categories.get(lang).isEmpty()) {
             final GetRequest baseRequest = unirestConnector.getCachingHttpClient().get("/categories/tree");
 
             baseRequest.queryString("lang", lang);
@@ -139,9 +140,9 @@ public class EcomBridgeApi {
                                   .getItems()
                                   .stream().map(category -> new EcomCategory(new Json(category)))
                                   .filter(EcomCategory::isValid)
-                                  .collect(toList()), categories);
+                                  .collect(toList()), categories.get(lang));
         }
-        return categories;
+        return categories.get(lang);
     }
 
     public boolean hasCategoryTree() {

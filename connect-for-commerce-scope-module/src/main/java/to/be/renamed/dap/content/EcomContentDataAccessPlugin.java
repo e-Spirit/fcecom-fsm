@@ -40,7 +40,7 @@ public class EcomContentDataAccessPlugin implements DataAccessPlugin<EcomContent
 
     @Override
     public @NotNull String getLabel() {
-        return scope.getLabel("report.contents.label");
+        return scope.getLabel(scope.getDisplayLanguage(), "report.contents.label");
     }
 
     @Override

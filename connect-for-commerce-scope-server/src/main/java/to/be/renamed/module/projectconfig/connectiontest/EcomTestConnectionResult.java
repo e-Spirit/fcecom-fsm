@@ -2,10 +2,6 @@ package to.be.renamed.module.projectconfig.connectiontest;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -14,6 +10,11 @@ import java.awt.GridLayout;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 public class EcomTestConnectionResult extends JDialog {
     private static final long serialVersionUID = -3375713240936359305L;
@@ -60,7 +61,7 @@ public class EcomTestConnectionResult extends JDialog {
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(panel);
-        setSize(700, 700);
+        setSize(900, 500);
     }
 
     @Override

@@ -71,16 +71,17 @@ public class FsPageCreator {
             return pageRef;
         }
 
+        TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
+            @Override
+            public boolean accept(Page page) {
+                return Objects.equals(id, getPageId(page, language));
+            }
+        };
+
         Listable<Page> pages = scope.getBroker()
                 .requireSpecialist(StoreAgent.TYPE)
                 .getStore(Store.Type.PAGESTORE)
-                .getChildren(
-                        new TypedFilter<>(Page.class) {
-                            @Override
-                            public boolean accept(Page page) {
-                                return Objects.equals(id, getPageId(page, language));
-                            }
-                        }, true);
+                .getChildren(pageFilter, true);
 
         Page page = pages.getFirst();
         if (page != null) {
@@ -113,12 +114,7 @@ public class FsPageCreator {
         StoreAgent storeAgent = scope.getBroker().requireSpecialist(StoreAgent.TYPE);
         TemplateStoreRoot templates = (TemplateStoreRoot) storeAgent.getStore(Store.Type.TEMPLATESTORE);
 
-        PageTemplate template = templates.getPageTemplates().getTemplate(fsPageTemplate);
-
-        if (template == null) {
-            Logging.logError(format(TEMPLATE_NOT_FOUND, fsPageTemplate), getClass());
-            throw new CreatePageException(format(TEMPLATE_NOT_FOUND, fsPageTemplate), null, ErrorCode.TEMPLATE_NOT_FOUND.get());
-        }
+        PageTemplate template = getPageTemplate(fsPageTemplate, templates);
 
         LanguageAgent languageAgent = scope.getBroker().requireSpecialist(LanguageAgent.TYPE);
         Collection<Language> projectLanguages = languageAgent.getProjectLanguages(false).values();
@@ -138,6 +134,23 @@ public class FsPageCreator {
         return create(id, fsPageTemplate, pageType, displayNames, null, false, false);
     }
 
+    /**
+     * Retrieves a PageTemplate that matches the provided FirstSpirit template reference name
+     *
+     * @param fsPageTemplate The FirstSpirit template reference name
+     * @param templates The TemplateStore root node
+     * @return PageTemplate that matches the provided FirstSpirit template reference name
+     */
+    private PageTemplate getPageTemplate(String fsPageTemplate, TemplateStoreRoot templates) {
+        PageTemplate template = templates.getPageTemplates().getTemplate(fsPageTemplate);
+
+        if (template == null) {
+            Logging.logError(format(TEMPLATE_NOT_FOUND, fsPageTemplate), getClass());
+            throw new CreatePageException(format(TEMPLATE_NOT_FOUND, fsPageTemplate), null, ErrorCode.TEMPLATE_NOT_FOUND.get());
+        }
+        return template;
+    }
+
     private PageRef createContentPage(String id, String pageType, Map<String, Object> displayNames, StoreAgent storeAgent, PageTemplate template, Collection<Language> projectLanguages, Language masterLanguage) {
         Map<Language, String> lang2DisplayName = Collections.singletonMap(masterLanguage, id);
 
@@ -152,22 +165,9 @@ public class FsPageCreator {
                 page.setLock(true);
             }
             setDisplayNames(displayNames, projectLanguages, page, id, pageType);
-            for (Language projectLanguage : projectLanguages) {
-                if (getLanguage().equals(projectLanguage)) {
-                    if (!page.isTranslated(projectLanguage)) {
-                        page.addTranslated(projectLanguage);
-                    }
-                } else {
-                    if (page.isTranslated(projectLanguage)) {
-                        page.removeTranslated(projectLanguage);
-                    }
-                }
-            }
+            handlePageTranslation(page, projectLanguages);
+            updatePageFormData(page, id, pageType);
 
-            FormData formData = page.getFormData();
-            formData.get(getLanguage(), PAGE_ID_FORM_FIELD).set(id);
-            formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
-            page.setFormData(formData);
             page.save();
             page.setLock(false);
 
@@ -227,10 +227,8 @@ public class FsPageCreator {
                 page.setLock(true);
             }
             setDisplayNames(displayNames, projectLanguages, page, id, pageType);
-            FormData formData = page.getFormData();
-            formData.get(getLanguage(), PAGE_ID_FORM_FIELD).set(id);
-            formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
-            page.setFormData(formData);
+            updatePageFormData(page, id, pageType);
+
             page.save();
             if (release) {
                 page.release();
@@ -242,11 +240,7 @@ public class FsPageCreator {
             if (pageRefsRootContainer == null) {
                 pageRefsRootContainer = sites.createPageRefFolder(containerUid, lang2DisplayName, false);
                 pageRefsRootContainer.setLock(true, true);
-                for (Language projectLanguage : projectLanguages) {
-                    FolderLangSpec folderLangSpec = pageRefsRootContainer.getFolderLangSpec(projectLanguage);
-                    folderLangSpec.setShowInSiteMap(false);
-                    folderLangSpec.setVisible(false);
-                }
+                configureFolderLangSpecs(pageRefsRootContainer, projectLanguages);
                 pageRefsRootContainer.save();
             }
 
@@ -255,11 +249,7 @@ public class FsPageCreator {
                 if (pageRefsContainer == null) {
                     pageRefsContainer = pageRefsRootContainer.createPageRefFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder),false);
                     pageRefsContainer.setLock(true, true);
-                    for (Language projectLanguage : projectLanguages) {
-                        FolderLangSpec folderLangSpec = pageRefsContainer.getFolderLangSpec(projectLanguage);
-                        folderLangSpec.setShowInSiteMap(false);
-                        folderLangSpec.setVisible(false);
-                    }
+                    configureFolderLangSpecs(pageRefsRootContainer, projectLanguages);
                     pageRefsContainer.save();
                 }
             } else {
@@ -275,7 +265,6 @@ public class FsPageCreator {
             if (release) {
                 pageRef.release();
             }
-
         } catch (Exception e) {
             Logging.logWarning(e.getMessage(), e, getClass());
         } finally {
@@ -284,6 +273,59 @@ public class FsPageCreator {
         return pageRef;
     }
 
+    /**
+     * Handles the translation of a page for a collection of project languages
+     *
+     * @param page The page to update the translations for
+     * @param projectLanguages Collection of project languages
+     */
+    private void handlePageTranslation(Page page, Collection<Language> projectLanguages) {
+        for (Language projectLanguage : projectLanguages) {
+            if (getLanguage().equals(projectLanguage)) {
+                if (!page.isTranslated(projectLanguage)) {
+                    page.addTranslated(projectLanguage);
+                }
+            } else {
+                if (page.isTranslated(projectLanguage)) {
+                    page.removeTranslated(projectLanguage);
+                }
+            }
+        }
+    }
+
+    /**
+     * Configures the FolderSpecification of a PageRefFolder for a collection of project languages
+     *
+     * @param pageRefsRootContainer The PageRefFolder
+     * @param projectLanguages Collection of project languages
+     */
+    private static void configureFolderLangSpecs(PageRefFolder pageRefsRootContainer, Collection<Language> projectLanguages) {
+        for (Language projectLanguage : projectLanguages) {
+            FolderLangSpec folderLangSpec = pageRefsRootContainer.getFolderLangSpec(projectLanguage);
+            folderLangSpec.setShowInSiteMap(false);
+            folderLangSpec.setVisible(false);
+        }
+    }
+
+    /**
+     * Updates the form data of a page with the current page id and page type
+     *
+     * @param page The page whose form data gets updated
+     * @param id The page identifier
+     * @param pageType The type of the page
+     */
+    private void updatePageFormData(Page page, String id, String pageType) {
+        FormData formData = page.getFormData();
+        formData.get(getLanguage(), PAGE_ID_FORM_FIELD).set(id);
+        formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
+        page.setFormData(formData);
+    }
+
+    /**
+     * Unlock the provided element if they are currently locked
+     *
+     * @param element The element to unlock
+     */
     private void unlockElement(IDProvider element) {
         if (element != null && element.isLocked()) {
             try {

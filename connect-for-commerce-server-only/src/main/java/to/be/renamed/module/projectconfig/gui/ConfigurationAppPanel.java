@@ -4,12 +4,10 @@ import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import to.be.renamed.module.projectconfig.model.GeneralConfig;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.module.projectconfig.model.ReportConfig;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
+
+import de.espirit.firstspirit.module.ProjectEnvironment;
+
+import javax.swing.*;
 
 /**
  * Configuration panel for the project configuration.
@@ -27,11 +25,11 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
      * Combines general, bridge and report tabs.
      * @param projectAppConfiguration The current configuration values
      */
-    public ConfigurationAppPanel(final ProjectAppConfiguration projectAppConfiguration, SpecialistsBroker broker) {
+    public ConfigurationAppPanel(final ProjectAppConfiguration projectAppConfiguration, ProjectEnvironment projectEnvironment) {
         super();
         generalTab = new GeneralConfigurationPanel(projectAppConfiguration.getGeneralConfig());
         cacheTab = new CacheConfigurationPanel(projectAppConfiguration.getBridgeConfig().getCacheConfig());
-        bridgeTab = new BridgeConfigurationPanel(projectAppConfiguration.getBridgeConfig(), broker, cacheTab);
+        bridgeTab = new BridgeConfigurationPanel(projectAppConfiguration.getBridgeConfig(), projectEnvironment, cacheTab);
         reportTab = new ReportConfigurationPanel(projectAppConfiguration.getReportConfig());
 
         configurationPanel = new JPanel();

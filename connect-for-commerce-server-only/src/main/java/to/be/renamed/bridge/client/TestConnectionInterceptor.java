@@ -6,6 +6,7 @@ import kong.unirest.HttpRequestSummary;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 
+import static to.be.renamed.bridge.client.UnirestConnector.PROJECT_ID_HEADER;
 import static de.espirit.common.tools.Strings.notEmpty;
 
 public class TestConnectionInterceptor extends UnirestInterceptor {
@@ -17,7 +18,9 @@ public class TestConnectionInterceptor extends UnirestInterceptor {
         super.onResponse(response, request, config);
 
         this.result = new BridgeTestResult()
-                .setRequestData(request.getHttpMethod().name(), request.getUrl())
+                .setRequestData(request.getHttpMethod().name(), request.getUrl(),
+                                config.getDefaultHeaders().get(PROJECT_ID_HEADER)
+                                    .stream().findFirst().orElse(null))
                 .setResponseData(response.getStatus(), response.getStatusText());
 
         response.getParsingError().ifPresentOrElse(parsingError -> {
@@ -40,7 +43,8 @@ public class TestConnectionInterceptor extends UnirestInterceptor {
     @Override
     public HttpResponse<?> onFail(Exception exception, HttpRequestSummary request, Config config) {
         this.result = new BridgeTestResult()
-                .setRequestData(request.getHttpMethod().name(), request.getUrl())
+                .setRequestData(request.getHttpMethod().name(), request.getUrl(),
+                                config.getDefaultHeaders().get(PROJECT_ID_HEADER).stream().findFirst().orElse(null))
                 .setException(exception);
 
         return super.onFail(exception, request, config);

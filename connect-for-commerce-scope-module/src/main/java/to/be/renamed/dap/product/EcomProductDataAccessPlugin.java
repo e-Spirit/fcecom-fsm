@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 @PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Products Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME
                                                                                                        + " - Data Access Plugin: Products")
 public class EcomProductDataAccessPlugin implements DataAccessPlugin<EcomProduct> {
+
     private static final Class<?> logger = EcomProductDataAccessPlugin.class;
     private DataAccessAspectMap dataAccessAspects;
     private EcomConnectScope scope;
@@ -34,7 +35,7 @@ public class EcomProductDataAccessPlugin implements DataAccessPlugin<EcomProduct
 
     @Override
     public @NotNull String getLabel() {
-        return scope.getLabel("report.products.label");
+        return scope.getLabel(scope.getDisplayLanguage(), "report.products.label");
     }
 
     @Override

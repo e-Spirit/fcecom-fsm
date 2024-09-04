@@ -1,6 +1,7 @@
 package to.be.renamed.bridge.client;
 
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
+
 import kong.unirest.Cache;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestInstance;
@@ -10,10 +11,11 @@ import kong.unirest.UnirestInstance;
  */
 public final class UnirestConnector {
 
-    private GuavaCache cache;
-
     private final UnirestInstance cachedUnirest;
     private final UnirestInstance unirestWithoutCache;
+    private GuavaCache cache;
+
+    public static final String PROJECT_ID_HEADER = "FS-Project-UUID";
 
     UnirestConnector(BridgeConfig bridgeConfig) {
         cachedUnirest = Unirest.spawnInstance();
@@ -47,15 +49,17 @@ public final class UnirestConnector {
         this.cache = new GuavaCache(bridgeConfig.getCacheConfig());
 
         cachedUnirest.config()
-                .defaultBaseUrl(bridgeConfig.getBridgeApiUrl())
-                .setDefaultBasicAuth(bridgeConfig.getBridgeUsername(), bridgeConfig.getBridgePassword())
-                .setDefaultHeader("Accept", "application/json")
-                .cacheResponses(Cache.builder().backingCache(getCache()));
+            .defaultBaseUrl(bridgeConfig.getBridgeApiUrl())
+            .setDefaultBasicAuth(bridgeConfig.getBridgeUsername(), bridgeConfig.getBridgePassword())
+            .setDefaultHeader("Accept", "application/json")
+            .addDefaultHeader(PROJECT_ID_HEADER, String.valueOf(bridgeConfig.getProjectUuid()))
+            .cacheResponses(Cache.builder().backingCache(getCache()));
 
         unirestWithoutCache.config()
-                .defaultBaseUrl(bridgeConfig.getBridgeApiUrl())
-                .setDefaultBasicAuth(bridgeConfig.getBridgeUsername(), bridgeConfig.getBridgePassword())
-                .setDefaultHeader("Accept", "application/json");
+            .defaultBaseUrl(bridgeConfig.getBridgeApiUrl())
+            .setDefaultBasicAuth(bridgeConfig.getBridgeUsername(), bridgeConfig.getBridgePassword())
+            .setDefaultHeader("Accept", "application/json")
+            .addDefaultHeader(PROJECT_ID_HEADER, String.valueOf(bridgeConfig.getProjectUuid()));
     }
 
     /**

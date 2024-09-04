@@ -50,7 +50,7 @@ public class EcomCategoryDataStreamBuilder implements DataStreamBuilder<EcomCate
     }
 
     private void getReportFilter(EcomFilterBuilder filterBuilder) {
-        filterBuilder.addTextField(EcomDapUtilities.FILTER_QUERY, scope.getLabel("report.products.filter.q"));
+        filterBuilder.addTextField(EcomDapUtilities.FILTER_QUERY, scope.getLabel(scope.getDisplayLanguage(), "report.products.filter.q"));
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
         if (!bridgeService.hasCategoryTree()) {
             return;
@@ -89,9 +89,9 @@ public class EcomCategoryDataStreamBuilder implements DataStreamBuilder<EcomCate
 
         Map<String, String> categoryFilter = new LinkedHashMap<>();
         categoryFilter.put("", format("%s (%s %s %s)",
-                                      scope.getLabel("report.categories.filter.label"),
+                                      scope.getLabel(scope.getDisplayLanguage(), "report.categories.filter.label"),
                                       tempCategoryFilter.size(),
-                                      scope.getLabel("report.categories.filter.of"),
+                                      scope.getLabel(scope.getDisplayLanguage(), "report.categories.filter.of"),
                                       bridgeService.getCategoriesTree(scope.getLang()).size()));
         categoryFilter.putAll(tempCategoryFilter);
         filterBuilder.addSelect(EcomDapUtilities.FILTER_PARENT_ID, categoryFilter);

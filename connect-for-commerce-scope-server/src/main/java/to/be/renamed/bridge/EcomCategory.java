@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 public class EcomCategory extends EcomId implements Serializable {
 
     private static final long serialVersionUID = 151051737286568433L;
@@ -78,5 +80,19 @@ public class EcomCategory extends EcomId implements Serializable {
     @Override
     public String getType() {
         return EcomId.CATEGORY_TEMPLATE_UID;
+    }
+
+    @Override
+    public String toString() {
+        return format(
+            "EcomCategory {id: %s, type: %s, lang: %s, pageRefUid: %s, label: %s, parentId: %s, childrenSize: %d}",
+            id,
+            type,
+            lang,
+            pageRefUid,
+            label,
+            parent != null ? parent.getId() : "null",
+            children != null ? children.size() : 0
+        );
     }
 }

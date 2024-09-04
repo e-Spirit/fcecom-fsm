@@ -76,9 +76,9 @@ class EcomContentCreatorMessage {
                 EcomConnectScope scope = new EcomConnectScope(broker);
                 ResourceBundle errorCodes;
                 try {
-                    errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME, scope.getLanguage().getLocale());
+                    errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME, scope.getDisplayLanguage().getLocale());
                 } catch (MissingResourceException e) {
-                    Logging.logWarning(format("Could not find resource bundle '%s' for locale '%s', using default bundle", ERROR_CODES_BUNDLE_NAME, scope.getLanguage().getLocale().toString()), e, EcomContentCreatorMessage.class);
+                    Logging.logWarning(format("Could not find resource bundle '%s' for locale '%s', using default bundle", ERROR_CODES_BUNDLE_NAME, scope.getDisplayLanguage().getLocale().toString()), e, EcomContentCreatorMessage.class);
                     errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME);
                 }
 

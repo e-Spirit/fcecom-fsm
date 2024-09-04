@@ -3,7 +3,7 @@ package to.be.renamed.dap.category.aspects;
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomCategory;
 import to.be.renamed.dap.EcomWebeditExecutableReportItem;
-import to.be.renamed.module.EcomConnectWebApp;
+import to.be.renamed.dap.category.EcomCategoryReportIcon;
 
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.agency.Image;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
@@ -35,11 +36,10 @@ public class EcomCategoryReporting implements Reporting, ReportItemsProviding<Ec
 
     @Override
     public Image<?> getReportIcon(final boolean active) {
-        if (baseContext.is(BaseContext.Env.WEBEDIT)) {
-            return imageAgent.getImageFromUrl(EcomConnectWebApp.CATEGORY_DAP_ICON);
-        } else {
-            return imageAgent.getImageFromIcon(new ImageIcon(getClass().getResource("/files-web/fcecom-category.png")));
-        }
+        return baseContext.is(BaseContext.Env.WEBEDIT)
+               ? imageAgent.getImageFromUrl(EcomCategoryReportIcon.standard().webEditFile())
+               : imageAgent.getImageFromIcon(new ImageIcon(Objects.requireNonNull(
+                   getClass().getResource(EcomCategoryReportIcon.standard().siteArchitectFile()))));
     }
 
     @Override

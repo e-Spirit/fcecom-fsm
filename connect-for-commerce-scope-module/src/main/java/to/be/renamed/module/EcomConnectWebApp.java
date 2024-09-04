@@ -19,9 +19,6 @@ public class EcomConnectWebApp extends AbstractWebApp implements WebApp {
 
     public static final String WEB_APP_NAME = ProjectAppHelper.MODULE_NAME + " - Web Application Component";
 
-    public static final String CATEGORY_DAP_ICON = "fcecom-category.svg";
-    public static final String CONTENT_DAP_ICON = "fcecom-content.svg";
-    public static final String PRODUCT_DAP_ICON = "fcecom-product.svg";
 
     @Override
     public void installed() {

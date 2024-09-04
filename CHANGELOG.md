@@ -1,11 +1,23 @@
+## [3.13.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.12.0...v3.13.0) (2024-09-04)
+
+### Changes
+
+* Added executable for adding AI generated seo tags to a product page.
+* Fixed a problem causing the category tree filter to not update when the UI language was changed.
+* Refactored code to improve readability.
+* The FSM now sends a new header containing the project uuid.
+* Added javadoc to EcomElement.
+* Improved automatic creation of CaaS indices.
+* Added a visual indication inside the reports for shop-driven pages that are managed in FirstSpirit.
+* Avoid potential concurrency issues when accessing labels.
+* Fixed a bug that prevented the reports to be shown inside the SiteArchitect.
+
 ## [3.12.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.11.0...v3.12.0) (2024-07-31)
 
 ### Changes
 
 * Made cache configurable in the project app configuration.
 * Removed workaround that was previously required to fix the x-total header.
-
-### UPDATE NOTICE
 
 ## [3.11.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.10.0...v3.11.0) (2024-07-10)
 

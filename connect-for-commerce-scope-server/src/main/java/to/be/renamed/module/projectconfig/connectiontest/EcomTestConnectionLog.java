@@ -2,6 +2,11 @@ package to.be.renamed.module.projectconfig.connectiontest;
 
 import to.be.renamed.bridge.TaskType;
 
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -9,10 +14,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 import static to.be.renamed.module.projectconfig.connectiontest.EcomTaskResult.UNKNOWN;
 import static de.espirit.common.base.Logging.logWarning;
@@ -86,7 +87,7 @@ public class EcomTestConnectionLog extends JScrollPane {
         StyleConstants.setFontSize(attr, 18);
 
         insertText(attr, labels.getString("testConnection.heading." + taskType.name()));
-        newLine();
+        newLine().newLine();
     }
 
     public void addTaskDescription(final String task) {
@@ -116,6 +117,14 @@ public class EcomTestConnectionLog extends JScrollPane {
         if (!isEmpty(details)) {
             light(labels.getString("testConnection.request") + " " + details);
             newLine();
+        }
+    }
+
+    public void addProjectUuid(final String projectUuid) {
+        if (!isEmpty(projectUuid)) {
+            light(labels.getString("testConnection.project-uuid-header").formatted(projectUuid));
+        } else {
+            warning(labels.getString("testConnection.project-uuid-header.missing"));
         }
     }
 
@@ -154,6 +163,10 @@ public class EcomTestConnectionLog extends JScrollPane {
 
         deprecated(result.isDeprecated());
         addDetails(result.summarizeRequest());
+
+        addProjectUuid(result.getProjectUuid());
+
+        newLine().newLine();
     }
 
     public JTextPane getLog() {

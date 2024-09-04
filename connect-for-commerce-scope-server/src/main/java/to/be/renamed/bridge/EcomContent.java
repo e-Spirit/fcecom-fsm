@@ -34,6 +34,11 @@ public class EcomContent extends EcomId implements Serializable {
         return extract;
     }
 
+    @Override
+    public String toString() {
+        return format("EcomContent: {id: %s, type: %s, lang: %s, pageRefUid: %s, label: %s, extract: %s}", id, type, lang, pageRefUid, label, extract);
+    }
+
     public void ensureExistence(EcomConnectScope scope) throws EcomConnectException {
         if (!hasId()) {
             EcomElement element = getElement(scope);

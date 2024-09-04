@@ -2,6 +2,7 @@ package to.be.renamed.module.projectconfig.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
@@ -15,6 +16,7 @@ public class BridgeConfig implements Serializable {
     private final String bridgeUsername;
     private final String bridgePassword;
     private final CacheConfig cacheConfig;
+    private UUID projectUuid;
 
     /**
      * Required by Gson.
@@ -26,10 +28,11 @@ public class BridgeConfig implements Serializable {
 
     /**
      * Creates a bridge configuration.
-     * @param bridgeApiUrl URL of the bridge
+     *
+     * @param bridgeApiUrl   URL of the bridge
      * @param bridgeUsername Username for bridge authentication
      * @param bridgePassword Password for bridge authentication
-     * @param cacheConfig Cache-specific configuration
+     * @param cacheConfig    Cache-specific configuration
      */
     public BridgeConfig(String bridgeApiUrl, String bridgeUsername, String bridgePassword, CacheConfig cacheConfig) {
         this.bridgeApiUrl = ConfigUtils.removeTrailingSlash(Objects.requireNonNullElse(bridgeApiUrl, ""));
@@ -41,13 +44,15 @@ public class BridgeConfig implements Serializable {
     /**
      * Creates a bridge configuration from values.
      * Needed for char[] input as provided by BridgeConfigurationPanel.
-     * @param bridgeApiUrl Url of the bridge
+     *
+     * @param bridgeApiUrl   Url of the bridge
      * @param bridgeUsername Username for bridge authentication
      * @param bridgePassword Password for bridge authentication
-     * @param cacheConfig Configuration for the internal cache
+     * @param cacheConfig    Configuration for the internal cache
      * @return A bridge config
      */
-    public static BridgeConfig fromValues(final String bridgeApiUrl, final String bridgeUsername, final char[] bridgePassword, final CacheConfig cacheConfig) {
+    public static BridgeConfig fromValues(final String bridgeApiUrl, final String bridgeUsername, final char[] bridgePassword,
+                                          final CacheConfig cacheConfig) {
         return new BridgeConfig(bridgeApiUrl, bridgeUsername, String.valueOf(bridgePassword), cacheConfig);
     }
 
@@ -84,13 +89,22 @@ public class BridgeConfig implements Serializable {
 
         BridgeConfig that = (BridgeConfig) o;
         return Objects.equals(getBridgeApiUrl(), that.getBridgeApiUrl()) &&
-                Objects.equals(getBridgeUsername(), that.getBridgeUsername()) &&
-                Objects.equals(getBridgePassword(), that.getBridgePassword()) &&
-                getCacheConfig().equals(that.getCacheConfig());
+               Objects.equals(getBridgeUsername(), that.getBridgeUsername()) &&
+               Objects.equals(getBridgePassword(), that.getBridgePassword()) &&
+               Objects.equals(getProjectUuid(), that.getProjectUuid()) &&
+               Objects.equals(getCacheConfig(), that.getCacheConfig());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getBridgeApiUrl(), getBridgeUsername(), getBridgePassword(), getCacheConfig().hashCode());
+    }
+
+    public UUID getProjectUuid() {
+        return projectUuid;
+    }
+
+    public void setProjectUuid(final UUID projectUuid) {
+        this.projectUuid = projectUuid;
     }
 }

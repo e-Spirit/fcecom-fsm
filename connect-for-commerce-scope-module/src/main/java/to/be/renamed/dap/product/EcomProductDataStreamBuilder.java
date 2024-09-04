@@ -51,7 +51,7 @@ public class EcomProductDataStreamBuilder implements DataStreamBuilder<EcomProdu
     }
 
     private void getReportFilter(EcomFilterBuilder filterBuilder) {
-        filterBuilder.addTextField(EcomDapUtilities.FILTER_QUERY, scope.getLabel("report.products.filter.q"));
+        filterBuilder.addTextField(EcomDapUtilities.FILTER_QUERY, scope.getLabel(scope.getDisplayLanguage(), "report.products.filter.q"));
         BridgeService bridgeService = ServiceFactory.getBridgeService(scope.getBroker());
 
         if (bridgeService.hasCategoryTree()) {
@@ -65,7 +65,8 @@ public class EcomProductDataStreamBuilder implements DataStreamBuilder<EcomProdu
             try {
                 categoryTree = bridgeService.getCategoriesTree(scope.getLang());
             } catch (BridgeConnectionException e) {
-                Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+                Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
+                                 this.getClass());
                 EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
                 categoryTree = Collections.emptyMap();
             }
@@ -84,9 +85,9 @@ public class EcomProductDataStreamBuilder implements DataStreamBuilder<EcomProdu
 
             Map<String, String> categoryFilter = new LinkedHashMap<>();
             categoryFilter.put("", format("%s (%s %s %s)",
-                                          scope.getLabel("report.categories.filter.label"),
+                                          scope.getLabel(scope.getDisplayLanguage(), "report.categories.filter.label"),
                                           tempCategoryFilter.size(),
-                                          scope.getLabel("report.categories.filter.of"),
+                                          scope.getLabel(scope.getDisplayLanguage(), "report.categories.filter.of"),
                                           bridgeService.getCategoriesTree(scope.getLang()).size()));
             categoryFilter.putAll(tempCategoryFilter);
             filterBuilder.addSelect(EcomDapUtilities.FILTER_CATEGORY, categoryFilter);

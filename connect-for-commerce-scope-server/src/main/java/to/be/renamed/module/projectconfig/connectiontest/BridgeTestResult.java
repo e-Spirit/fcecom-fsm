@@ -36,6 +36,7 @@ public class BridgeTestResult implements Serializable {
     // Request
     private String httpMethod;
     private String url;
+    private String projectUuid;
 
     // Response
     private int status;
@@ -58,6 +59,10 @@ public class BridgeTestResult implements Serializable {
 
     public String getErrorResponse() {
         return errorResponse;
+    }
+
+    public String getProjectUuid() {
+        return projectUuid;
     }
 
     public int getStatus() {
@@ -105,9 +110,10 @@ public class BridgeTestResult implements Serializable {
         setTaskResult(PROBLEMATIC);
     }
 
-    public BridgeTestResult setRequestData(String httpMethod, String url) {
+    public BridgeTestResult setRequestData(String httpMethod, String url, final String projectUuid) {
         this.httpMethod = httpMethod;
         this.url = url;
+        this.projectUuid = projectUuid;
 
         return this;
     }

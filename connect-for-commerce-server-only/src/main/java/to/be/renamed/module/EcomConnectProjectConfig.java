@@ -1,11 +1,13 @@
 package to.be.renamed.module;
 
+import to.be.renamed.bridge.BridgeService;
 import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.gui.ConfigurationAppPanel;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.Language;
+import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.UIAgent;
 import de.espirit.firstspirit.module.Configuration;
@@ -13,6 +15,7 @@ import de.espirit.firstspirit.module.ProjectEnvironment;
 
 import java.awt.*;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.*;
@@ -22,7 +25,6 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
     private ProjectEnvironment projectEnvironment;
     private ProjectAppConfiguration configuration;
     private ConfigurationAppPanel configurationPanel;
-    private Language language;
     private ProjectAppConfigurationService moduleConfigurationAccessor;
 
     @Override
@@ -31,7 +33,7 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
         moduleConfigurationAccessor = ServiceFactory.getProjectAppConfigurationService(projectEnvironment.getBroker());
 
         final UIAgent uiAgent = env.getBroker().requestSpecialist(UIAgent.TYPE);
-        language = uiAgent != null ? uiAgent.getDisplayLanguage() : null;
+        Language language = uiAgent != null ? uiAgent.getDisplayLanguage() : null;
 
         if (language == null) {
             language = env.getBroker().requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
@@ -51,7 +53,7 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
     @Override
     public JComponent getGui(Frame appFrame) {
         if (configurationPanel == null) {
-            configurationPanel = new ConfigurationAppPanel(configuration, projectEnvironment.getBroker());
+            configurationPanel = new ConfigurationAppPanel(configuration, projectEnvironment);
         }
         if (appFrame != null) {
             return (JComponent) appFrame.add(configurationPanel.getConfigurationPanel());
@@ -64,6 +66,7 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
     public void load() {
         Logging.logDebug("Loading project app configuration", getClass());
         configuration = moduleConfigurationAccessor.loadConfiguration();
+        configuration.getBridgeConfig().setProjectUuid(Objects.requireNonNull(projectEnvironment.getProject()).getUuid());
     }
 
     @Override
@@ -72,16 +75,22 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
         final ProjectAppConfiguration updatedConfiguration = configurationPanel.getValue();
         moduleConfigurationAccessor.storeConfiguration(updatedConfiguration);
         configuration = updatedConfiguration;
-        ServiceFactory.getBridgeService(projectEnvironment.getBroker())
-                .configureBridge(updatedConfiguration.getBridgeConfig());
+        final BridgeService bridgeService = ServiceFactory.getBridgeService(projectEnvironment.getBroker());
+        final Project project = Objects.requireNonNull(projectEnvironment.getProject());
+        updatedConfiguration.getBridgeConfig().setProjectUuid(project.getUuid());
+        bridgeService.configureBridge(updatedConfiguration.getBridgeConfig());
     }
 
     // Unimplemented because not needed
     @Override
-    public String getParameter(final String name) { return ""; }
+    public String getParameter(final String name) {
+        return "";
+    }
 
     // Unimplemented because not needed
     @Override
-    public Set<String> getParameterNames() { return Collections.emptySet(); }
+    public Set<String> getParameterNames() {
+        return Collections.emptySet();
+    }
 
 }

@@ -24,4 +24,8 @@ public class EcomSearchResult<T> implements Serializable {
     public Iterator<T> getIterator() {
         return result.iterator();
     }
+
+    public List<T> getResults() {
+        return result;
+    }
 }

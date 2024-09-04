@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 @PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Categories Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME
                                                                                                          + " - Data Access Plugin: Categories")
 public class EcomCategoryDataAccessPlugin implements DataAccessPlugin<EcomCategory> {
+
     private static final Class<?> logger = EcomCategoryDataAccessPlugin.class;
     private DataAccessAspectMap dataAccessAspects;
     private EcomConnectScope scope;
@@ -34,7 +35,7 @@ public class EcomCategoryDataAccessPlugin implements DataAccessPlugin<EcomCatego
 
     @Override
     public @NotNull String getLabel() {
-        return scope.getLabel("report.categories.label");
+        return scope.getLabel(scope.getDisplayLanguage(), "report.categories.label");
     }
 
     @Override
@@ -51,7 +52,7 @@ public class EcomCategoryDataAccessPlugin implements DataAccessPlugin<EcomCatego
     @Override
     public void setUp(final @NotNull BaseContext context) {
         dataAccessAspects = new DataAccessAspectMap();
-        scope = new EcomConnectScope(context);
+        scope = EcomConnectScope.create(context);
         final long projectId = context.requireSpecialist(ProjectAgent.TYPE).getId();
 
         if (ProjectAppHelper.isInstalled(context, projectId)) {

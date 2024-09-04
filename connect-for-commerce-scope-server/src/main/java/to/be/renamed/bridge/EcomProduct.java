@@ -6,6 +6,8 @@ import com.google.gson.JsonPrimitive;
 
 import java.io.Serializable;
 
+import static java.lang.String.format;
+
 /**
  * Object representation of a product page from the shop system.
  */
@@ -81,4 +83,19 @@ public class EcomProduct extends EcomId implements Serializable {
         return image;
     }
 
+    @Override
+    public String toString() {
+        return format(
+            "EcomProduct: {id: %s, type: %s, lang: %s, pageRefUid: %s, label: %s, extract: %s, thumbnail: %s, image: %s, categoryId: %s}",
+            id,
+            type,
+            lang,
+            pageRefUid,
+            label,
+            extract,
+            thumbnail,
+            image,
+            categoryId
+        );
+    }
 }

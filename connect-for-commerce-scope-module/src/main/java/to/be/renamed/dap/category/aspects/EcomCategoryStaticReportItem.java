@@ -24,7 +24,7 @@ public class EcomCategoryStaticReportItem implements Item<BaseContext>, WebeditE
 
     @Override
     public @NotNull String getLabel(@NotNull BaseContext context) {
-        return scope.getLabel("report.categories.static.refresh");
+        return scope.getLabel(scope.getDisplayLanguage(), "report.categories.static.refresh");
     }
 
     @Override

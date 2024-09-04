@@ -1,17 +1,19 @@
 package to.be.renamed.bridge;
 
-import to.be.renamed.bridge.client.Json;
-import to.be.renamed.EcomConnectScope;
-import to.be.renamed.OrphanedPageRefException;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
+import to.be.renamed.EcomConnectScope;
+import to.be.renamed.OrphanedPageRefException;
+import to.be.renamed.bridge.client.Json;
+
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
 
 import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 
 import static java.lang.String.format;
@@ -24,7 +26,7 @@ public abstract class EcomId implements Serializable {
     protected static final String CATEGORY_TEMPLATE_UID = "category";
     protected static final String PRODUCT_TEMPLATE_UID = "product";
     protected static final String CONTENT_TEMPLATE_UID = "contentpages";
-    protected static final String PAGE_ID_FORM_FIELD = "id";
+    public static final String PAGE_ID_FORM_FIELD = "id";
     private static final long serialVersionUID = -4130798586510507783L;
 
     protected final String type;
@@ -32,6 +34,7 @@ public abstract class EcomId implements Serializable {
     protected String id;
     protected final String pageRefUid;
     protected final String label;
+    protected boolean isManaged;
 
     protected EcomId(Json json) {
         type = json.get("type");
@@ -159,6 +162,14 @@ public abstract class EcomId implements Serializable {
 
     public String getLabel() {
         return label;
+    }
+
+    public Boolean isManaged() {
+        return isManaged;
+    }
+
+    public void setManaged(boolean isManaged) {
+        this.isManaged = isManaged;
     }
 
     public EcomElement getElement(EcomConnectScope scope) {

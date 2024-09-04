@@ -8,22 +8,21 @@ import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
 import to.be.renamed.module.projectconfig.connectiontest.EcomTestConnectionLog;
 import to.be.renamed.module.projectconfig.connectiontest.EcomTestConnectionResult;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
-import de.espirit.common.base.Logging;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import kong.unirest.HttpMethod;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.Point;
-import java.awt.Window;
+import de.espirit.common.base.Logging;
+import de.espirit.firstspirit.module.ProjectEnvironment;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+
+import javax.swing.*;
+
+import kong.unirest.HttpMethod;
 
 /**
  * Configuration panel for bridge related configuration tab.
@@ -40,7 +39,8 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
      *
      * @param bridgeConfig The current bridge configuration values
      */
-    BridgeConfigurationPanel(final BridgeConfig bridgeConfig, SpecialistsBroker broker, CacheConfigurationPanel cacheConfigurationPanel) {
+    BridgeConfigurationPanel(final BridgeConfig bridgeConfig, ProjectEnvironment projectEnvironment,
+                             CacheConfigurationPanel cacheConfigurationPanel) {
         super();
 
         bridgeApiUrlTextField = new JTextField(bridgeConfig.getBridgeApiUrl(), TEXTFIELD_COLUMNS);
@@ -75,37 +75,29 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
                         // Category
                         SwingUtilities.invokeAndWait(() -> {
                             log.heading(TaskType.CATEGORY);
-                            log.newLine().addTaskDescription("testConnection.task.category");
-                        });
-                        SwingUtilities.invokeAndWait(() -> {
-                            log.logResult(funcTest(broker, "/categories/ids"));
+                            log.addTaskDescription("testConnection.task.category");
+                            log.logResult(funcTest(projectEnvironment, "/categories/ids"));
                         });
 
                         // Category Tree
                         SwingUtilities.invokeAndWait(() -> {
-                            log.newLine().addTaskDescription("testConnection.task.categoryTree");
-                        });
-                        SwingUtilities.invokeAndWait(() -> {
-                            log.logResult(funcTest(broker, "/categories/tree"));
-                            log.newLine().newLine();
+                            log.addTaskDescription("testConnection.task.categoryTree");
+                            log.logResult(funcTest(projectEnvironment, "/categories/tree"));
                         });
 
                         // Product
                         SwingUtilities.invokeAndWait(() -> {
                             log.heading(TaskType.PRODUCT);
-                            log.newLine().addTaskDescription("testConnection.task.product");
-                        });
-                        SwingUtilities.invokeAndWait(() -> {
-                            log.logResult(funcTest(broker, "/products/ids"));
-                            log.newLine().newLine();
+                            log.addTaskDescription("testConnection.task.product");
+                            log.logResult(funcTest(projectEnvironment, "/products/ids"));
                         });
 
                         // Content (New)
                         SwingUtilities.invokeAndWait(() -> {
                             log.heading(TaskType.CONTENT);
-                            log.newLine().addTaskDescription("testConnection.task.content");
+                            log.addTaskDescription("testConnection.task.content");
+                            log.logResult(funcTest(projectEnvironment, "/content"));
                         });
-                        SwingUtilities.invokeAndWait(() -> log.logResult(funcTest(broker, "/content")));
 
                         // Log to console
                         SwingUtilities.invokeLater(() -> Logging.logInfo("\nFCECOM TestConnection\n\n" + progressDialog.getFullLog(), getClass()));
@@ -129,9 +121,10 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
         addButton(Label.BRIDGE_TEST_CONNECTION, buttonAction);
     }
 
-    private BridgeTestResult funcTest(SpecialistsBroker broker, String url) {
+    private BridgeTestResult funcTest(ProjectEnvironment projectEnvironment, String url) {
         BridgeConfig updatedBridgeConfig = getValue();
-        BridgeService bridgeService = ServiceFactory.getBridgeService(broker);
+        updatedBridgeConfig.setProjectUuid(Objects.requireNonNull(projectEnvironment.getProject()).getUuid());
+        BridgeService bridgeService = ServiceFactory.getBridgeService(projectEnvironment.getBroker());
         return bridgeService.testConnection(updatedBridgeConfig, TestConnectionRequest.withParams(HttpMethod.HEAD.name(), url));
     }
 
@@ -139,7 +132,7 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
         Window owner = progressDialog.getOwner();
         Point p = owner.getLocation();
         progressDialog.setLocation(p.x + owner.getWidth() / 2 - progressDialog.getWidth()
-                / 2, p.y + owner.getHeight() / 2 - progressDialog.getHeight() / 2);
+                                                                / 2, p.y + owner.getHeight() / 2 - progressDialog.getHeight() / 2);
     }
 
     /**
@@ -149,6 +142,7 @@ public class BridgeConfigurationPanel extends AbstractConfigurationPanel<BridgeC
      */
     @Override
     BridgeConfig getValue() {
-        return BridgeConfig.fromValues(bridgeApiUrlTextField.getText(), bridgeApiUsernameTextField.getText(), bridgeApiPasswordPasswordField.getPassword(), cacheConfigurationPanel.getValue());
+        return BridgeConfig.fromValues(bridgeApiUrlTextField.getText(), bridgeApiUsernameTextField.getText(),
+                                       bridgeApiPasswordPasswordField.getPassword(), cacheConfigurationPanel.getValue());
     }
 }
