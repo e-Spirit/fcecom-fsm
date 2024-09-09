@@ -57,7 +57,7 @@ public class EcomContentDataAccessPlugin implements DataAccessPlugin<EcomContent
     @Override
     public void setUp(final @NotNull BaseContext context) {
         dataAccessAspects = new DataAccessAspectMap();
-        scope = new EcomConnectScope(context);
+        scope = EcomConnectScope.create(context);
         final long projectId = context.requireSpecialist(ProjectAgent.TYPE).getId();
 
         if (ProjectAppHelper.isInstalled(context, projectId) && isAvailable()) {

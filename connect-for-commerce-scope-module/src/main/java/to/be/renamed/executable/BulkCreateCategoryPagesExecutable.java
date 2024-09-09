@@ -56,7 +56,7 @@ public class BulkCreateCategoryPagesExecutable extends ExecutableUtilities imple
             final String folder = getParam(PARAM_SUBFOLDER);
             final boolean release = Boolean.parseBoolean(getParam(PARAM_PAGE_RELEASE));
 
-            final EcomConnectScope scope = new EcomConnectScope(baseContext);
+            final EcomConnectScope scope = EcomConnectScope.create(baseContext);
 
             EcomSearchResult<EcomCategory> results = new EcomSearchResult<>(Collections.emptyList(), 0);
             int count = 0;

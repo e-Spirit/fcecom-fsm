@@ -51,7 +51,7 @@ public class CreateReferencePageExecutable extends ExecutableUtilities implement
 
     private String createReferencePage() {
         try {
-            EcomConnectScope scope = new EcomConnectScope(context);
+            EcomConnectScope scope = EcomConnectScope.create(context);
 
             final String storeFrontUrl = getParam(STOREFRONT_URL_PARAM);
             final String id = requireParam(ID_PARAM);

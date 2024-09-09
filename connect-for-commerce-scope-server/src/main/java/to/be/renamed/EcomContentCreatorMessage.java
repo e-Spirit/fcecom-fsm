@@ -73,7 +73,7 @@ class EcomContentCreatorMessage {
                         .perform("() => (FCECOM_API.applyMessage(" + json + "), 1)", false);
             } else {
                 String errorCode = ErrorCode.MISSING_CC_EXTENSION.get();
-                EcomConnectScope scope = new EcomConnectScope(broker);
+                EcomConnectScope scope = EcomConnectScope.create(broker);
                 ResourceBundle errorCodes;
                 try {
                     errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME, scope.getDisplayLanguage().getLocale());

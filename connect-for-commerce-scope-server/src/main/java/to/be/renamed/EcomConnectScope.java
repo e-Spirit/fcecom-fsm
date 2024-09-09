@@ -45,7 +45,7 @@ public class EcomConnectScope {
     private final SpecialistsBroker broker;
     private Language language;
 
-    public EcomConnectScope(SpecialistsBroker broker) {
+    private EcomConnectScope(SpecialistsBroker broker) {
         this.broker = broker;
 
         WebeditUiAgent webeditUiAgent = broker.requestSpecialist(WebeditUiAgent.TYPE);

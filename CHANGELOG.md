@@ -1,3 +1,9 @@
+## [3.14.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.13.0...v3.14.0) (2024-09-09)
+
+### Changes
+
+* Streamlined EcomConnectScope object creation by utilizing static `create` method.
+
 ## [3.13.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.12.0...v3.13.0) (2024-09-04)
 
 ### Changes

@@ -56,7 +56,7 @@ public class BulkCreateProductPagesExecutable extends ExecutableUtilities implem
             final String subfolder = getParam(PARAM_SUBFOLDER);
             final boolean release = Boolean.parseBoolean(getParam(PARAM_PAGE_RELEASE));
 
-            final EcomConnectScope scope = new EcomConnectScope(baseContext);
+            final EcomConnectScope scope = EcomConnectScope.create(baseContext);
 
             EcomSearchResult<EcomProduct> results = new EcomSearchResult<>(Collections.emptyList(), 0);
             int count = 0;
