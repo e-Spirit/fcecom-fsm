@@ -11,6 +11,7 @@ import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
+import de.espirit.firstspirit.forms.NoSuchFormFieldException;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -96,13 +97,37 @@ public abstract class EcomId implements Serializable {
         return null;
     }
 
+    /**
+     * Checks if the current page contains the page id form field
+     *
+     * @param page the page to check for the page id form field
+     * @return true if page contains page id form field, false if it's missing
+     */
+    public static boolean hasPageIdField(Page page) {
+        try {
+            page.getFormData().get(null, PAGE_ID_FORM_FIELD);
+            return true;
+        } catch (NoSuchFormFieldException e) {
+            Logging.logDebug("The id form field is missing on the page with the UID: " + page.getUid(), e, EcomId.class);
+            return false;
+        }
+    }
+
+    /**
+     * Retrieves the page id from the given page for the specified language
+     *
+     * @param page the page to retrieve the page id from
+     * @param language the language for which the page id is retrieved
+     * @return the page id as a string or null if the page id is missing or invalid
+     */
     public static String getPageId(Page page, Language language) {
+        if (!hasPageIdField(page)) {
+            return null;
+        }
+
         Object pageId = page.getFormData().get(language, PAGE_ID_FORM_FIELD).get();
-        if (pageId instanceof String) {
-            String id = (String) pageId;
-            if (!id.isEmpty()) {
-                return id;
-            }
+        if (pageId instanceof String id && !id.isEmpty()) {
+            return id;
         }
         return null;
     }

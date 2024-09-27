@@ -1,3 +1,10 @@
+## [3.14.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.14.0...v3.14.1) (2024-09-27)
+
+### Changes
+
+* Improved error handling to handle exception that occurred when the ID form field was missing for a page.
+* Fixed an incorrect return value when retrieving multiple products or categories.
+
 ## [3.14.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.13.0...v3.14.0) (2024-09-09)
 
 ### Changes

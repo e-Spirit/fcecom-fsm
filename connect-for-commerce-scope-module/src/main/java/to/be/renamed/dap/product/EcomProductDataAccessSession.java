@@ -1,6 +1,7 @@
 package to.be.renamed.dap.product;
 
 import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.EcomProduct;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.product.aspects.EcomProductDataTemplating;
@@ -29,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -60,7 +63,7 @@ public class EcomProductDataAccessSession implements DataAccessSession<EcomProdu
     @Override
     public @NotNull EcomProduct getData(@NotNull String identifier) throws NoSuchElementException {
         List<EcomProduct> data = getData(Collections.singletonList(identifier));
-        if (data.isEmpty()) {
+        if (data.get(0) == null) {
             throw new NoSuchElementException("Could not resolve id: " + identifier);
         }
         return data.get(0);
@@ -68,7 +71,9 @@ public class EcomProductDataAccessSession implements DataAccessSession<EcomProdu
 
     @Override
     public @NotNull List<EcomProduct> getData(@NotNull Collection<String> identifiers) {
-        return resolve(identifiers);
+        final List<EcomProduct> resolvedProducts = resolve(identifiers);
+        final Map<String, EcomProduct> productsMap = resolvedProducts.stream().collect(Collectors.toMap(EcomId::getId, product -> product));
+        return identifiers.stream().map(identifier -> productsMap.getOrDefault(identifier, null)).collect(Collectors.toList());
     }
 
     @Override

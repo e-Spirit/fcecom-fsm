@@ -3,6 +3,7 @@ package to.be.renamed.dap.content;
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.BridgeService;
 import to.be.renamed.bridge.EcomContent;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.content.aspects.EcomContentDataTemplating;
 import to.be.renamed.dap.content.aspects.EcomContentJsonSupporting;
@@ -30,7 +31,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -61,7 +64,7 @@ public class EcomContentDataAccessSession implements DataAccessSession<EcomConte
     @Override
     public @NotNull EcomContent getData(@NotNull String identifier) throws NoSuchElementException {
         List<EcomContent> data = getData(Collections.singletonList(identifier));
-        if (data.isEmpty()) {
+        if (data.get(0) == null) {
             throw new NoSuchElementException("Could not resolve id: " + identifier);
         }
         return data.get(0);
@@ -69,7 +72,9 @@ public class EcomContentDataAccessSession implements DataAccessSession<EcomConte
 
     @Override
     public @NotNull List<EcomContent> getData(@NotNull Collection<String> identifiers) {
-        return resolve(identifiers);
+        final List<EcomContent> resolvedContents = resolve(identifiers);
+        final Map<String, EcomContent> contentsMap = resolvedContents.stream().collect(Collectors.toMap(EcomId::getId, content -> content));
+        return identifiers.stream().map(identifier -> contentsMap.getOrDefault(identifier, null)).collect(Collectors.toList());
     }
 
     @Override

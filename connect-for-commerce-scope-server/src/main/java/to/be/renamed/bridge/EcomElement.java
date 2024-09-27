@@ -72,6 +72,10 @@ public class EcomElement {
         TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
             @Override
             public boolean accept(Page page) {
+                if (!EcomId.hasPageIdField(page)) {
+                    return false;
+                }
+                
                 return Objects.equals(ecomId.getId(), EcomId.getPageId(page, language));
             }
         };

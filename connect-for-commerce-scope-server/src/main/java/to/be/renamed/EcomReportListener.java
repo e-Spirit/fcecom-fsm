@@ -72,7 +72,7 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
      * It handles the "language creation" problem by just fetching the master language.
      *
      * @param page StoreElement got from elementChanged
-     * @return pageId String
+     * @return pageId as String if valid and present and null if it's missing or invalid
      */
     private String extractPageId(Page page) {
         final Language masterLanguage = broker.requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
@@ -88,7 +88,12 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
     private void markManaged(StoreElement storeElement) {
         if (storeElement instanceof Page) {
             // Extract pageId from form data.
+            if (EcomId.hasPageIdField((Page) storeElement)) {
+                return;
+            }
+
             final String pageId = extractPageId((Page) storeElement);
+
             if (pageId != null) {
                 if (storeElement.getName().startsWith("product")) {
                     markReportIcon(pageId, "fcecom-product-managed.svg", broker);

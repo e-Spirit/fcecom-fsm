@@ -1,6 +1,7 @@
 package to.be.renamed.fspage;
 
 import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.error.CreatePageException;
 import to.be.renamed.error.ErrorCode;
 import de.espirit.common.TypedFilter;
@@ -56,12 +57,13 @@ public class FsPageCreator {
 
     @Nullable
     protected static String getPageId(Page page, Language language) {
+        if (!EcomId.hasPageIdField(page)) {
+            return null;
+        }
+
         Object pageId = page.getFormData().get(language, PAGE_ID_FORM_FIELD).get();
-        if (pageId instanceof String) {
-            String id = (String) pageId;
-            if (!id.isEmpty()) {
-                return id;
-            }
+        if (pageId instanceof String id && !id.isEmpty()) {
+            return id;
         }
         return null;
     }
@@ -74,6 +76,10 @@ public class FsPageCreator {
         TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
             @Override
             public boolean accept(Page page) {
+                if (!EcomId.hasPageIdField(page)) {
+                    return false;
+                }
+                
                 return Objects.equals(id, getPageId(page, language));
             }
         };

@@ -2,6 +2,7 @@ package to.be.renamed.dap.category;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomCategory;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.category.aspects.EcomCategoryDataTemplating;
 import to.be.renamed.dap.category.aspects.EcomCategoryJsonSupporting;
@@ -29,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -60,7 +63,7 @@ public class EcomCategoryDataAccessSession implements DataAccessSession<EcomCate
     @Override
     public @NotNull EcomCategory getData(@NotNull String identifier) throws NoSuchElementException {
         List<EcomCategory> data = getData(Collections.singletonList(identifier));
-        if (data.isEmpty()) {
+        if (data.get(0) == null) {
             throw new NoSuchElementException("Could not resolve id: " + identifier);
         }
         return data.get(0);
@@ -68,7 +71,9 @@ public class EcomCategoryDataAccessSession implements DataAccessSession<EcomCate
 
     @Override
     public @NotNull List<EcomCategory> getData(@NotNull Collection<String> identifiers) {
-        return resolve(identifiers);
+        final List<EcomCategory> resolvedCategories = resolve(identifiers);
+        final Map<String, EcomCategory> categoriesMap = resolvedCategories.stream().collect(Collectors.toMap(EcomId::getId, category -> category));
+        return identifiers.stream().map(identifier -> categoriesMap.getOrDefault(identifier, null)).collect(Collectors.toList());
     }
 
     @Override

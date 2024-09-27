@@ -62,6 +62,10 @@ public class EcomDapUtilities {
 
             @Override
             public boolean accept(Page page) {
+                if (!EcomId.hasPageIdField(page)) {
+                    return false;
+                }
+
                 return bridgeItems.containsKey(EcomId.getPageId(page, null));
             }
         };
