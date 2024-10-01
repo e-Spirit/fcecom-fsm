@@ -13,11 +13,12 @@ import static de.espirit.common.base.Logging.logInfo;
 /**
  * A class for displaying the result of a bridge test.
  * It holds all necessary information to display a
- *  successful run, but also any problem occurred in a request.
+ * successful run, but also any problem occurred in a request.
  * With this class it is possible to transfer the necessary information
- *  between the Server plugin and the ServerManager interface.
+ * between the Server plugin and the ServerManager interface.
  */
 public class BridgeTestResult implements Serializable {
+
     private static final long serialVersionUID = -8311754019008068549L;
 
     /**
@@ -153,5 +154,81 @@ public class BridgeTestResult implements Serializable {
         }
 
         return msg.toString();
+    }
+
+    public String minimalSummary() {
+        StringBuilder msg = new StringBuilder();
+
+        if (httpMethod != null) {
+            msg.append(httpMethod).append(" ");
+        }
+        if (url != null) {
+            msg.append(url);
+        }
+        if (statusText != null) {
+            msg.append(" · ").append(statusText);
+        }
+
+        return msg.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof final BridgeTestResult bridgeTestResult)) {
+            return false;
+        }
+
+        // Deprecated
+        if (deprecated != bridgeTestResult.deprecated) {
+            return false;
+        }
+
+        // Result
+        if (taskResult != bridgeTestResult.taskResult) {
+            return false;
+        }
+
+        // Errors
+        if (!Objects.equals(parsingError, bridgeTestResult.parsingError)) {
+            return false;
+        }
+        if (!Objects.equals(errorResponse, bridgeTestResult.errorResponse)) {
+            return false;
+        }
+
+        // Request
+        if (!Objects.equals(httpMethod, bridgeTestResult.httpMethod)) {
+            return false;
+        }
+        if (!Objects.equals(url, bridgeTestResult.url)) {
+            return false;
+        }
+        if (!Objects.equals(projectUuid, bridgeTestResult.projectUuid)) {
+            return false;
+        }
+
+        // Response
+        if (status != bridgeTestResult.status) {
+            return false;
+        }
+        if (!Objects.equals(statusText, bridgeTestResult.statusText)) {
+            return false;
+        }
+
+        // Exception
+        if (!Objects.equals(exceptionMessage, bridgeTestResult.exceptionMessage)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(deprecated, taskResult, parsingError, errorResponse, httpMethod, url, projectUuid, status, statusText, exceptionMessage);
     }
 }

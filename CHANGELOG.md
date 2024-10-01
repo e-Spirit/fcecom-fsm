@@ -1,3 +1,9 @@
+## [3.15.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.14.1...v3.15.0) (2024-10-01)
+
+### Changes
+
+* Added a new automated test connection feature, accessible via an executable.
+
 ## [3.14.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.14.0...v3.14.1) (2024-09-27)
 
 ### Changes

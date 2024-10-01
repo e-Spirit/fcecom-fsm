@@ -1,8 +1,12 @@
 package to.be.renamed.bridge;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class TestConnectionRequest implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -2912834619367127011L;
 
     private final String httpMethod;
     private final String url;
