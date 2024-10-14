@@ -9,9 +9,11 @@ import to.be.renamed.fspage.FsPageCreator;
 import to.be.renamed.module.ProjectAppHelper;
 import to.be.renamed.module.ServiceFactory;
 import com.espirit.moddev.components.annotations.PublicComponent;
+
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.script.Executable;
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
@@ -22,7 +24,8 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Objects;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Create Reference Page", displayName = ProjectAppHelper.MODULE_NAME + " - Executable: Create Reference Page")
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Create Reference Page", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                 + " - Executable: Create Reference Page")
 public class CreateReferencePageExecutable extends ExecutableUtilities implements Executable {
 
     private static final String STOREFRONT_URL_PARAM = "storeFrontUrl";

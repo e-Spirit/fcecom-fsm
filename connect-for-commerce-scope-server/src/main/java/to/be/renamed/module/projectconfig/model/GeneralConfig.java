@@ -27,8 +27,9 @@ public class GeneralConfig implements Serializable {
 
     /**
      * Creates a general configuration
-     * @param ccExtensionsUrl URL to load the ContentCreator Extensions from
-     * @param useCCExtensions Whether to use ContentCreator Extensions
+     *
+     * @param ccExtensionsUrl           URL to load the ContentCreator Extensions from
+     * @param useCCExtensions           Whether to use ContentCreator Extensions
      * @param disableBridgePageCreation Flag to disable bride page creation
      */
     public GeneralConfig(String ccExtensionsUrl, Boolean useCCExtensions, Boolean disableBridgePageCreation) {
@@ -40,8 +41,9 @@ public class GeneralConfig implements Serializable {
     /**
      * Creates a general config from strings, uses false if strings are not parseable.
      * Needed when reading values from file.
-     * @param ccExtensionsUrlString URL to load the ContentCreator Extensions from
-     * @param useCCExtensionsString Whether to use ContentCreator Extensions
+     *
+     * @param ccExtensionsUrlString           URL to load the ContentCreator Extensions from
+     * @param useCCExtensionsString           Whether to use ContentCreator Extensions
      * @param disableBridgePageCreationString Flag to disable bride page creation
      * @return A general configuration
      */
@@ -63,7 +65,8 @@ public class GeneralConfig implements Serializable {
 
     @Override
     public String toString() {
-        return format("{ccExtensionsUrl: %s, useCCExtensions: %s, disableBridgePageCreation: %s}", ccExtensionsUrl, useCCExtensions, disableBridgePageCreation);
+        return format("{ccExtensionsUrl: %s, useCCExtensions: %s, disableBridgePageCreation: %s}", ccExtensionsUrl, useCCExtensions,
+                      disableBridgePageCreation);
     }
 
     @Override
@@ -78,8 +81,8 @@ public class GeneralConfig implements Serializable {
 
         GeneralConfig that = (GeneralConfig) o;
         return Objects.equals(getCcExtensionsUrl(), that.getCcExtensionsUrl()) &&
-                Objects.equals(useCCExtensions, that.useCCExtensions) &&
-                Objects.equals(disableBridgePageCreation, that.disableBridgePageCreation);
+               Objects.equals(useCCExtensions, that.useCCExtensions) &&
+               Objects.equals(disableBridgePageCreation, that.disableBridgePageCreation);
     }
 
     @Override

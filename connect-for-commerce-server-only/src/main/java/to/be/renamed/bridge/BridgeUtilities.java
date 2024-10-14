@@ -1,12 +1,15 @@
 package to.be.renamed.bridge;
 
 import to.be.renamed.bridge.client.Json;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import de.espirit.common.base.Logging;
+
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONObject;
 
@@ -15,7 +18,9 @@ import java.util.Map;
 import static java.lang.String.format;
 
 public final class BridgeUtilities {
-    private BridgeUtilities() {}
+
+    private BridgeUtilities() {
+    }
 
     public static JSONObject toJSONObject(JsonObject input) {
         JSONObject jsonObject = new JSONObject();
@@ -42,8 +47,9 @@ public final class BridgeUtilities {
         } else if (input instanceof JSONObject) {
             JsonObject jsonObject = new JsonObject();
             JSONObject object = (JSONObject) input;
-            for (String key : object.keySet())
+            for (String key : object.keySet()) {
                 jsonObject.add(key, toJsonElement(object.get(key)));
+            }
             return jsonObject;
         } else if (input instanceof Boolean) {
             return new JsonPrimitive((Boolean) input);
@@ -60,8 +66,9 @@ public final class BridgeUtilities {
             ((Map<?, ?>) input).forEach((key, value) -> jsonObject.add(String.valueOf(key), toJsonElement(value)));
             return jsonObject;
         } else {
-            if (input != null)
+            if (input != null) {
                 Logging.logWarning(format("Unable to transform %s (%s)", input, input.getClass().getName()), Json.class);
+            }
             return JsonNull.INSTANCE;
         }
     }

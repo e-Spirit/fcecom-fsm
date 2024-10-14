@@ -98,7 +98,8 @@ public class EcomContentDataAccessSession implements DataAccessSession<EcomConte
         try {
             return bridgeService.getContent(identifiers, scope.getLang());
         } catch (BridgeConnectionException e) {
-            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
+                             this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
             return Collections.emptyList();
         }

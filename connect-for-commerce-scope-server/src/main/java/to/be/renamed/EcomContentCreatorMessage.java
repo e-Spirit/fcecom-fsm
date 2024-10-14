@@ -7,6 +7,7 @@ import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.error.ErrorCode;
 
 import com.google.common.base.Strings;
+
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 import static java.text.MessageFormat.format;
 
 class EcomContentCreatorMessage {
+
     private static final String ERROR_CODES_BUNDLE_NAME = "ErrorCodes";
     private final Map<String, Object> message = new HashMap<>();
 
@@ -70,7 +72,7 @@ class EcomContentCreatorMessage {
             if (!Strings.isNullOrEmpty(loaderPath)) {
                 Objects.requireNonNull(broker.requireSpecialist(OperationAgent.TYPE)
                                            .getOperation(ClientScriptOperation.TYPE))
-                        .perform("() => (FCECOM_API.applyMessage(" + json + "), 1)", false);
+                    .perform("() => (FCECOM_API.applyMessage(" + json + "), 1)", false);
             } else {
                 String errorCode = ErrorCode.MISSING_CC_EXTENSION.get();
                 EcomConnectScope scope = EcomConnectScope.create(broker);
@@ -78,7 +80,8 @@ class EcomContentCreatorMessage {
                 try {
                     errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME, scope.getDisplayLanguage().getLocale());
                 } catch (MissingResourceException e) {
-                    Logging.logWarning(format("Could not find resource bundle '%s' for locale '%s', using default bundle", ERROR_CODES_BUNDLE_NAME, scope.getDisplayLanguage().getLocale().toString()), e, EcomContentCreatorMessage.class);
+                    Logging.logWarning(format("Could not find resource bundle '%s' for locale '%s', using default bundle", ERROR_CODES_BUNDLE_NAME,
+                                              scope.getDisplayLanguage().getLocale().toString()), e, EcomContentCreatorMessage.class);
                     errorCodes = ResourceBundle.getBundle(ERROR_CODES_BUNDLE_NAME);
                 }
 

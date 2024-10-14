@@ -1,3 +1,9 @@
+## [3.15.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.0...v3.15.1) (2024-10-14)
+
+### Changes
+
+* Applied consistent formatting across all files.
+
 ## [3.15.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.14.1...v3.15.0) (2024-10-01)
 
 ### Changes

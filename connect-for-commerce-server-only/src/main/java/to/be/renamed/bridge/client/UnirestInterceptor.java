@@ -1,6 +1,7 @@
 package to.be.renamed.bridge.client;
 
 import de.espirit.common.base.Logging;
+
 import kong.unirest.Config;
 import kong.unirest.FailedResponse;
 import kong.unirest.HttpRequest;
@@ -30,8 +31,8 @@ public class UnirestInterceptor implements Interceptor {
         }
 
         final StringBuilder logMessage = new StringBuilder(format("%s %s - %s %s",
-                request.getHttpMethod().name(), request.getUrl(),
-                response.getStatus(), response.getStatusText()));
+                                                                  request.getHttpMethod().name(), request.getUrl(),
+                                                                  response.getStatus(), response.getStatusText()));
 
         response.getParsingError().ifPresentOrElse(parsingError -> {
             Logging.logError(logMessage + "\n\t" + parsingError.getMessage(), parsingError, getClass());
@@ -43,8 +44,8 @@ public class UnirestInterceptor implements Interceptor {
     @Override
     public HttpResponse<?> onFail(Exception exception, HttpRequestSummary request, Config config) {
         Logging.logError(format("%s %s%n\t%s",
-                request.getHttpMethod().name(), request.getUrl(),
-                exception.getMessage()), exception, getClass());
+                                request.getHttpMethod().name(), request.getUrl(),
+                                exception.getMessage()), exception, getClass());
 
         return new FailedResponse<>(exception);
     }

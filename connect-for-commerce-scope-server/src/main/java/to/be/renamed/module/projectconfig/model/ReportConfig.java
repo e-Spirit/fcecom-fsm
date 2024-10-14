@@ -30,8 +30,9 @@ public class ReportConfig implements Serializable {
 
     /**
      * Creates a report configuration.
+     *
      * @param categoryReportCategoryLevel Category levels for category report filter
-     * @param productReportCategoryLevel Category levels for product report filter
+     * @param productReportCategoryLevel  Category levels for product report filter
      */
     public ReportConfig(int categoryReportCategoryLevel, int productReportCategoryLevel) {
         this.categoryReportCategoryLevel = Objects.requireNonNullElse(categoryReportCategoryLevel, DEFAULT_CATEGORY_LEVELS_FOR_CATEGORY_REPORT);
@@ -42,8 +43,9 @@ public class ReportConfig implements Serializable {
      * Creates a report configuration from strings, uses default values when input is not parseable to int.
      * (categoryReportCategoryLevel = 3, productReportCategoryLevel = 3)
      * Needed when reading values from file.
+     *
      * @param categoryReportCategoryLevel Category levels for category report filter as string
-     * @param productReportCategoryLevel Category levels for product report filter
+     * @param productReportCategoryLevel  Category levels for product report filter
      * @return A report configuration
      */
     public static ReportConfig fromStrings(String categoryReportCategoryLevel, String productReportCategoryLevel) {
@@ -53,15 +55,17 @@ public class ReportConfig implements Serializable {
         try {
             categoryReportCatLevel = parseInt(categoryReportCategoryLevel);
         } catch (NumberFormatException nfe) {
-            Logging.logWarning("Unable to parse configured category level for category search dropdown. Using default value '" + DEFAULT_CATEGORY_LEVELS_FOR_CATEGORY_REPORT + "'.",
-                    nfe, ReportConfig.class);
+            Logging.logWarning("Unable to parse configured category level for category search dropdown. Using default value '"
+                               + DEFAULT_CATEGORY_LEVELS_FOR_CATEGORY_REPORT + "'.",
+                               nfe, ReportConfig.class);
         }
 
         try {
             productReportCatLevel = parseInt(productReportCategoryLevel);
         } catch (NumberFormatException nfe) {
-            Logging.logWarning("Unable to parse configured category level for product search dropdown. Using default value '" + DEFAULT_CATEGORY_LEVELS_FOR_CATEGORY_REPORT + "'.",
-                    nfe, ReportConfig.class);
+            Logging.logWarning("Unable to parse configured category level for product search dropdown. Using default value '"
+                               + DEFAULT_CATEGORY_LEVELS_FOR_CATEGORY_REPORT + "'.",
+                               nfe, ReportConfig.class);
         }
 
         return new ReportConfig(categoryReportCatLevel, productReportCatLevel);
@@ -99,7 +103,8 @@ public class ReportConfig implements Serializable {
         }
 
         ReportConfig that = (ReportConfig) o;
-        return getCategoryReportCategoryLevel() == that.getCategoryReportCategoryLevel() && getProductReportCategoryLevel() == that.getProductReportCategoryLevel();
+        return getCategoryReportCategoryLevel() == that.getCategoryReportCategoryLevel()
+               && getProductReportCategoryLevel() == that.getProductReportCategoryLevel();
     }
 
     @Override

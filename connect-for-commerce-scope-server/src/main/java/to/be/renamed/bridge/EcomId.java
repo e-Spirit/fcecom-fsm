@@ -75,9 +75,9 @@ public abstract class EcomId implements Serializable {
     /**
      * Creates an EcomId from values.
      *
-     * @param type The type of the EcomId
-     * @param id The id from the shop system
-     * @param lang The current language
+     * @param type       The type of the EcomId
+     * @param id         The id from the shop system
+     * @param lang       The current language
      * @param pageRefUid The Uid of the pageRef
      * @return EcomId internal Object to describe Product, Category or Content
      */
@@ -116,7 +116,7 @@ public abstract class EcomId implements Serializable {
     /**
      * Retrieves the page id from the given page for the specified language
      *
-     * @param page the page to retrieve the page id from
+     * @param page     the page to retrieve the page id from
      * @param language the language for which the page id is retrieved
      * @return the page id as a string or null if the page id is missing or invalid
      */

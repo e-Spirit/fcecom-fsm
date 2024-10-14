@@ -10,7 +10,6 @@ import de.espirit.firstspirit.client.plugin.dataaccess.aspects.transfer.Transfer
 import java.awt.datatransfer.DataFlavor;
 
 /**
- *
  * @author mikula
  */
 public class EcomProductTransferHandling implements TransferHandling<EcomProduct> {

@@ -138,32 +138,32 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
     public static void markReportIcon(String ecomId, String icon, SpecialistsBroker broker) {
         if (broker.requestSpecialist(WebeditUiAgent.TYPE) != null) {
             String javascript = minifyJS("""
-                /**
-                 * Finds all elements in the entire page matching `selector`, even if they are in shadowRoots.
-                 * Just like `querySelectorAll`, but automatically expand on all child `shadowRoot` elements.
-                 * Original code by [Domi](https://stackoverflow.com/users/2228771), retrieved from
-                 * @see https://stackoverflow.com/a/71692555/2228771.
-                 * @license Licensed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
-                 */
-                const querySelectorAllShadows = (selector, el = document.body) => {
-                    // recurse on childShadows
-                    const childShadows = Array.from(el.querySelectorAll('*')).map(el => el.shadowRoot).filter(Boolean);
-                    const childResults = childShadows.map(child => querySelectorAllShadows(selector, child));
-                
-                    // fuse all results into singular, flat array
-                    const result = Array.from(el.querySelectorAll(selector));
-                    return result.concat(childResults).flat();
-                }
-                
-                const pageId = '%s'
-                const icon = '%s'
-                
-                const markReportIcon = () => {
-                    querySelectorAllShadows('.report-entry-wrapper[data-identifier="' + pageId + '"] img.report-entry-icon')
-                        .forEach((reportItemIcon) => reportItemIcon.setAttribute('src', `${icon}`))
-                }
-                
-                setTimeout(markReportIcon, 500)""".formatted(ecomId, icon));
+                                             /**
+                                              * Finds all elements in the entire page matching `selector`, even if they are in shadowRoots.
+                                              * Just like `querySelectorAll`, but automatically expand on all child `shadowRoot` elements.
+                                              * Original code by [Domi](https://stackoverflow.com/users/2228771), retrieved from
+                                              * @see https://stackoverflow.com/a/71692555/2228771.
+                                              * @license Licensed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+                                              */
+                                             const querySelectorAllShadows = (selector, el = document.body) => {
+                                                 // recurse on childShadows
+                                                 const childShadows = Array.from(el.querySelectorAll('*')).map(el => el.shadowRoot).filter(Boolean);
+                                                 const childResults = childShadows.map(child => querySelectorAllShadows(selector, child));
+                                                             
+                                                 // fuse all results into singular, flat array
+                                                 const result = Array.from(el.querySelectorAll(selector));
+                                                 return result.concat(childResults).flat();
+                                             }
+                                                             
+                                             const pageId = '%s'
+                                             const icon = '%s'
+                                                             
+                                             const markReportIcon = () => {
+                                                 querySelectorAllShadows('.report-entry-wrapper[data-identifier="' + pageId + '"] img.report-entry-icon')
+                                                     .forEach((reportItemIcon) => reportItemIcon.setAttribute('src', `${icon}`))
+                                             }
+                                                             
+                                             setTimeout(markReportIcon, 500)""".formatted(ecomId, icon));
             Objects.requireNonNull(broker.requireSpecialist(OperationAgent.TYPE).getOperation(ClientScriptOperation.TYPE))
                 .perform(javascript, false);
         }

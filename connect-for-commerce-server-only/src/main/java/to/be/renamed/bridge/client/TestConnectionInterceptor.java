@@ -1,6 +1,7 @@
 package to.be.renamed.bridge.client;
 
 import to.be.renamed.module.projectconfig.connectiontest.BridgeTestResult;
+
 import kong.unirest.Config;
 import kong.unirest.HttpRequestSummary;
 import kong.unirest.HttpResponse;
@@ -18,10 +19,10 @@ public class TestConnectionInterceptor extends UnirestInterceptor {
         super.onResponse(response, request, config);
 
         this.result = new BridgeTestResult()
-                .setRequestData(request.getHttpMethod().name(), request.getUrl(),
-                                config.getDefaultHeaders().get(PROJECT_ID_HEADER)
-                                    .stream().findFirst().orElse(null))
-                .setResponseData(response.getStatus(), response.getStatusText());
+            .setRequestData(request.getHttpMethod().name(), request.getUrl(),
+                            config.getDefaultHeaders().get(PROJECT_ID_HEADER)
+                                .stream().findFirst().orElse(null))
+            .setResponseData(response.getStatus(), response.getStatusText());
 
         response.getParsingError().ifPresentOrElse(parsingError -> {
             this.result.setParsingError(parsingError.getOriginalBody());
@@ -43,9 +44,9 @@ public class TestConnectionInterceptor extends UnirestInterceptor {
     @Override
     public HttpResponse<?> onFail(Exception exception, HttpRequestSummary request, Config config) {
         this.result = new BridgeTestResult()
-                .setRequestData(request.getHttpMethod().name(), request.getUrl(),
-                                config.getDefaultHeaders().get(PROJECT_ID_HEADER).stream().findFirst().orElse(null))
-                .setException(exception);
+            .setRequestData(request.getHttpMethod().name(), request.getUrl(),
+                            config.getDefaultHeaders().get(PROJECT_ID_HEADER).stream().findFirst().orElse(null))
+            .setException(exception);
 
         return super.onFail(exception, request, config);
     }

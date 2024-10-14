@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 public class EcomTestConnectionResult extends JDialog {
+
     private static final long serialVersionUID = -3375713240936359305L;
     private final EcomTestConnectionLog logDisplayComponent;
 

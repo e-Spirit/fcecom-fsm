@@ -17,7 +17,7 @@ public class EcomCategory extends EcomId implements Serializable {
     private final List<EcomCategory> children;
 
     public EcomCategory(Json json) {
-       this(json, null);
+        this(json, null);
     }
 
     public EcomCategory(String id, String type, String lang, String pageRefUid, String label) {
@@ -33,12 +33,12 @@ public class EcomCategory extends EcomId implements Serializable {
 
         if (hasChildren(json)) {
             (json.getValue().get(CHILDREN_KEY).getAsJsonArray())
-                    .forEach(child -> {
-                        EcomCategory category = new EcomCategory(new Json(child), this);
-                        if (category.isValid()) {
-                            children.add(category);
-                        }
-                    });
+                .forEach(child -> {
+                    EcomCategory category = new EcomCategory(new Json(child), this);
+                    if (category.isValid()) {
+                        children.add(category);
+                    }
+                });
         }
     }
 

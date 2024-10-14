@@ -27,7 +27,8 @@ public class EcomDapUtilities {
     public static final String FILTER_CATEGORY = "categoryId";
     public static final String FILTER_PARENT_ID = "parentId";
 
-    private EcomDapUtilities() {}
+    private EcomDapUtilities() {
+    }
 
     /**
      * Opens an error dialog with the title "Error while connecting to bridge" in the Content Creator.

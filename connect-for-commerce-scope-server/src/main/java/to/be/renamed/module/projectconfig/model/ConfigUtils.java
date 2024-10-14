@@ -9,10 +9,12 @@ import java.util.Objects;
  */
 public final class ConfigUtils {
 
-    private ConfigUtils() {}
+    private ConfigUtils() {
+    }
 
     /**
      * Removes a trailing slash in present
+     *
      * @param input Input string
      * @return The input without the trailing slash
      */

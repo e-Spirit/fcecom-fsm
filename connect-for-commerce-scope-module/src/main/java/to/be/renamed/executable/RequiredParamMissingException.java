@@ -3,6 +3,7 @@ package to.be.renamed.executable;
 import static java.lang.String.format;
 
 public class RequiredParamMissingException extends IllegalArgumentException {
+
     /**
      * Creates a RequiredParamMissingException
      *

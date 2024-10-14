@@ -16,6 +16,7 @@ public class GeneralConfigurationPanel extends AbstractConfigurationPanel<Genera
 
     /**
      * Creates a configuration panel for the general related configuration tab.
+     *
      * @param generalConfig The current general configuration values
      */
     public GeneralConfigurationPanel(GeneralConfig generalConfig) {
@@ -33,10 +34,11 @@ public class GeneralConfigurationPanel extends AbstractConfigurationPanel<Genera
 
     /**
      * Provides the GeneralConfig based on the panels input fields.
+     *
      * @return The values from the panels input fields packed as a GeneralConfig object.
      */
     @Override
     GeneralConfig getValue() {
-        return new GeneralConfig(ccExtensionsUrlTextField.getText(),useCCExtensionsCheckBox.isSelected(), disableBridgePageCreation.isSelected());
+        return new GeneralConfig(ccExtensionsUrlTextField.getText(), useCCExtensionsCheckBox.isSelected(), disableBridgePageCreation.isSelected());
     }
 }

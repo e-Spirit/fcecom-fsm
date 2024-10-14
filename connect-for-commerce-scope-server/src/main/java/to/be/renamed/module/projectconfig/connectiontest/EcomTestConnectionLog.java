@@ -21,6 +21,7 @@ import static de.espirit.common.tools.Strings.isEmpty;
 import static java.awt.Color.WHITE;
 
 public class EcomTestConnectionLog extends JScrollPane {
+
     private static final long serialVersionUID = 4337670428843842562L;
     private final JTextPane log;
 
@@ -98,7 +99,7 @@ public class EcomTestConnectionLog extends JScrollPane {
         final EcomTaskResult taskResult = Objects.requireNonNullElse(testResult.getTaskResult(), UNKNOWN);
 
         inColor(taskResult.getColor(), labels.getString("testConnection.status." + taskResult.name())
-                + " · " + labels.getString("testConnection.summary." + taskResult.name())).newLine();
+                                       + " · " + labels.getString("testConnection.summary." + taskResult.name())).newLine();
 
         if (testResult.getExceptionMessage() != null) {
             warning(testResult.getExceptionMessage()).newLine();

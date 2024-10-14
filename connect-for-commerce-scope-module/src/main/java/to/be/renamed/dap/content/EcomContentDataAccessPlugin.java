@@ -29,6 +29,7 @@ import static java.lang.String.format;
 @PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - ContentPages Data Access Plugin", displayName = ProjectAppHelper.MODULE_NAME
                                                                                                            + " - Data Access Plugin: ContentPages")
 public class EcomContentDataAccessPlugin implements DataAccessPlugin<EcomContent> {
+
     private static final Class<?> logger = EcomContentDataAccessPlugin.class;
     private DataAccessAspectMap dataAccessAspects;
     private EcomConnectScope scope;
@@ -79,7 +80,8 @@ public class EcomContentDataAccessPlugin implements DataAccessPlugin<EcomContent
         try {
             return bridgeService.hasContent();
         } catch (BridgeConnectionException e) {
-            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e, this.getClass());
+            Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
+                             this.getClass());
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
         }
         return false;

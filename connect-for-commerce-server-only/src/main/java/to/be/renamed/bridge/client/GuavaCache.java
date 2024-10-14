@@ -1,10 +1,13 @@
 package to.be.renamed.bridge.client;
 
 import to.be.renamed.module.projectconfig.model.CacheConfig;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
+
 import de.espirit.common.base.Logging;
+
 import kong.unirest.HttpResponse;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +24,7 @@ public class GuavaCache implements kong.unirest.Cache {
 
     /**
      * Cache for BridgeRequests, configured through Project App Config.
+     *
      * @param cacheConfig Configuration for Cache Size and Age
      */
     public GuavaCache(CacheConfig cacheConfig) {
@@ -28,12 +32,12 @@ public class GuavaCache implements kong.unirest.Cache {
         final int cacheSize = cacheConfig.getCacheSize();
 
         this.regular = CacheBuilder.newBuilder().maximumSize(cacheSize)
-                .expireAfterWrite(cacheAge, SECONDS)
-                .removalListener(this::log).build();
+            .expireAfterWrite(cacheAge, SECONDS)
+            .removalListener(this::log).build();
 
         this.async = CacheBuilder.newBuilder().maximumSize(cacheSize)
-                .expireAfterWrite(cacheAge, SECONDS)
-                .removalListener(this::log).build();
+            .expireAfterWrite(cacheAge, SECONDS)
+            .removalListener(this::log).build();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package to.be.renamed.bridge;
 
 import to.be.renamed.bridge.client.Json;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -27,7 +28,8 @@ public class EcomProduct extends EcomId implements Serializable {
         categoryId = json.get("categoryId");
     }
 
-    public EcomProduct(String id, String type, String lang, String pageRefUid, String label, String extract, String thumbnail, String image, String categoryId) {
+    public EcomProduct(String id, String type, String lang, String pageRefUid, String label, String extract, String thumbnail, String image,
+                       String categoryId) {
         super(id, type, lang, pageRefUid, label);
         this.extract = extract;
         this.thumbnail = thumbnail;

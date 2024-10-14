@@ -75,7 +75,7 @@ public class EcomElement {
                 if (!EcomId.hasPageIdField(page)) {
                     return false;
                 }
-                
+
                 return Objects.equals(ecomId.getId(), EcomId.getPageId(page, language));
             }
         };

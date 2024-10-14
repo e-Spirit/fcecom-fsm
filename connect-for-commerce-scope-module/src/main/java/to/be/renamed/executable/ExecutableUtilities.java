@@ -46,13 +46,13 @@ public abstract class ExecutableUtilities {
     }
 
 
-
     public Map<String, Object> getNestedParametersMap(String parameterName) {
         if (parameters != null && parameters.containsKey(parameterName)) {
             Object value = parameters.get(parameterName);
             if (value instanceof Map<?, ?>) {
-                if (!((Map<?, ?>) value).isEmpty())
+                if (!((Map<?, ?>) value).isEmpty()) {
                     return (Map<String, Object>) value;
+                }
             } else {
                 throw new InvalidNestedMapTypeException(parameterName);
             }

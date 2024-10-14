@@ -23,6 +23,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
     /**
      * Creates a configuration panel for the project app configuration.
      * Combines general, bridge and report tabs.
+     *
      * @param projectAppConfiguration The current configuration values
      */
     public ConfigurationAppPanel(final ProjectAppConfiguration projectAppConfiguration, ProjectEnvironment projectEnvironment) {
@@ -48,6 +49,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
 
     /**
      * Provides the ProjectAppConfiguration based on the panels input fields of each tab.
+     *
      * @return The values from the panels input fields of each tab packed as a ProjectAppConfiguration object.
      */
     @Override
@@ -56,6 +58,6 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
         final BridgeConfig bridgeConfigValue = bridgeTab.getValue();
         final ReportConfig reportConfigValue = reportTab.getValue();
 
-        return new ProjectAppConfiguration(generalConfigValue, bridgeConfigValue,reportConfigValue);
+        return new ProjectAppConfiguration(generalConfigValue, bridgeConfigValue, reportConfigValue);
     }
 }

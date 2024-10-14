@@ -23,9 +23,10 @@ public class ProjectAppConfiguration implements Serializable {
 
     /**
      * Creates a project app configuration.
+     *
      * @param generalConfig General configuration
-     * @param bridgeConfig Bridge configuration
-     * @param reportConfig Report configuration
+     * @param bridgeConfig  Bridge configuration
+     * @param reportConfig  Report configuration
      */
     public ProjectAppConfiguration(GeneralConfig generalConfig, BridgeConfig bridgeConfig, ReportConfig reportConfig) {
         this.generalConfig = Objects.requireNonNullElse(generalConfig, new GeneralConfig());
@@ -62,8 +63,8 @@ public class ProjectAppConfiguration implements Serializable {
 
         ProjectAppConfiguration that = (ProjectAppConfiguration) o;
         return Objects.equals(getGeneralConfig(), that.getGeneralConfig()) &&
-                Objects.equals(getBridgeConfig(), that.getBridgeConfig()) &&
-                Objects.equals(getReportConfig(), that.getReportConfig());
+               Objects.equals(getBridgeConfig(), that.getBridgeConfig()) &&
+               Objects.equals(getReportConfig(), that.getReportConfig());
     }
 
     @Override

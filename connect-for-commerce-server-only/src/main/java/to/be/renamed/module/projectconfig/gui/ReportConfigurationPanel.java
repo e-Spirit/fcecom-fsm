@@ -14,6 +14,7 @@ public class ReportConfigurationPanel extends AbstractConfigurationPanel<ReportC
 
     /**
      * Creates a configuration panel for the report related configuration tab.
+     *
      * @param reportConfig The current report configuration values
      */
     public ReportConfigurationPanel(ReportConfig reportConfig) {
@@ -21,12 +22,13 @@ public class ReportConfigurationPanel extends AbstractConfigurationPanel<ReportC
         categoryReportCategoryLevelTextField = new JTextField(reportConfig.getCategoryReportCategoryLevelAsString(), TEXTFIELD_COLUMNS);
         addComponent(categoryReportCategoryLevelTextField, Label.REPORT_CATEGORY_LEVELS);
 
-        productReportCategoryLevelTextField = new JTextField(reportConfig.getProductReportCategoryLevelAsString(),TEXTFIELD_COLUMNS);
+        productReportCategoryLevelTextField = new JTextField(reportConfig.getProductReportCategoryLevelAsString(), TEXTFIELD_COLUMNS);
         addComponent(productReportCategoryLevelTextField, Label.REPORT_PRODUCT_LEVELS);
     }
 
     /**
      * Provides the ReportConfig based on the panels input fields.
+     *
      * @return The values from the panels input fields packed as a ReportConfig object.
      */
     @Override

@@ -4,6 +4,7 @@ package to.be.renamed.bridge;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Objects;
  * Comes with helper methods to create json from the data.
  */
 public class EcomElementDTO implements Serializable {
+
     private static final long serialVersionUID = -5056032127227374769L;
     private final String template;
     private final boolean released;
@@ -24,11 +26,12 @@ public class EcomElementDTO implements Serializable {
 
     /**
      * Creates an EcomElementDTO from the given values.
+     *
      * @param template The page templates uid.
      * @param released Boolean which marks if the page will be released in the shop system.
-     * @param pageUid The FirstSpirit PageUid
-     * @param label The label of the page as a map with lang abbreviation as key and label as value.
-     * @param path The path of the page as a map with lang abbreviation as key and path as value.
+     * @param pageUid  The FirstSpirit PageUid
+     * @param label    The label of the page as a map with lang abbreviation as key and label as value.
+     * @param path     The path of the page as a map with lang abbreviation as key and path as value.
      */
     public EcomElementDTO(String template, boolean released, String pageUid, Map<String, String> label, Map<String, String> path) {
         this.template = template;
@@ -41,6 +44,7 @@ public class EcomElementDTO implements Serializable {
     /**
      * Creates a FirstSpirit JsonObject representation of the EcomElementDTO.
      * Used as request body for creating and updating a content page via the bridge.
+     *
      * @return FirstSpirit JsonObject representation of the EcomElementDTO
      */
     public JsonObject getJsonModel() {
@@ -56,6 +60,7 @@ public class EcomElementDTO implements Serializable {
 
     /**
      * Gives the first value rom a map with strings as key and value if present.
+     *
      * @param input A map with strings as key and value.
      * @return The first value of the map or null if no value is present.
      */
@@ -73,6 +78,7 @@ public class EcomElementDTO implements Serializable {
 
     /**
      * Creates a FirstSpirit JsonObject from a map with strings as key and value.
+     *
      * @param input A map with strings as key and value.
      * @return A FirstSpirit JsonObject with the keys and values from the map as keys and values.
      */

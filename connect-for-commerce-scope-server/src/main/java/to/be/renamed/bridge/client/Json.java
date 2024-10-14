@@ -6,6 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import com.google.gson.JsonPrimitive;
+
 import de.espirit.common.base.Logging;
 import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.json.values.JsonBooleanValue;
@@ -65,8 +66,9 @@ public class Json {
             ((Map<?, ?>) input).forEach((key, value) -> jsonObject.add(String.valueOf(key), asJsonElement(value)));
             return jsonObject;
         } else {
-            if (input != null)
+            if (input != null) {
                 Logging.logWarning(format("Unable to transform %s (%s)", input, input.getClass().getName()), Json.class);
+            }
             return JsonNull.INSTANCE;
         }
     }
@@ -87,8 +89,9 @@ public class Json {
                 return JsonNullValue.NULL;
             }
         } else {
-            if (input != null)
+            if (input != null) {
                 Logging.logWarning(format("Unable to transform %s (%s)", input, input.getClass().getName()), Json.class);
+            }
             return JsonNullValue.NULL;
         }
     }

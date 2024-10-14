@@ -3,11 +3,13 @@ package to.be.renamed.module.projectconfig.gui;
 import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstants;
 import info.clearthought.layout.TableLayoutConstraints;
+
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
@@ -15,9 +17,11 @@ import java.util.function.Consumer;
 
 /**
  * Abstract configuration panel with helper functions for creating input fields.
+ *
  * @param <ConfigurationT> The current configuration of the panel
  */
 abstract class AbstractConfigurationPanel<ConfigurationT> {
+
     static final int TEXTFIELD_WIDTH = 80;
     static final int TEXTFIELD_COLUMNS = 30;
     private static final int TEXTFIELD_HEIGHT = 20;
@@ -51,7 +55,8 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
 
     /**
      * Adds the given component with the given label to the panel.
-     * @param component The component to add
+     *
+     * @param component        The component to add
      * @param labelResourceKey The component label resource key
      */
     final void addComponent(final JComponent component, final Label labelResourceKey) {
@@ -65,8 +70,9 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
 
     /**
      * Adds a button with the given label and button action.
+     *
      * @param labelResourceKey The button label resource key
-     * @param action The action to execute when clicking the button
+     * @param action           The action to execute when clicking the button
      */
     final void addButton(final Label labelResourceKey, Consumer<ActionEvent> action) {
         row++;
@@ -79,6 +85,7 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
 
     /**
      * Provides the configuration based on the panels input fields.
+     *
      * @return The values from the panels input fields packed as the configuration object.
      */
     abstract ConfigurationT getValue();

@@ -25,7 +25,8 @@ import java.util.Objects;
 
 import static java.lang.String.format;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Bulk Create Product Pages", displayName = ProjectAppHelper.MODULE_NAME + " - Executable: Bulk Create Product Pages")
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Bulk Create Product Pages", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                     + " - Executable: Bulk Create Product Pages")
 public class BulkCreateProductPagesExecutable extends ExecutableUtilities implements Executable {
 
     protected static final String PARAM_SUBCATEGORY = "bulk_product_page_creation_subcategory";

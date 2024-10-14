@@ -13,6 +13,7 @@ import static java.lang.String.format;
  * Representation of the cache configuration.
  */
 public class CacheConfig implements Serializable {
+
     private static final long serialVersionUID = 969025740620384332L;
     private static final int DEFAULT_CACHE_SIZE = 100;
     private static final int DEFAULT_CACHE_AGE = 5 * 60;
@@ -55,10 +56,10 @@ public class CacheConfig implements Serializable {
             actualCacheSize = parseInt(cacheSize);
         } catch (NumberFormatException nfe) {
             Logging.logWarning(
-                    "Unable to parse configured cache size. Using default value '"
-                            + DEFAULT_CACHE_SIZE
-                            + "'.",
-                    nfe, CacheConfig.class);
+                "Unable to parse configured cache size. Using default value '"
+                + DEFAULT_CACHE_SIZE
+                + "'.",
+                nfe, CacheConfig.class);
         }
 
         if (cacheAge == null) {
@@ -69,8 +70,8 @@ public class CacheConfig implements Serializable {
             actualCacheAge = withinBoundaries(parseDuration(cacheAge));
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException exception) {
             Logging.logWarning(
-                    "Unable to parse configured cache age. Using default value '%d'.".formatted(DEFAULT_CACHE_AGE),
-                    exception, CacheConfig.class);
+                "Unable to parse configured cache age. Using default value '%d'.".formatted(DEFAULT_CACHE_AGE),
+                exception, CacheConfig.class);
         }
 
         return new CacheConfig(actualCacheSize, actualCacheAge);
@@ -102,10 +103,10 @@ public class CacheConfig implements Serializable {
     public String getCacheAgeAsString() {
         final Duration cacheAgeDuration = Duration.ofSeconds(withinBoundaries(cacheAge));
         return format("%02d:%02d:%02d:%02d",
-                cacheAgeDuration.toDaysPart(),
-                cacheAgeDuration.toHoursPart(),
-                cacheAgeDuration.toMinutesPart(),
-                cacheAgeDuration.toSecondsPart());
+                      cacheAgeDuration.toDaysPart(),
+                      cacheAgeDuration.toHoursPart(),
+                      cacheAgeDuration.toMinutesPart(),
+                      cacheAgeDuration.toSecondsPart());
     }
 
     private static int withinBoundaries(int target) {

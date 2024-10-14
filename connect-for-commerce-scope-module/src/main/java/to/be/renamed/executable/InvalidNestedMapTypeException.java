@@ -3,6 +3,7 @@ package to.be.renamed.executable;
 import static java.lang.String.format;
 
 public class InvalidNestedMapTypeException extends RuntimeException {
+
     /**
      * Creates an InvalidNestedMapTypeException
      *

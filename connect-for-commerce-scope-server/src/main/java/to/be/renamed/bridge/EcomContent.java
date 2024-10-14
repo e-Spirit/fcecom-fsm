@@ -4,6 +4,7 @@ import to.be.renamed.bridge.client.Json;
 import to.be.renamed.module.ServiceFactory;
 import to.be.renamed.EcomConnectException;
 import to.be.renamed.EcomConnectScope;
+
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
 
 import java.io.Serializable;
@@ -36,7 +37,8 @@ public class EcomContent extends EcomId implements Serializable {
 
     @Override
     public String toString() {
-        return format("EcomContent: {id: %s, type: %s, lang: %s, pageRefUid: %s, label: %s, extract: %s}", id, type, lang, pageRefUid, label, extract);
+        return format("EcomContent: {id: %s, type: %s, lang: %s, pageRefUid: %s, label: %s, extract: %s}", id, type, lang, pageRefUid, label,
+                      extract);
     }
 
     public void ensureExistence(EcomConnectScope scope) throws EcomConnectException {
@@ -49,9 +51,9 @@ public class EcomContent extends EcomId implements Serializable {
 
                 if (pageId == null) {
                     throw new EcomConnectException(
-                            format(
-                                    "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().toString()));
-                    
+                        format(
+                            "problem creating page%n\tlang: %s%n\tjson: %s", getLang(), element.getEcomElementDTO().getJsonModel().toString()));
+
                 }
                 element.updatePageId(pageId);
                 setId(pageId);

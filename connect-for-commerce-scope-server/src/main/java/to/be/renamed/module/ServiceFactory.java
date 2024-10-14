@@ -24,6 +24,7 @@ public final class ServiceFactory {
 
     /**
      * Gets a {@link ProjectAppConfigurationService} for the project that the given <code>specialistsBroker</code> is bound too.
+     *
      * @param specialistsBroker {@link SpecialistsBroker} that is used to access FirstSpirit and to identify the project for which a service will be returned
      * @return a {@link ProjectAppConfigurationService} for the project that the given <code>specialistsBroker</code> is bound to.
      */
@@ -33,8 +34,9 @@ public final class ServiceFactory {
 
     /**
      * Returns a {@link ProjectAppConfigurationService} for the project identified by the given <code>projectId</code>.
+     *
      * @param specialistsBroker {@link SpecialistsBroker} that is used to access FirstSpirit
-     * @param projectId Id that identifies the project for which a service will be returned
+     * @param projectId         Id that identifies the project for which a service will be returned
      * @return a {@link ProjectAppConfigurationService} for the project identified by the given <code>projectId</code>.
      */
     public static ProjectAppConfigurationService getProjectAppConfigurationService(final SpecialistsBroker specialistsBroker, final long projectId) {
@@ -48,7 +50,8 @@ public final class ServiceFactory {
         }
     }
 
-    private static ProjectAppConfigurationService loadProjectAppConfigurationService(final SpecialistsBroker specialistsBroker, final long projectId) {
+    private static ProjectAppConfigurationService loadProjectAppConfigurationService(final SpecialistsBroker specialistsBroker,
+                                                                                     final long projectId) {
         logDebug("Loading a project app configuration service for project " + projectId + ".");
         final ProjectAppConfigurationService service = load(ProjectAppConfigurationService.class);
 
@@ -59,6 +62,7 @@ public final class ServiceFactory {
 
     /**
      * Gets a {@link BridgeFsService} which executes requests on a bridge instance configured for the project that the given <code>specialistsBroker</code> is bound too.
+     *
      * @param specialistsBroker {@link SpecialistsBroker} that is used to access FirstSpirit and to identify the project for which a service will be returned
      * @return a {@link BridgeFsService} which executes requests on a bridge instance configured for the project that the given <code>specialistsBroker</code> is bound too.
      */
@@ -68,8 +72,9 @@ public final class ServiceFactory {
 
     /**
      * Returns a {@link BridgeFsService} for the project identified by the given <code>projectId</code>.
+     *
      * @param specialistsBroker {@link SpecialistsBroker} that is used to access FirstSpirit
-     * @param projectId Id that identifies the project for which a service will be returned
+     * @param projectId         Id that identifies the project for which a service will be returned
      * @return a {@link BridgeFsService} for the project identified by the given <code>projectId</code>.
      */
     public static BridgeService getBridgeService(final SpecialistsBroker specialistsBroker, final long projectId) {

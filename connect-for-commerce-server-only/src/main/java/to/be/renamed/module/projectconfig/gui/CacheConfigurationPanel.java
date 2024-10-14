@@ -5,6 +5,7 @@ import to.be.renamed.module.projectconfig.model.CacheConfig;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
+
 import java.text.ParseException;
 
 /**
@@ -17,6 +18,7 @@ public class CacheConfigurationPanel extends AbstractConfigurationPanel<CacheCon
 
     /**
      * Creates a configuration panel for the cache related configuration tab.
+     *
      * @param cacheConfig The current cache configuration values
      */
     public CacheConfigurationPanel(CacheConfig cacheConfig) {
@@ -37,6 +39,7 @@ public class CacheConfigurationPanel extends AbstractConfigurationPanel<CacheCon
 
     /**
      * Provides the CacheConfig based on the panels input fields.
+     *
      * @return The values from the panels input fields packed as a CacheConfig object.
      */
     @Override

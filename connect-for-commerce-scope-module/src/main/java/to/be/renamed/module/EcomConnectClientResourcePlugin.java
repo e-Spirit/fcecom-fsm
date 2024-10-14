@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Client Resource Plugin", displayName = ProjectAppHelper.MODULE_NAME + " - Client Resource Plugin")
+@PublicComponent(name = ProjectAppHelper.MODULE_NAME + " - Client Resource Plugin", displayName = ProjectAppHelper.MODULE_NAME
+                                                                                                  + " - Client Resource Plugin")
 public class EcomConnectClientResourcePlugin implements ClientResourcePlugin {
 
     private String loaderPath;

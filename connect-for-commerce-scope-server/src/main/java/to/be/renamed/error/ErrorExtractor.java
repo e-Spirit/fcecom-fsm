@@ -11,10 +11,13 @@ import java.util.List;
  * Utility class for extracting errors from Json bodies
  */
 public final class ErrorExtractor {
-    private ErrorExtractor() {}
+
+    private ErrorExtractor() {
+    }
 
     /**
      * Extracts BodyValidationErrors from an unirest json body
+     *
      * @param body Response body as unirest JsonNode
      * @return A list of BodyValidationErrors
      */

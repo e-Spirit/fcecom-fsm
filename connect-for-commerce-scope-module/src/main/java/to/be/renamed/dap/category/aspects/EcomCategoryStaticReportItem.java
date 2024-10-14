@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class EcomCategoryStaticReportItem implements Item<BaseContext>, WebeditExecutablePluginItem<BaseContext>, JavaClientExecutablePluginItem<BaseContext> {
+public class EcomCategoryStaticReportItem
+    implements Item<BaseContext>, WebeditExecutablePluginItem<BaseContext>, JavaClientExecutablePluginItem<BaseContext> {
 
     private final EcomConnectScope scope;
 

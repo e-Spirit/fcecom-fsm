@@ -4,6 +4,7 @@ import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomId;
 import to.be.renamed.error.CreatePageException;
 import to.be.renamed.error.ErrorCode;
+
 import de.espirit.common.TypedFilter;
 import de.espirit.common.base.Logging;
 import de.espirit.common.util.Listable;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 
 public class FsPageCreator {
+
     public static final String CATEGORY_PAGE_TYPE = "category";
     public static final String PRODUCT_PAGE_TYPE = "product";
     private static final String CONTENT_PAGE_TYPE = "content";
@@ -79,24 +81,24 @@ public class FsPageCreator {
                 if (!EcomId.hasPageIdField(page)) {
                     return false;
                 }
-                
+
                 return Objects.equals(id, getPageId(page, language));
             }
         };
 
         Listable<Page> pages = scope.getBroker()
-                .requireSpecialist(StoreAgent.TYPE)
-                .getStore(Store.Type.PAGESTORE)
-                .getChildren(pageFilter, true);
+            .requireSpecialist(StoreAgent.TYPE)
+            .getStore(Store.Type.PAGESTORE)
+            .getChildren(pageFilter, true);
 
         Page page = pages.getFirst();
         if (page != null) {
             List<PageRef> pageRefs = Arrays.stream(page.getIncomingReferences())
-                    .filter(ref -> !ref.getRelease() && ref.isType(ReferenceEntry.SITE_STORE_REFERENCE) && !ref.isRemote())
-                    .map(ReferenceEntry::getReferencedElement)
-                    .filter(PageRef.class::isInstance)
-                    .map(PageRef.class::cast)
-                    .collect(Collectors.toList());
+                .filter(ref -> !ref.getRelease() && ref.isType(ReferenceEntry.SITE_STORE_REFERENCE) && !ref.isRemote())
+                .map(ReferenceEntry::getReferencedElement)
+                .filter(PageRef.class::isInstance)
+                .map(PageRef.class::cast)
+                .collect(Collectors.toList());
             if (!pageRefs.isEmpty()) {
                 pageRef = pageRefs.listIterator().next();
                 if (pageRefs.size() > 1) {
@@ -108,7 +110,8 @@ public class FsPageCreator {
         return pageRef;
     }
 
-    public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames, String folder, boolean release, boolean isBulkCreation) {
+    public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames, String folder, boolean release,
+                          boolean isBulkCreation) {
         if (getPageRef(id) != null) {
             Logging.logWarning(format(PAGE_ALREADY_EXISTS, id), this.getClass());
             if (!isBulkCreation) {
@@ -144,7 +147,7 @@ public class FsPageCreator {
      * Retrieves a PageTemplate that matches the provided FirstSpirit template reference name
      *
      * @param fsPageTemplate The FirstSpirit template reference name
-     * @param templates The TemplateStore root node
+     * @param templates      The TemplateStore root node
      * @return PageTemplate that matches the provided FirstSpirit template reference name
      */
     private PageTemplate getPageTemplate(String fsPageTemplate, TemplateStoreRoot templates) {
@@ -157,7 +160,8 @@ public class FsPageCreator {
         return template;
     }
 
-    private PageRef createContentPage(String id, String pageType, Map<String, Object> displayNames, StoreAgent storeAgent, PageTemplate template, Collection<Language> projectLanguages, Language masterLanguage) {
+    private PageRef createContentPage(String id, String pageType, Map<String, Object> displayNames, StoreAgent storeAgent, PageTemplate template,
+                                      Collection<Language> projectLanguages, Language masterLanguage) {
         Map<Language, String> lang2DisplayName = Collections.singletonMap(masterLanguage, id);
 
         Page page = null;
@@ -222,7 +226,8 @@ public class FsPageCreator {
             if (folder != null) {
                 pagesContainer = (PageFolder) pages.getStoreElement(technicalFolderName, PageFolder.UID_TYPE);
                 if (pagesContainer == null) {
-                    pagesContainer = pagesRootContainer.createPageFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder),false);
+                    pagesContainer =
+                        pagesRootContainer.createPageFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder), false);
                 }
             } else {
                 pagesContainer = pagesRootContainer;
@@ -253,7 +258,8 @@ public class FsPageCreator {
             if (folder != null) {
                 pageRefsContainer = (PageRefFolder) sites.getStoreElement(technicalFolderName, SiteStoreFolder.UID_TYPE);
                 if (pageRefsContainer == null) {
-                    pageRefsContainer = pageRefsRootContainer.createPageRefFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder),false);
+                    pageRefsContainer =
+                        pageRefsRootContainer.createPageRefFolder(technicalFolderName, Collections.singletonMap(masterLanguage, folder), false);
                     pageRefsContainer.setLock(true, true);
                     configureFolderLangSpecs(pageRefsRootContainer, projectLanguages);
                     pageRefsContainer.save();
@@ -282,7 +288,7 @@ public class FsPageCreator {
     /**
      * Handles the translation of a page for a collection of project languages
      *
-     * @param page The page to update the translations for
+     * @param page             The page to update the translations for
      * @param projectLanguages Collection of project languages
      */
     private void handlePageTranslation(Page page, Collection<Language> projectLanguages) {
@@ -303,7 +309,7 @@ public class FsPageCreator {
      * Configures the FolderSpecification of a PageRefFolder for a collection of project languages
      *
      * @param pageRefsRootContainer The PageRefFolder
-     * @param projectLanguages Collection of project languages
+     * @param projectLanguages      Collection of project languages
      */
     private static void configureFolderLangSpecs(PageRefFolder pageRefsRootContainer, Collection<Language> projectLanguages) {
         for (Language projectLanguage : projectLanguages) {
@@ -316,8 +322,8 @@ public class FsPageCreator {
     /**
      * Updates the form data of a page with the current page id and page type
      *
-     * @param page The page whose form data gets updated
-     * @param id The page identifier
+     * @param page     The page whose form data gets updated
+     * @param id       The page identifier
      * @param pageType The type of the page
      */
     private void updatePageFormData(Page page, String id, String pageType) {
@@ -342,7 +348,8 @@ public class FsPageCreator {
         }
     }
 
-    private static void setDisplayNames(Map<String, Object> displayNames, Collection<Language> projectLanguages, IDProvider element, String id, String pageType) {
+    private static void setDisplayNames(Map<String, Object> displayNames, Collection<Language> projectLanguages, IDProvider element, String id,
+                                        String pageType) {
         for (Language language : projectLanguages) {
             boolean displayNameProvided = false;
             for (Map.Entry<String, Object> entry : displayNames.entrySet()) {

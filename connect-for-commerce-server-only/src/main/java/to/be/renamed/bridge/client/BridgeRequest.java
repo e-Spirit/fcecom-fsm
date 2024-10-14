@@ -91,7 +91,7 @@ public class BridgeRequest {
 
         try {
             total = Integer.parseInt(response.getHeaders().getFirst("x-total"));
-        } catch(final Exception e) {
+        } catch (final Exception e) {
             Logging.logInfo("Response doesn't provide x-total header.", e, getClass());
         }
 

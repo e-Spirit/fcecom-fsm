@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Representation of an error returned in the bridges response
  */
 public class BridgeError implements Serializable {
+
     private static final long serialVersionUID = -3652573135969314029L;
     private static final String FIELD_PROPERTY = "field";
     private static final String CAUSE_PROPERTY = "cause";
@@ -19,6 +20,7 @@ public class BridgeError implements Serializable {
 
     /**
      * Creates a representation of an error returned in the bridges response
+     *
      * @param jsonObject The error as a unirest JSONObject
      */
     public BridgeError(JsonObject jsonObject) {
