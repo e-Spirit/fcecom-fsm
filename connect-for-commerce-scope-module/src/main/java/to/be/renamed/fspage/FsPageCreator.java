@@ -22,21 +22,19 @@ import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.forms.FormData;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static to.be.renamed.bridge.EcomId.PAGE_ID_FORM_FIELD;
+import static to.be.renamed.bridge.EcomId.PAGE_TYPE_FORM_FIELD;
 import static java.lang.String.format;
 
 public class FsPageCreator {
 
     public static final String CATEGORY_PAGE_TYPE = "category";
     public static final String PRODUCT_PAGE_TYPE = "product";
-    private static final String CONTENT_PAGE_TYPE = "content";
-    private static final String PAGE_ID_FORM_FIELD = "id";
-    private static final String PAGE_TYPE_FORM_FIELD = "type";
+    public static final String CONTENT_PAGE_TYPE = "content";
     private static final String PRODUCTS_SUBFOLDER_PREFIX = "p_";
     private static final String CATEGORIES_SUBFOLDER_PREFIX = "c_";
 
@@ -57,20 +55,7 @@ public class FsPageCreator {
         return language;
     }
 
-    @Nullable
-    protected static String getPageId(Page page, Language language) {
-        if (!EcomId.hasPageIdField(page)) {
-            return null;
-        }
-
-        Object pageId = page.getFormData().get(language, PAGE_ID_FORM_FIELD).get();
-        if (pageId instanceof String id && !id.isEmpty()) {
-            return id;
-        }
-        return null;
-    }
-
-    public PageRef getPageRef(String id) {
+    public PageRef getPageRef(String id, String pageType) {
         if (pageRef != null) {
             return pageRef;
         }
@@ -78,11 +63,11 @@ public class FsPageCreator {
         TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
             @Override
             public boolean accept(Page page) {
-                if (!EcomId.hasPageIdField(page)) {
+                if (!(EcomId.hasPageIdField(page) && EcomId.hasPageTypeField(page))) {
                     return false;
                 }
 
-                return Objects.equals(id, getPageId(page, language));
+                return Objects.equals(id, EcomId.getPageId(page, language)) && Objects.equals(pageType, EcomId.getPageType(page, language));
             }
         };
 
@@ -112,7 +97,7 @@ public class FsPageCreator {
 
     public PageRef create(String id, String fsPageTemplate, String pageType, Map<String, Object> displayNames, String folder, boolean release,
                           boolean isBulkCreation) {
-        if (getPageRef(id) != null) {
+        if (getPageRef(id, pageType) != null) {
             Logging.logWarning(format(PAGE_ALREADY_EXISTS, id), this.getClass());
             if (!isBulkCreation) {
                 throw new CreatePageException(format(PAGE_ALREADY_EXISTS, id), null, ErrorCode.PAGE_ALREADY_EXISTS.get());

@@ -6,6 +6,7 @@ import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
 import to.be.renamed.error.BridgeConnectionException;
+import to.be.renamed.fspage.FsPageCreator;
 import to.be.renamed.module.ServiceFactory;
 
 import de.espirit.common.base.Logging;
@@ -76,7 +77,7 @@ public class EcomCategoryDataStream implements DataStream<EcomCategory> {
             return EcomDapUtilities.applyManagedFlag(
                 ServiceFactory.getBridgeService(scope.getBroker())
                     .findCategories(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_PARENT_ID), scope.getLang(),
-                                    page), scope);
+                                    page), FsPageCreator.CATEGORY_PAGE_TYPE, scope);
         } catch (BridgeConnectionException e) {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
                              this.getClass());

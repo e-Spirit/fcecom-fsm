@@ -1,3 +1,9 @@
+## [3.15.2](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.1...v3.15.2) (2024-10-30)
+
+### Changes
+
+* A problem in the handling of categories and products with the same ID has been fixed.
+
 ## [3.15.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.0...v3.15.1) (2024-10-14)
 
 ### Changes

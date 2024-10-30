@@ -49,11 +49,12 @@ public class EcomDapUtilities {
      * managed by FirstSpirit, then sets the {isManaged} flag.
      *
      * @param items Processed Bridge response items.
+     * @param pageType The pageType of the items to be flagged.
      * @param scope EcomConnectScope needed for FS page fetch.
      * @param <T>   Any subtype of EcomId
      * @return Altered provided items list with managed flags.
      */
-    public static <T extends EcomId> EcomSearchResult<T> applyManagedFlag(EcomSearchResult<T> items, EcomConnectScope scope) {
+    public static <T extends EcomId> EcomSearchResult<T> applyManagedFlag(EcomSearchResult<T> items, String pageType, EcomConnectScope scope) {
         // Bridge Results as map with the ID as Key
         final ImmutableMap<String, T> bridgeItems = Maps.uniqueIndex(items.getResults(), EcomId::getId);
 
@@ -63,11 +64,16 @@ public class EcomDapUtilities {
 
             @Override
             public boolean accept(Page page) {
-                if (!EcomId.hasPageIdField(page)) {
+                if (!(EcomId.hasPageIdField(page) && EcomId.hasPageTypeField(page))) {
                     return false;
                 }
 
-                return bridgeItems.containsKey(EcomId.getPageId(page, null));
+                T bridgeItem = bridgeItems.get(EcomId.getPageId(page, null));
+                if (bridgeItem == null) {
+                    return false;
+                } else {
+                    return pageType.equals(EcomId.getPageType(page, null));
+                }
             }
         };
 

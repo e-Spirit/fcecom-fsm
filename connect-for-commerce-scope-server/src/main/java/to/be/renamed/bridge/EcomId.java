@@ -28,6 +28,7 @@ public abstract class EcomId implements Serializable {
     protected static final String PRODUCT_TEMPLATE_UID = "product";
     protected static final String CONTENT_TEMPLATE_UID = "contentpages";
     public static final String PAGE_ID_FORM_FIELD = "id";
+    public static final String PAGE_TYPE_FORM_FIELD = "type";
     private static final long serialVersionUID = -4130798586510507783L;
 
     protected final String type;
@@ -114,6 +115,22 @@ public abstract class EcomId implements Serializable {
     }
 
     /**
+     * Checks if the current page contains the page type form field
+     *
+     * @param page the page to check for the page type form field
+     * @return true if page contains page type form field, false if it's missing
+     */
+    public static boolean hasPageTypeField(Page page) {
+        try {
+            page.getFormData().get(null, PAGE_TYPE_FORM_FIELD);
+            return true;
+        } catch (NoSuchFormFieldException e) {
+            Logging.logDebug("The type form field is missing on the page with the UID: " + page.getUid(), e, EcomId.class);
+            return false;
+        }
+    }
+
+    /**
      * Retrieves the page id from the given page for the specified language
      *
      * @param page     the page to retrieve the page id from
@@ -128,6 +145,25 @@ public abstract class EcomId implements Serializable {
         Object pageId = page.getFormData().get(language, PAGE_ID_FORM_FIELD).get();
         if (pageId instanceof String id && !id.isEmpty()) {
             return id;
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the page type from the given page for the specified language
+     *
+     * @param page     the page to retrieve the page type from
+     * @param language the language for which the page type is retrieved
+     * @return the page type as a string or null if the page type is missing or invalid
+     */
+    public static String getPageType(Page page, Language language) {
+        if (!hasPageTypeField(page)) {
+            return null;
+        }
+
+        Object pageType = page.getFormData().get(language, PAGE_TYPE_FORM_FIELD).get();
+        if (pageType instanceof String type && !type.isEmpty()) {
+            return type;
         }
         return null;
     }
