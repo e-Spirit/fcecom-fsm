@@ -1,3 +1,9 @@
+## [3.15.3](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.2...v3.15.3) (2024-11-06)
+
+### Changes
+
+* Make the `EcomConnectClientResourcePlugin` only read the configuration if the project app is installed in the current project.
+
 ## [3.15.2](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.1...v3.15.2) (2024-10-30)
 
 ### Changes
