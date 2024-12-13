@@ -7,6 +7,8 @@ registries:
     password: ${{secrets.ARTIFACTORY_HOSTING_PASSWORD}}
 updates:
   - package-ecosystem: "gradle"
+    registries:
+      - gradle-artifactory
     directory: "/"
     schedule:
       interval: "daily"
