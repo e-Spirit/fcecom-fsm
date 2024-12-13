@@ -9,6 +9,9 @@ permissions:
 
 jobs:
   dependency-submission:
+    env:
+      artifactory_hosting_username = ${{ secrets.ARTIFACTORY_HOSTING_USERNAME }}
+      artifactory_hosting_password = ${{ secrets.ARTIFACTORY_HOSTING_PASSWORD }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
