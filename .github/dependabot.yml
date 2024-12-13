@@ -1,4 +1,10 @@
 version: 2
+registries:
+  gradle-artifactory:
+    type: maven-repository
+    url: https://artifactory.e-spirit.hosting/artifactory/repo
+    username: ${{secrets.ARTIFACTORY_HOSTING_USERNAME}}
+    password: ${{secrets.ARTIFACTORY_HOSTING_PASSWORD}}
 updates:
   - package-ecosystem: "gradle"
     directory: "/"
