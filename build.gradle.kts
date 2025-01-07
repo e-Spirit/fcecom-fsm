@@ -23,13 +23,11 @@ plugins {
 }
 
 subprojects {
-    val fsRuntimeVersion: String by project
-
     apply(plugin = "java-library")
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(11)
+        options.release.set(17)
     }
 
     repositories {
@@ -42,6 +40,6 @@ subprojects {
     }
 
     dependencies {
-        compileOnly (group = "de.espirit.firstspirit", name = "fs-isolated-runtime", version = fsRuntimeVersion)
+        compileOnly(rootProject.libs.fs.isolated.runtime)
     }
 }

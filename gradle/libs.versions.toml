@@ -1,12 +1,13 @@
 [versions]
-fsRuntimeVersion = "5.2.241008"
+# ENTER FIRSTSPIRIT VERSION TO BUILD AGAINST
+fsRuntimeVersion = "5.2.241308"
+# ENTER DEPENDENCY VERSIONS
 fcaf = "1.9.0"
 guava = "33.0.0-jre"
-gson ="2.10.1"
+gson ="2.11.0"
 commonsLang3 = "3.17.0"
-minifier = "1.2"
+minifier = "1.3"
 tableLayout = "4.3.0"
-caasConnectGlobal = "3.66.0"
 unirestJava = "3.14.5"
 
 [libraries]
@@ -18,5 +19,4 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang3" }
 minifier = { group = "net.logicsquad", name = "minifier", version.ref = "minifier" }
 table-layout = { group = "info.clearthought", name = "table-layout", version.ref = "tableLayout" }
-caas-connect-global = { group = "com.espirit.caas", name = "caas-connect-global", version.ref = "caasConnectGlobal" }
 unirest-java = { group = "com.konghq", name = "unirest-java", version.ref = "unirestJava" }

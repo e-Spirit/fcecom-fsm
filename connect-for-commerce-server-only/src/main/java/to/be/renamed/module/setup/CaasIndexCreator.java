@@ -1,5 +1,6 @@
 package to.be.renamed.module.setup;
 
+import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.ModuleAgent;
 import de.espirit.firstspirit.access.script.Executable;
 import de.espirit.firstspirit.module.ProjectEnvironment;
@@ -61,7 +62,7 @@ public final class CaasIndexCreator {
         if (executable != null) {
             executable.execute(params);
         } else {
-            throw new CaasIndexCreatorException(format("Could not get executable class %s.", CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME));
+            Logging.logInfo(format("Could not find executable class %s. No CaaS index will be created.", CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME), getClass());
         }
     }
 
