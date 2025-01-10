@@ -1,18 +1,24 @@
+## [3.15.5](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.4...v3.15.5) (2025-01-10)
+
+### Changes
+
+* Fixed an issue where the icon in reports did not update immediately after adding a category, product, or content page to FirstSpirit.
+
 ## [3.15.4](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.3...v3.15.4) (2025-01-07)
 
 ### Changes
 
 * Replaced throwing an exception if the CaaS executable can't be found by logging an info message instead.
-* Updated gradle wrapper version to 8.5
+* Updated gradle wrapper version to 8.5.
 * Introduced a gradle version catalog for managing dependencies.
 * Updated firstspirit-module plugin to version 6.4.1.
 * Updated firstspirit-module-annotations plugin to version 6.4.1.
 * Updated guava to version 33.0.0-jre.
 * Updated gson version 2.11.0.
 * Updated Java version to 17.
-* Added missing dependency org.apache.commons:commons-lang3
-* Added missing dependency net.logicsquad:minifier
-* Removed unused dependency com.espirit.caas:caas-connect-global
+* Added missing dependency org.apache.commons:commons-lang3.
+* Added missing dependency net.logicsquad:minifier.
+* Removed unused dependency com.espirit.caas:caas-connect-global.
 
 ## [3.15.3](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.2...v3.15.3) (2024-11-06)
 

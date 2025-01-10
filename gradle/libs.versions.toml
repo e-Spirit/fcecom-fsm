@@ -1,6 +1,6 @@
 [versions]
 # ENTER FIRSTSPIRIT VERSION TO BUILD AGAINST
-fsRuntimeVersion = "5.2.241308"
+fsRuntimeVersion = "5.2.250102"
 # ENTER DEPENDENCY VERSIONS
 fcaf = "1.9.0"
 guava = "33.0.0-jre"

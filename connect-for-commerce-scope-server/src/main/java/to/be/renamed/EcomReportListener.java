@@ -88,7 +88,7 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
     private void markManaged(StoreElement storeElement) {
         if (storeElement instanceof Page) {
             // Extract pageId from form data.
-            if (EcomId.hasPageIdField((Page) storeElement)) {
+            if (!EcomId.hasPageIdField((Page) storeElement)) {
                 return;
             }
 
@@ -149,20 +149,20 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
                                                  // recurse on childShadows
                                                  const childShadows = Array.from(el.querySelectorAll('*')).map(el => el.shadowRoot).filter(Boolean);
                                                  const childResults = childShadows.map(child => querySelectorAllShadows(selector, child));
-                                                             
+                                             
                                                  // fuse all results into singular, flat array
                                                  const result = Array.from(el.querySelectorAll(selector));
                                                  return result.concat(childResults).flat();
                                              }
-                                                             
+                                             
                                              const pageId = '%s'
                                              const icon = '%s'
-                                                             
+                                             
                                              const markReportIcon = () => {
                                                  querySelectorAllShadows('.report-entry-wrapper[data-identifier="' + pageId + '"] img.report-entry-icon')
                                                      .forEach((reportItemIcon) => reportItemIcon.setAttribute('src', `${icon}`))
                                              }
-                                                             
+                                             
                                              setTimeout(markReportIcon, 500)""".formatted(ecomId, icon));
             Objects.requireNonNull(broker.requireSpecialist(OperationAgent.TYPE).getOperation(ClientScriptOperation.TYPE))
                 .perform(javascript, false);
