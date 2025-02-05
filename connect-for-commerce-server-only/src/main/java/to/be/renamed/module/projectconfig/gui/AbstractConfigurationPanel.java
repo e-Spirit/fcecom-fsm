@@ -4,16 +4,21 @@ import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstants;
 import info.clearthought.layout.TableLayoutConstraints;
 
-import javax.swing.JPanel;
-import javax.swing.JComponent;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.BorderFactory;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.function.IntToDoubleFunction;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Abstract configuration panel with helper functions for creating input fields.
@@ -22,12 +27,12 @@ import java.util.function.Consumer;
  */
 abstract class AbstractConfigurationPanel<ConfigurationT> {
 
-    static final int TEXTFIELD_WIDTH = 80;
-    static final int TEXTFIELD_COLUMNS = 30;
-    private static final int TEXTFIELD_HEIGHT = 20;
-    private static final int LAYOUT_H_GAP = 5;
-    private static final int LAYOUT_V_GAP = 5;
-    private static final int BORDER_SIZE = 5;
+    private static final int TEXTFIELD_WIDTH = 80;
+    protected static final int TEXTFIELD_COLUMNS = 35;
+    private static final int TEXTFIELD_HEIGHT = 23;
+    private static final int LAYOUT_H_GAP = 10;
+    private static final int LAYOUT_V_GAP = 10;
+    private static final int BORDER_SIZE = 10;
     private final TableLayout layout;
     private int row;
     private final JPanel panel;
@@ -46,6 +51,7 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
         layout.setVGap(LAYOUT_V_GAP);
         panel.setLayout(layout);
         panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+        addFocusDismiss(panel);
         row = -1;
     }
 
@@ -63,9 +69,26 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
         row++;
         layout.insertRow(row, TableLayoutConstants.PREFERRED);
         component.setPreferredSize(new Dimension(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT));
+
         JLabel jLabel = new JLabel(labels.getString(labelResourceKey.getResourceBundleKey()));
+        addFocusDismiss(jLabel);
+
         panel.add(jLabel, new TableLayoutConstraints(0, row));
         panel.add(component, new TableLayoutConstraints(1, row));
+    }
+
+    final void addComponent(final JCheckBox component, final Label labelResourceKey) {
+        // Panel to hold both buttons side by side
+        JPanel checkBoxPanel = new JPanel();
+        TableLayout tableLayout = new TableLayout(new double[][]{
+            new double[]{TableLayoutConstants.PREFERRED, TableLayoutConstants.FILL},
+            new double[]{TableLayoutConstants.PREFERRED}});
+
+        checkBoxPanel.setLayout(tableLayout);
+        checkBoxPanel.add(component, new TableLayoutConstraints(0, 0));
+
+        addFocusDismiss(component);
+        addComponent(checkBoxPanel, labelResourceKey);
     }
 
     /**
@@ -79,8 +102,87 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
         layout.insertRow(row, TableLayoutConstants.PREFERRED);
         JButton button = new JButton(labels.getString(labelResourceKey.getResourceBundleKey()));
         button.setPreferredSize(new Dimension(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT));
-        button.addActionListener(action::accept);
+        button.addActionListener(actionEvent -> {
+            panel.requestFocusInWindow();
+            action.accept(actionEvent);
+        });
         panel.add(button, new TableLayoutConstraints(1, row));
+    }
+
+    /**
+     * Adds a new row of buttons regarding the JWT Secret Input Field.
+     *
+     * @param generateJwtSecretButton A button to generate a random JWT Secret.
+     * @param copyToClipboardButton   A button to copy the JWT Secret to the clipboard.
+     * @param showHideSecretButton    A button to show or hide the JWT Token.
+     */
+    final void addJwtButtonRow(JButton generateJwtSecretButton, JButton copyToClipboardButton, JButton showHideSecretButton) {
+        row++;
+        layout.insertRow(row, TableLayoutConstants.PREFERRED);
+
+        final int COLUMNS = 3;
+        final int ROWS = 1;
+
+        final IntToDoubleFunction contentStretch = i -> TableLayoutConstants.PREFERRED;
+
+        double[] columns = new double[COLUMNS];
+        Arrays.setAll(columns, contentStretch);
+
+        double[] rows = new double[ROWS];
+        Arrays.setAll(rows, contentStretch);
+
+        // Panel to hold both buttons side by side
+        JPanel buttonPanel = new JPanel();
+        TableLayout tableLayout = new TableLayout(new double[][]{columns, rows});
+
+        tableLayout.setHGap(LAYOUT_H_GAP);
+        tableLayout.setVGap(LAYOUT_V_GAP);
+
+        buttonPanel.setLayout(tableLayout);
+
+        final int GENERATE_JWT_SECRET_BUTTON_POSITION = 0;
+        final int COPY_TO_CLIPBOARD_BUTTON_POSITION = 1;
+        final int SHOW_SECRET_BUTTON_POSITION = 2;
+
+        buttonPanel.add(generateJwtSecretButton, new TableLayoutConstraints(GENERATE_JWT_SECRET_BUTTON_POSITION, 0));
+        buttonPanel.add(copyToClipboardButton, new TableLayoutConstraints(COPY_TO_CLIPBOARD_BUTTON_POSITION, 0));
+        buttonPanel.add(showHideSecretButton, new TableLayoutConstraints(SHOW_SECRET_BUTTON_POSITION, 0));
+
+        // Add the button panel to the main panel
+        panel.add(buttonPanel, new TableLayoutConstraints(1, row));
+    }
+
+    /**
+     * Updates the text of a button and adjusts its size accordingly.
+     *
+     * @param button  The button to update
+     * @param newText The new text to set on the button
+     */
+    void updateButtonText(JButton button, String newText) {
+        button.setText(newText);
+
+        // Reset to default sizing based on content
+        button.setPreferredSize(null);
+
+        // Recalculate the layout for the button
+        button.revalidate();
+
+        // Redraw the button
+        button.repaint();
+    }
+
+    void dismissFocus() {
+        panel.requestFocusInWindow();
+    }
+
+    // Add mouse listener to remove focus when clicking outside components
+    private void addFocusDismiss(final JComponent component) {
+        component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(final MouseEvent e) {
+                dismissFocus();
+            }
+        });
     }
 
     /**

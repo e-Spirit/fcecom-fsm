@@ -2,12 +2,18 @@ package to.be.renamed.module.projectconfig.gui;
 
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import to.be.renamed.module.projectconfig.model.GeneralConfig;
+import to.be.renamed.module.projectconfig.model.JwtConfig;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.module.projectconfig.model.ReportConfig;
 
 import de.espirit.firstspirit.module.ProjectEnvironment;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 /**
  * Configuration panel for the project configuration.
@@ -18,6 +24,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
     private final BridgeConfigurationPanel bridgeTab;
     private final ReportConfigurationPanel reportTab;
     private final CacheConfigurationPanel cacheTab;
+    private final JwtConfigurationPanel jwtTab;
     private final JPanel configurationPanel;
 
     /**
@@ -32,6 +39,7 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
         cacheTab = new CacheConfigurationPanel(projectAppConfiguration.getBridgeConfig().getCacheConfig());
         bridgeTab = new BridgeConfigurationPanel(projectAppConfiguration.getBridgeConfig(), projectEnvironment, cacheTab);
         reportTab = new ReportConfigurationPanel(projectAppConfiguration.getReportConfig());
+        jwtTab = new JwtConfigurationPanel(projectAppConfiguration.getJwtConfig());
 
         configurationPanel = new JPanel();
         configurationPanel.setLayout(new BoxLayout(configurationPanel, BoxLayout.PAGE_AXIS));
@@ -40,6 +48,13 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
         jTabbedPane.addTab(labels.getString(Label.BRIDGE_TAB_TITLE.getResourceBundleKey()), bridgeTab.getPanel());
         jTabbedPane.addTab(labels.getString(Label.REPORT_TAB_TITLE.getResourceBundleKey()), reportTab.getPanel());
         jTabbedPane.addTab(labels.getString(Label.CACHE_TAB_TITLE.getResourceBundleKey()), cacheTab.getPanel());
+        jTabbedPane.addTab(labels.getString(Label.JWT_TAB_TITLE.getResourceBundleKey()), jwtTab.getPanel());
+
+        // Remove focus when a tab is opened
+        jTabbedPane.addChangeListener(changeEvent -> {
+            SwingUtilities.invokeLater(() -> jTabbedPane.getSelectedComponent().requestFocusInWindow());
+        });
+
         configurationPanel.add(jTabbedPane);
     }
 
@@ -57,7 +72,8 @@ public class ConfigurationAppPanel extends AbstractConfigurationPanel<ProjectApp
         final GeneralConfig generalConfigValue = generalTab.getValue();
         final BridgeConfig bridgeConfigValue = bridgeTab.getValue();
         final ReportConfig reportConfigValue = reportTab.getValue();
+        final JwtConfig jwtConfigValue = jwtTab.getValue();
 
-        return new ProjectAppConfiguration(generalConfigValue, bridgeConfigValue, reportConfigValue);
+        return new ProjectAppConfiguration(generalConfigValue, bridgeConfigValue, reportConfigValue, jwtConfigValue);
     }
 }

@@ -7,6 +7,7 @@ import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.model.BridgeConfig;
 import to.be.renamed.module.projectconfig.model.CacheConfig;
 import to.be.renamed.module.projectconfig.model.GeneralConfig;
+import to.be.renamed.module.projectconfig.model.JwtConfig;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 import to.be.renamed.module.projectconfig.model.ReportConfig;
 import to.be.renamed.module.setup.CaasIndexCreator;
@@ -91,7 +92,7 @@ public class EcomConnectProjectApp implements ProjectApp {
 
             final ReportConfig reportConfig = new ReportConfig(categoryLevels, productLevels);
 
-            final ProjectAppConfiguration projectAppConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig);
+            final ProjectAppConfiguration projectAppConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig, new JwtConfig());
 
             storeMigratedConfiguration(projectAppConfiguration);
             Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!", getClass());
@@ -113,7 +114,7 @@ public class EcomConnectProjectApp implements ProjectApp {
                                      projectAppConfiguration.getBridgeConfig().getCacheConfig());
                 final ReportConfig reportConfig = projectAppConfiguration.getReportConfig();
 
-                final ProjectAppConfiguration migratedConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig);
+                final ProjectAppConfiguration migratedConfiguration = new ProjectAppConfiguration(generalConfig, bridgeConfig, reportConfig, new JwtConfig());
 
                 storeMigratedConfiguration(migratedConfiguration);
                 Logging.logInfo("Project app configuration for project with ID " + environment.getProjectId() + " successfully migrated!",

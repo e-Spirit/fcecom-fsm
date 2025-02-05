@@ -30,7 +30,7 @@ public class GeneralConfig implements Serializable {
      *
      * @param ccExtensionsUrl           URL to load the ContentCreator Extensions from
      * @param useCCExtensions           Whether to use ContentCreator Extensions
-     * @param disableBridgePageCreation Flag to disable bride page creation
+     * @param disableBridgePageCreation Flag to disable bridge page creation
      */
     public GeneralConfig(String ccExtensionsUrl, Boolean useCCExtensions, Boolean disableBridgePageCreation) {
         this.ccExtensionsUrl = ConfigUtils.removeTrailingSlash(Objects.requireNonNullElse(ccExtensionsUrl, ""));
@@ -44,7 +44,7 @@ public class GeneralConfig implements Serializable {
      *
      * @param ccExtensionsUrlString           URL to load the ContentCreator Extensions from
      * @param useCCExtensionsString           Whether to use ContentCreator Extensions
-     * @param disableBridgePageCreationString Flag to disable bride page creation
+     * @param disableBridgePageCreationString Flag to disable bridge page creation
      * @return A general configuration
      */
     public static GeneralConfig fromStrings(String ccExtensionsUrlString, String useCCExtensionsString, String disableBridgePageCreationString) {

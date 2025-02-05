@@ -12,14 +12,20 @@ public enum Label {
     BRIDGE_PASSWORD("projectApp.configuration.items.bridge-password.label"),
     TEST_CONNECTION("projectApp.configuration.items.bridge-test.dialog.title"),
     BRIDGE_TEST_CONNECTION("projectApp.configuration.actions.bridge-test.button.label"),
+    GENERATE_JWT_SECRET("projectApp.configuration.actions.jwt.secret.generate.button.label"),
+    COPY_JWT_SECRET("projectApp.configuration.actions.jwt.secret.copy.button.label"),
+    SHOW_PASSWORD("projectApp.configuration.actions.jwt.secret.show.button.label"),
+    HIDE_PASSWORD("projectApp.configuration.actions.jwt.secret.hide.button.label"),
     REPORT_CATEGORY_LEVELS("projectApp.configuration.items.category-levels.label"),
     REPORT_PRODUCT_LEVELS("projectApp.configuration.items.product-levels.label"),
+    JWT_SECRET("projectApp.configuration.items.jwt.secret.label"),
     CACHE_SIZE("projectApp.configuration.items.cache-size.label"),
     CACHE_AGE("projectApp.configuration.items.cache-age.label"),
     GENERAL_TAB_TITLE("projectApp.configuration.sections.general.label"),
     BRIDGE_TAB_TITLE("projectApp.configuration.sections.bridge.label"),
     REPORT_TAB_TITLE("projectApp.configuration.sections.report.label"),
-    CACHE_TAB_TITLE("projectApp.configuration.sections.cache.label");
+    CACHE_TAB_TITLE("projectApp.configuration.sections.cache.label"),
+    JWT_TAB_TITLE("projectApp.configuration.sections.jwt.label");
 
     private final String resourceBundleKey;
 

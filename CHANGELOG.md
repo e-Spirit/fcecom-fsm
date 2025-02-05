@@ -1,3 +1,16 @@
+## [3.16.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.5...v3.16.0) (2025-02-05)
+
+### Changes
+* Added a new ShareView feature that enables secure sharing of preview content outside of the ContentCreator.
+
+### UPDATE NOTICE
+
+ShareView is a mode of the Frontend API ecosystem that allows users to preview content outside the ContentCreator without requiring it to be released in FirstSpirit.
+
+This feature involves a token generation process that grants users access to a generated token, enabling them to view preview content from the Frontend API Backend or a similar implementation of the Frontend API Server package.
+
+While the functionality works out of the box, some configuration steps are required to enable this view. Refer to the [Frontend API documentation](https://docs.e-spirit.com/ecom/fsconnect-com-api/fsconnect-com-frontend-api/latest/share-view/).
+
 ## [3.15.5](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.4...v3.15.5) (2025-01-10)
 
 ### Changes

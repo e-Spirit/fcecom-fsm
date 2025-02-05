@@ -41,5 +41,7 @@ subprojects {
 
     dependencies {
         compileOnly(rootProject.libs.fs.isolated.runtime)
+
+        implementation("com.nimbusds:nimbus-jose-jwt:10.0.1")
     }
 }

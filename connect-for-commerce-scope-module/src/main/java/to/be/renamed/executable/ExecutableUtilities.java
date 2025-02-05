@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class ExecutableUtilities {
 
@@ -25,11 +26,25 @@ public abstract class ExecutableUtilities {
         return null;
     }
 
+    @Nullable
     public Long getLongParam(String parameterName) {
+        if (parameters.containsKey(parameterName) &&
+            parameters.get(parameterName) instanceof Number number) {
+            return number.longValue();
+        }
+        return null;
+    }
+
+    public long getLongParam(String parameterName, long defaultValue) {
+        return Optional.ofNullable(getLongParam(parameterName)).orElse(defaultValue);
+    }
+
+    @Nullable
+    public Boolean getBooleanParam(String parameterName) {
         if (parameters.containsKey(parameterName)) {
             Object value = parameters.get(parameterName);
-            if (value instanceof Number) {
-                return ((Number) value).longValue();
+            if (value instanceof Boolean) {
+                return (Boolean) value;
             }
         }
         return null;
