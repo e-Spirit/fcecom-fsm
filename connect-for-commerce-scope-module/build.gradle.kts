@@ -9,4 +9,5 @@ dependencies {
     implementation(rootProject.libs.guava)
     implementation(rootProject.libs.gson)
     implementation(rootProject.libs.commons.lang3)
+    implementation(rootProject.libs.nimbus.jose.jwt)
 }

@@ -1,6 +1,13 @@
+## [3.16.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.16.0...v3.16.1) (2025-03-10)
+
+### Changes
+
+* Moved `nimbus-jose-jwt` dependency to the version catalog.
+
 ## [3.16.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.15.5...v3.16.0) (2025-02-05)
 
 ### Changes
+
 * Added a new ShareView feature that enables secure sharing of preview content outside of the ContentCreator.
 
 ### UPDATE NOTICE

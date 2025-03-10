@@ -1,6 +1,6 @@
 [versions]
 # ENTER FIRSTSPIRIT VERSION TO BUILD AGAINST
-fsRuntimeVersion = "5.2.250211"
+fsRuntimeVersion = "5.2.250212"
 # ENTER DEPENDENCY VERSIONS
 fcaf = "1.9.0"
 guava = "33.0.0-jre"
@@ -9,6 +9,7 @@ commonsLang3 = "3.17.0"
 minifier = "1.3"
 tableLayout = "4.3.0"
 unirestJava = "3.14.5"
+nimbusJoseJwt = "10.0.1"
 
 [libraries]
 fs-isolated-runtime = { group = "de.espirit.firstspirit", name = "fs-isolated-runtime", version.ref = "fsRuntimeVersion" }
@@ -20,3 +21,4 @@ commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.
 minifier = { group = "net.logicsquad", name = "minifier", version.ref = "minifier" }
 table-layout = { group = "info.clearthought", name = "table-layout", version.ref = "tableLayout" }
 unirest-java = { group = "com.konghq", name = "unirest-java", version.ref = "unirestJava" }
+nimbus-jose-jwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version.ref = "nimbusJoseJwt" }

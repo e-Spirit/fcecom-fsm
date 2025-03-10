@@ -10,4 +10,5 @@ dependencies {
     implementation(rootProject.libs.table.layout)
     implementation(rootProject.libs.guava)
     implementation(rootProject.libs.unirest.java)
+    implementation(rootProject.libs.nimbus.jose.jwt)
 }
