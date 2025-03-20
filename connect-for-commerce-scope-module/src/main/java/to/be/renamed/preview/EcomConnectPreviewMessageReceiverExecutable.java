@@ -105,7 +105,7 @@ public class EcomConnectPreviewMessageReceiverExecutable extends ExecutableUtili
 
         if (element instanceof PageRef) {
             Language language = context.requireSpecialist(LanguageAgent.TYPE).getProjectLanguages(false).get(languageAbbr);
-            EcomId ecomId = EcomId.from((PageRef) element, language != null ? language : scope.getLanguage());
+            EcomId ecomId = EcomId.from((PageRef) element, language != null ? language : scope.getLanguage(), scope);
             if (ecomId instanceof EcomContent) {
                 final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(context);
                 final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();

@@ -1,5 +1,7 @@
 package to.be.renamed.module;
 
+import to.be.renamed.caas.CaasService;
+import to.be.renamed.caas.CaasFsService;
 import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.bridge.BridgeFsService;
 import to.be.renamed.bridge.BridgeService;
@@ -7,6 +9,7 @@ import to.be.renamed.bridge.BridgeService;
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.agency.ProjectAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.module.ProjectEnvironment;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -94,6 +97,32 @@ public final class ServiceFactory {
 
         logDebug("Initializing bridge service for project " + projectId + ".");
         service.init(specialistsBroker, projectId);
+        return service;
+    }
+
+    /**
+     * Returns a {@link CaasFsService} for the project identified by the given <code>projectEnvironment.getProjectId()</code>.
+     *
+     * @param projectEnvironment {@link ProjectEnvironment} that currently used in FirstSpirit.
+     * @return a {@link CaasService} for the project identified by the given <code>projectEnvironment.getProjectId()</code>.
+     */
+    public static CaasService getCaasService(final ProjectEnvironment projectEnvironment) {
+        logDebug("Received a request to provide a caas service for project " + projectEnvironment.getProjectId() + ".");
+        try {
+            final CaasService caasService = loadCaasService(projectEnvironment);
+            logDebug("Successfully loaded a caas service for project " + projectEnvironment.getProjectId() + ".");
+            return caasService;
+        } catch (final RuntimeException e) {
+            throw new RuntimeException("Providing a caas service for project " + projectEnvironment.getProjectId() + " failed.", e);
+        }
+    }
+
+    private static CaasService loadCaasService(final ProjectEnvironment projectEnvironment) {
+        logDebug("Loading a caas service for project " + projectEnvironment.getProjectId() + ".");
+        final CaasService service = load(CaasService.class);
+
+        logDebug("Initializing caas service for project " + projectEnvironment.getProjectId() + ".");
+        service.init(projectEnvironment);
         return service;
     }
 

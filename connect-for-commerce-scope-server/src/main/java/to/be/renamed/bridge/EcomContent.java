@@ -1,9 +1,9 @@
 package to.be.renamed.bridge;
 
-import to.be.renamed.bridge.client.Json;
-import to.be.renamed.module.ServiceFactory;
 import to.be.renamed.EcomConnectException;
 import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.client.Json;
+import to.be.renamed.module.ServiceFactory;
 
 import de.espirit.firstspirit.access.store.sitestore.PageRef;
 
@@ -28,7 +28,7 @@ public class EcomContent extends EcomId implements Serializable {
 
     @Override
     public String getType() {
-        return EcomId.CONTENT_TEMPLATE_UID;
+        return EcomId.TYPE_CONTENT;
     }
 
     public String getExtract() {
@@ -45,9 +45,8 @@ public class EcomContent extends EcomId implements Serializable {
         if (!hasId()) {
             EcomElement element = getElement(scope);
             PageRef pageRef = element.getPageRef();
-            if (pageRef.getPage() != null && getPageId(pageRef.getPage(), element.getLanguage()) == null) {
-                String pageId;
-                pageId = ServiceFactory.getBridgeService(scope.getBroker()).createContent(element.getEcomElementDTO());
+            if (pageRef.getPage() != null && EcomIdUtilities.getPageId(pageRef.getPage(), element.getLanguage(), scope) == null) {
+                String pageId = ServiceFactory.getBridgeService(scope.getBroker()).createContent(element.getEcomElementDTO());
 
                 if (pageId == null) {
                     throw new EcomConnectException(

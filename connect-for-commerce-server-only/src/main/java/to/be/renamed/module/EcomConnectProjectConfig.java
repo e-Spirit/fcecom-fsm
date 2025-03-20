@@ -1,25 +1,26 @@
 package to.be.renamed.module;
 
 import to.be.renamed.bridge.BridgeService;
+import to.be.renamed.caas.CaasService;
 import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.gui.ConfigurationAppPanel;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 
 import de.espirit.common.base.Logging;
-import de.espirit.firstspirit.access.Language;
 import de.espirit.firstspirit.access.project.Project;
-import de.espirit.firstspirit.agency.LanguageAgent;
-import de.espirit.firstspirit.agency.UIAgent;
 import de.espirit.firstspirit.module.Configuration;
 import de.espirit.firstspirit.module.ProjectEnvironment;
 
-import java.awt.*;
+import java.awt.Frame;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
+/**
+ * Provides all information necessary to run all customer-specific operations.
+ */
 public class EcomConnectProjectConfig implements Configuration<ProjectEnvironment> {
 
     private ProjectEnvironment projectEnvironment;
@@ -31,13 +32,6 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
     public void init(final String moduleName, final String componentName, final ProjectEnvironment env) {
         this.projectEnvironment = env;
         moduleConfigurationAccessor = ServiceFactory.getProjectAppConfigurationService(projectEnvironment.getBroker());
-
-        final UIAgent uiAgent = env.getBroker().requestSpecialist(UIAgent.TYPE);
-        Language language = uiAgent != null ? uiAgent.getDisplayLanguage() : null;
-
-        if (language == null) {
-            language = env.getBroker().requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
-        }
     }
 
     @Override
@@ -79,6 +73,8 @@ public class EcomConnectProjectConfig implements Configuration<ProjectEnvironmen
         final Project project = Objects.requireNonNull(projectEnvironment.getProject());
         updatedConfiguration.getBridgeConfig().setProjectUuid(project.getUuid());
         bridgeService.configureBridge(updatedConfiguration.getBridgeConfig());
+        final CaasService caasService = ServiceFactory.getCaasService(projectEnvironment);
+        caasService.addCaasIndex(configuration.getFieldsConfig());
     }
 
     // Unimplemented because not needed

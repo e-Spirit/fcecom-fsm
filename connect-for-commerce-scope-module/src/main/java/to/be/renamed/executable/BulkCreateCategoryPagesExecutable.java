@@ -2,6 +2,7 @@ package to.be.renamed.executable;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomCategory;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.error.BridgeConnectionException;
@@ -87,7 +88,7 @@ public class BulkCreateCategoryPagesExecutable extends ExecutableUtilities imple
                     }
 
                     FsPageCreator fsPageCreator = Objects.requireNonNullElseGet(pageCreator, () -> new FsPageCreator(scope));
-                    fsPageCreator.create(category.getId(), fsPageTemplate, FsPageCreator.CATEGORY_PAGE_TYPE, displayNames, folder, release, true);
+                    fsPageCreator.create(category.getId(), fsPageTemplate, EcomId.TYPE_CATEGORY, displayNames, folder, release, true);
                 }
             } while (count < results.getTotal());
         }

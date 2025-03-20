@@ -39,7 +39,7 @@ public class EcomProduct extends EcomId implements Serializable {
 
     @Override
     public String getType() {
-        return EcomId.PRODUCT_TEMPLATE_UID;
+        return EcomId.TYPE_PRODUCT;
     }
 
     @Override

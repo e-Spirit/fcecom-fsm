@@ -59,7 +59,7 @@ public class EcomElementDTO implements Serializable {
     }
 
     /**
-     * Gives the first value rom a map with strings as key and value if present.
+     * Gives the first value from a map with strings as key and value if present.
      *
      * @param input A map with strings as key and value.
      * @return The first value of the map or null if no value is present.

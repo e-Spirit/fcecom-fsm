@@ -79,7 +79,7 @@ public class EcomCategory extends EcomId implements Serializable {
 
     @Override
     public String getType() {
-        return EcomId.CATEGORY_TEMPLATE_UID;
+        return EcomId.TYPE_CATEGORY;
     }
 
     @Override

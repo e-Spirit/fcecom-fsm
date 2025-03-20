@@ -2,6 +2,7 @@ package to.be.renamed.fspage;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomId;
+import to.be.renamed.bridge.EcomIdUtilities;
 import to.be.renamed.error.CreatePageException;
 import to.be.renamed.error.ErrorCode;
 
@@ -15,26 +16,30 @@ import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.access.store.pagestore.PageFolder;
 import de.espirit.firstspirit.access.store.pagestore.PageStoreRoot;
-import de.espirit.firstspirit.access.store.sitestore.*;
+import de.espirit.firstspirit.access.store.sitestore.FolderLangSpec;
+import de.espirit.firstspirit.access.store.sitestore.PageRef;
+import de.espirit.firstspirit.access.store.sitestore.PageRefFolder;
+import de.espirit.firstspirit.access.store.sitestore.SiteStoreFolder;
+import de.espirit.firstspirit.access.store.sitestore.SiteStoreRoot;
 import de.espirit.firstspirit.access.store.templatestore.PageTemplate;
 import de.espirit.firstspirit.access.store.templatestore.TemplateStoreRoot;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.forms.FormData;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static to.be.renamed.bridge.EcomId.PAGE_ID_FORM_FIELD;
-import static to.be.renamed.bridge.EcomId.PAGE_TYPE_FORM_FIELD;
 import static java.lang.String.format;
 
 public class FsPageCreator {
 
-    public static final String CATEGORY_PAGE_TYPE = "category";
-    public static final String PRODUCT_PAGE_TYPE = "product";
-    public static final String CONTENT_PAGE_TYPE = "content";
     private static final String PRODUCTS_SUBFOLDER_PREFIX = "p_";
     private static final String CATEGORIES_SUBFOLDER_PREFIX = "c_";
 
@@ -63,11 +68,16 @@ public class FsPageCreator {
         TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
             @Override
             public boolean accept(Page page) {
-                if (!(EcomId.hasPageIdField(page) && EcomId.hasPageTypeField(page))) {
+                if (!EcomIdUtilities.hasPageIdField(page, scope)) {
                     return false;
                 }
 
-                return Objects.equals(id, EcomId.getPageId(page, language)) && Objects.equals(pageType, EcomId.getPageType(page, language));
+                if (!EcomIdUtilities.hasPageTypeField(page, scope)) {
+                    return false;
+                }
+
+                return Objects.equals(id, EcomIdUtilities.getPageId(page, language, scope)) &&
+                       Objects.equals(pageType, EcomIdUtilities.getPageType(page, language, scope));
             }
         };
 
@@ -114,9 +124,9 @@ public class FsPageCreator {
         Collection<Language> projectLanguages = languageAgent.getProjectLanguages(false).values();
         Language masterLanguage = languageAgent.getMasterLanguage();
 
-        if (pageType.equals(CATEGORY_PAGE_TYPE) || pageType.equals(PRODUCT_PAGE_TYPE)) {
+        if (pageType.equals(EcomId.TYPE_CATEGORY) || pageType.equals(EcomId.TYPE_PRODUCT)) {
             return createCategoryOrProductPage(id, pageType, displayNames, storeAgent, template, projectLanguages, masterLanguage, folder, release);
-        } else if (pageType.equals(CONTENT_PAGE_TYPE)) {
+        } else if (pageType.equals(EcomId.TYPE_CONTENT) || pageType.equals(EcomId.TYPE_CONTENT_DEPRECATED)) {
             return createContentPage(id, pageType, displayNames, storeAgent, template, projectLanguages, masterLanguage);
         } else {
             Logging.logError(format(INCORRECT_PAGE_TYPE, pageType), getClass());
@@ -191,7 +201,7 @@ public class FsPageCreator {
                                                 Language masterLanguage,
                                                 String folder,
                                                 boolean release) {
-        String containerUid = '_' + (pageType.equals(CATEGORY_PAGE_TYPE) ? (pageType.substring(0, pageType.length() - 1) + "ies") : (pageType + 's'));
+        String containerUid = '_' + (pageType.equals(EcomId.TYPE_CATEGORY) ? (pageType.substring(0, pageType.length() - 1) + "ies") : (pageType + 's'));
         Map<Language, String> lang2DisplayName = Collections.singletonMap(masterLanguage, '[' + containerUid.substring(1) + ']');
 
         PageFolder pagesRootContainer;
@@ -199,7 +209,7 @@ public class FsPageCreator {
         PageRefFolder pageRefsRootContainer = null;
         PageRefFolder pageRefsContainer = null;
         Page page = null;
-        String technicalFolderName = (pageType.equals(CATEGORY_PAGE_TYPE) ? CATEGORIES_SUBFOLDER_PREFIX : PRODUCTS_SUBFOLDER_PREFIX) + folder;
+        String technicalFolderName = (pageType.equals(EcomId.TYPE_CATEGORY) ? CATEGORIES_SUBFOLDER_PREFIX : PRODUCTS_SUBFOLDER_PREFIX) + folder;
 
         try {
             PageStoreRoot pages = (PageStoreRoot) storeAgent.getStore(Store.Type.PAGESTORE);
@@ -313,8 +323,8 @@ public class FsPageCreator {
      */
     private void updatePageFormData(Page page, String id, String pageType) {
         FormData formData = page.getFormData();
-        formData.get(getLanguage(), PAGE_ID_FORM_FIELD).set(id);
-        formData.get(getLanguage(), PAGE_TYPE_FORM_FIELD).set(pageType);
+        formData.get(getLanguage(), scope.getIdField()).set(id);
+        formData.get(getLanguage(), scope.getPageTypeField()).set(pageType);
         page.setFormData(formData);
     }
 

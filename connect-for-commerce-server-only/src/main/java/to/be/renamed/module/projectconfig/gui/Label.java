@@ -18,6 +18,12 @@ public enum Label {
     HIDE_PASSWORD("projectApp.configuration.actions.jwt.secret.hide.button.label"),
     REPORT_CATEGORY_LEVELS("projectApp.configuration.items.category-levels.label"),
     REPORT_PRODUCT_LEVELS("projectApp.configuration.items.product-levels.label"),
+    FIELDS_ID_FIELD_NAME("projectApp.configuration.items.fields.id.label"),
+    FIELDS_TYPE_FIELD_NAME("projectApp.configuration.items.fields.type.label"),
+    FIELDS_DOCUMENTATION("projectApp.configuration.items.fields.documentation.label"),
+    ERROR_WRONG_FORMAT("projectApp.configuration.items.fields.error.wrong-format"),
+    ERROR_LEADING_NUMBER("projectApp.configuration.items.fields.error.leading-number"),
+    ERROR_EMPTY_VALUE("projectApp.configuration.items.fields.error.empty-value"),
     JWT_SECRET("projectApp.configuration.items.jwt.secret.label"),
     CACHE_SIZE("projectApp.configuration.items.cache-size.label"),
     CACHE_AGE("projectApp.configuration.items.cache-age.label"),
@@ -25,6 +31,7 @@ public enum Label {
     BRIDGE_TAB_TITLE("projectApp.configuration.sections.bridge.label"),
     REPORT_TAB_TITLE("projectApp.configuration.sections.report.label"),
     CACHE_TAB_TITLE("projectApp.configuration.sections.cache.label"),
+    FIELDS_TAB_TITLE("projectApp.configuration.sections.fields.label"),
     JWT_TAB_TITLE("projectApp.configuration.sections.jwt.label");
 
     private final String resourceBundleKey;

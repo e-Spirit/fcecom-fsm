@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomId;
+import to.be.renamed.bridge.EcomIdUtilities;
 import to.be.renamed.bridge.EcomSearchResult;
 
 import de.espirit.common.TypedFilter;
@@ -48,10 +49,10 @@ public class EcomDapUtilities {
      * Fetches FirstSpirit pages and searches for shop driven pages
      * managed by FirstSpirit, then sets the {isManaged} flag.
      *
-     * @param items Processed Bridge response items.
+     * @param items    Processed Bridge response items.
      * @param pageType The pageType of the items to be flagged.
-     * @param scope EcomConnectScope needed for FS page fetch.
-     * @param <T>   Any subtype of EcomId
+     * @param scope    EcomConnectScope needed for FS page fetch.
+     * @param <T>      Any subtype of EcomId
      * @return Altered provided items list with managed flags.
      */
     public static <T extends EcomId> EcomSearchResult<T> applyManagedFlag(EcomSearchResult<T> items, String pageType, EcomConnectScope scope) {
@@ -64,15 +65,18 @@ public class EcomDapUtilities {
 
             @Override
             public boolean accept(Page page) {
-                if (!(EcomId.hasPageIdField(page) && EcomId.hasPageTypeField(page))) {
+                if (!EcomIdUtilities.hasPageIdField(page, scope)) {
+                    return false;
+                }
+                if (!EcomIdUtilities.hasPageTypeField(page, scope)) {
                     return false;
                 }
 
-                T bridgeItem = bridgeItems.get(EcomId.getPageId(page, null));
+                T bridgeItem = bridgeItems.get(EcomIdUtilities.getPageId(page, null, scope));
                 if (bridgeItem == null) {
                     return false;
                 } else {
-                    return pageType.equals(EcomId.getPageType(page, null));
+                    return pageType.equals(EcomIdUtilities.getPageType(page, null, scope));
                 }
             }
         };
@@ -87,7 +91,7 @@ public class EcomDapUtilities {
             .filter(fsPage -> !fsPage.getPageRefs().isEmpty())
 
             // Get item from Bridge Results
-            .forEach(fsPage -> Objects.requireNonNull(bridgeItems.get(EcomId.getPageId(fsPage, null)))
+            .forEach(fsPage -> Objects.requireNonNull(bridgeItems.get(EcomIdUtilities.getPageId(fsPage, null, scope)))
 
                 // Set managed flag
                 .setManaged(true));

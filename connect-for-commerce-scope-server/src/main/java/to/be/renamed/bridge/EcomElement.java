@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Represents the combination of an EcomId and A FirstSpirit page object consisting of a Paga and a PageRef.
+ * Represents the combination of an EcomId and A FirstSpirit page object consisting of a Page and a PageRef.
  */
 public class EcomElement {
 
@@ -72,11 +72,11 @@ public class EcomElement {
         TypedFilter<Page> pageFilter = new TypedFilter<>(Page.class) {
             @Override
             public boolean accept(Page page) {
-                if (!EcomId.hasPageIdField(page)) {
+                if (!EcomIdUtilities.hasPageIdField(page, scope)) {
                     return false;
                 }
 
-                return Objects.equals(ecomId.getId(), EcomId.getPageId(page, language));
+                return Objects.equals(ecomId.getId(), EcomIdUtilities.getPageId(page, language, scope));
             }
         };
 
@@ -362,7 +362,7 @@ public class EcomElement {
      */
     private void updatePageFormData(Page page) {
         FormData formData = page.getFormData();
-        formData.get(getLanguage(), EcomId.PAGE_ID_FORM_FIELD).set(ecomId.getId());
+        formData.get(getLanguage(), scope.getIdField()).set(ecomId.getId());
         page.setFormData(formData);
     }
 
@@ -393,7 +393,7 @@ public class EcomElement {
             try {
                 page.setLock(true, true);
                 FormData formData = page.getFormData();
-                formData.get(getLanguage(), EcomId.PAGE_ID_FORM_FIELD).set(pageId);
+                formData.get(getLanguage(), scope.getIdField()).set(pageId);
                 page.setFormData(formData);
                 page.save();
             } catch (Exception e) {

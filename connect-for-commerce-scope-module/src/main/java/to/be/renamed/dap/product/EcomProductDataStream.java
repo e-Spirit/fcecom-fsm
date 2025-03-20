@@ -1,6 +1,7 @@
 package to.be.renamed.dap.product;
 
 import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.EcomProduct;
 import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
@@ -78,7 +79,7 @@ public class EcomProductDataStream implements DataStream<EcomProduct> {
             return EcomDapUtilities.applyManagedFlag(
                 ServiceFactory.getBridgeService(scope.getBroker())
                     .findProducts(filters.get(EcomDapUtilities.FILTER_QUERY), filters.get(EcomDapUtilities.FILTER_CATEGORY), scope.getLang(), page),
-                FsPageCreator.PRODUCT_PAGE_TYPE, scope);
+                EcomId.TYPE_PRODUCT, scope);
         } catch (BridgeConnectionException e) {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
                              this.getClass());

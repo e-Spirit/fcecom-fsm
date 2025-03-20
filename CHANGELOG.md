@@ -1,3 +1,10 @@
+## [3.17.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.16.1...v3.17.0) (2025-03-20)
+
+### Changes
+
+* Added the ability to change the standard form field names for ShopID and PageType.
+* Unifed the internal usage of page types.
+
 ## [3.16.1](https://github.com/e-Spirit/fcecom-fsm/compare/v3.16.0...v3.16.1) (2025-03-10)
 
 ### Changes

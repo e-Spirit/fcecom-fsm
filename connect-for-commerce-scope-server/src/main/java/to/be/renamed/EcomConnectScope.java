@@ -6,7 +6,6 @@ import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.client.Json;
 import to.be.renamed.error.BridgeException;
 import to.be.renamed.module.ServiceFactory;
-import to.be.renamed.module.projectconfig.access.ProjectAppConfigurationService;
 import to.be.renamed.module.projectconfig.model.ProjectAppConfiguration;
 
 import de.espirit.common.TypedFilter;
@@ -32,8 +31,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class EcomConnectScope {
@@ -60,7 +59,7 @@ public class EcomConnectScope {
             language = broker.requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
         }
 
-        EcomReportListener.register(broker);
+        EcomReportListener.register(this);
     }
 
     public static EcomConnectScope create(SpecialistsBroker broker) {
@@ -77,6 +76,18 @@ public class EcomConnectScope {
 
     public Language getLanguage() {
         return language;
+    }
+
+    public ProjectAppConfiguration getProjectConfig() {
+        return ServiceFactory.getProjectAppConfigurationService(broker).loadConfiguration();
+    }
+
+    public String getIdField() {
+        return getProjectConfig().getFieldsConfig().getIdField();
+    }
+
+    public String getPageTypeField() {
+        return getProjectConfig().getFieldsConfig().getTypeField();
     }
 
     /**
@@ -131,8 +142,7 @@ public class EcomConnectScope {
 
 
     public void openReport(SpecialistsBroker broker, Class<? extends DataAccessPlugin<?>> dap, Map<String, Object> params) {
-        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(broker);
-        final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
+        final ProjectAppConfiguration projectAppConfiguration = getProjectConfig();
         // without cc extensions
         if (!projectAppConfiguration.getGeneralConfig().useCCExtensions()) {
             String javascript = String.format("() => (WE_API.Report.show(\"%s\", %s, true))", dap.getName(), Json.asJsonElement(params).toString());
@@ -199,15 +209,14 @@ public class EcomConnectScope {
                 );
             }
         } else {
-            message.add("fsid", ecomId.getElement(this).getFSID());
+            message.add("fsid", element.getFSID());
         }
         message.apply(broker);
     }
 
 
     public void setContentCreatorPreviewElement(SpecialistsBroker broker, String id, String pageType, PageRef pageRef) {
-        final ProjectAppConfigurationService projectAppConfigurationService = ServiceFactory.getProjectAppConfigurationService(broker);
-        final ProjectAppConfiguration projectAppConfiguration = projectAppConfigurationService.loadConfiguration();
+        final ProjectAppConfiguration projectAppConfiguration = getProjectConfig();
         // without cc extensions
         if (!projectAppConfiguration.getGeneralConfig().useCCExtensions()) {
             String javascript = String.format("() => (WE_API.Common.setPreviewElement(%s))", Json.asJsonElement(getFSID(pageRef)).toString());

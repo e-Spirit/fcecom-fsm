@@ -1,6 +1,6 @@
 package to.be.renamed;
 
-import to.be.renamed.bridge.EcomId;
+import to.be.renamed.bridge.EcomIdUtilities;
 
 import de.espirit.common.base.Logging;
 import de.espirit.firstspirit.access.Language;
@@ -30,12 +30,12 @@ import java.util.Objects;
  * a newly created page is instantly reflected with
  * a clear visual change in the Report
  *
- * @param broker Used to get:
+ * @param scope Used to get:
  *               1. Project's MasterLanguage
  *               2. ProjectAppConfiguration
  *               3. OperationAgent (for executing JS in ContentCreator)
  */
-public record EcomReportListener(SpecialistsBroker broker) implements StoreListener {
+public record EcomReportListener(EcomConnectScope scope) implements StoreListener {
 
     private static StoreListener STORE_LISTENER;
 
@@ -75,8 +75,8 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
      * @return pageId as String if valid and present and null if it's missing or invalid
      */
     private String extractPageId(Page page) {
-        final Language masterLanguage = broker.requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
-        return EcomId.getPageId(page, masterLanguage);
+        final Language masterLanguage = scope.getBroker().requireSpecialist(LanguageAgent.TYPE).getMasterLanguage();
+        return EcomIdUtilities.getPageId(page, masterLanguage, scope);
     }
 
     /**
@@ -88,7 +88,7 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
     private void markManaged(StoreElement storeElement) {
         if (storeElement instanceof Page) {
             // Extract pageId from form data.
-            if (!EcomId.hasPageIdField((Page) storeElement)) {
+            if (!EcomIdUtilities.hasPageIdField((Page) storeElement, scope)) {
                 return;
             }
 
@@ -96,11 +96,11 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
 
             if (pageId != null) {
                 if (storeElement.getName().startsWith("product")) {
-                    markReportIcon(pageId, "fcecom-product-managed.svg", broker);
+                    markReportIcon(pageId, "fcecom-product-managed.svg", scope.getBroker());
                 } else if (storeElement.getName().startsWith("category")) {
-                    markReportIcon(pageId, "fcecom-category-managed.svg", broker);
+                    markReportIcon(pageId, "fcecom-category-managed.svg", scope.getBroker());
                 } else {
-                    markReportIcon(pageId, "fcecom-content-managed.svg", broker);
+                    markReportIcon(pageId, "fcecom-content-managed.svg", scope.getBroker());
                 }
             }
         }
@@ -110,19 +110,19 @@ public record EcomReportListener(SpecialistsBroker broker) implements StoreListe
      * Registers a StoreListener to the PageStore.
      * Existing StoreListeners are first removed to prevent double events.
      *
-     * @param broker Used to get:
+     * @param scope Used to get:
      *               1. Project's MasterLanguage
      *               2. ProjectAppConfiguration
      *               3. OperationAgent (for executing JS in ContentCreator)
      */
-    public static void register(SpecialistsBroker broker) {
-        final Store store = broker.requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.PAGESTORE);
+    public static void register(EcomConnectScope scope) {
+        final Store store = scope.getBroker().requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.PAGESTORE);
 
         if (STORE_LISTENER != null) {
             store.removeStoreListener(STORE_LISTENER);
         }
 
-        STORE_LISTENER = new EcomReportListener(broker);
+        STORE_LISTENER = new EcomReportListener(scope);
         store.addStoreListener(STORE_LISTENER);
     }
 

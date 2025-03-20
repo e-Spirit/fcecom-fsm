@@ -2,6 +2,7 @@ package to.be.renamed.dap.content;
 
 import to.be.renamed.EcomConnectScope;
 import to.be.renamed.bridge.EcomContent;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
 import to.be.renamed.dap.EcomFilterBuilder;
@@ -76,7 +77,7 @@ public class EcomContentDataStream implements DataStream<EcomContent> {
         try {
             return EcomDapUtilities.applyManagedFlag(
                 ServiceFactory.getBridgeService(scope.getBroker())
-                    .findContent(filters.get(EcomDapUtilities.FILTER_QUERY), scope.getLang(), page), FsPageCreator.CONTENT_PAGE_TYPE, scope);
+                    .findContent(filters.get(EcomDapUtilities.FILTER_QUERY), scope.getLang(), page), EcomId.TYPE_CONTENT, scope);
         } catch (BridgeConnectionException e) {
             Logging.logError(format(EcomDapUtilities.ERROR_LOG_MESSAGE, EcomDapUtilities.ERROR_BRIDGE_CONNECTION, e.getErrorCode()), e,
                              this.getClass());

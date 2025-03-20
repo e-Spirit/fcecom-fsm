@@ -1,9 +1,15 @@
 package to.be.renamed.module.setup;
 
+import to.be.renamed.module.projectconfig.model.FieldsConfig;
+
 import de.espirit.common.base.Logging;
+import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.ModuleAgent;
+import de.espirit.firstspirit.access.ServicesBroker;
+import de.espirit.firstspirit.access.admin.ProjectStorage;
+import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.Executable;
-import de.espirit.firstspirit.module.ProjectEnvironment;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -18,58 +24,91 @@ public final class CaasIndexCreator {
 
     private static final String CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME = "CaasConnectCreateIndexExecutable";
 
-    private static final String FIND_PAGE_INDEX_NAME = "idx_pageType_pageId_lang_country";
-    private static final String
-        FIND_PAGE_INDEX =
-        "{\"keys\": {\"page.formData.type.value\": 1, \"page.formData.id.value\": 1, \"locale.language\": 1, \"locale.country\": 1}}";
+    private SpecialistsBroker specialistsBroker;
+    private FieldsConfig fieldsConfig;
 
-    private final ProjectEnvironment projectEnvironment;
+    private final Map<String, Object> params = new HashMap<>();
 
-    private CaasIndexCreator(final ProjectEnvironment projectEnvironment) {
-        this.projectEnvironment = projectEnvironment;
+    private long projectId;
+
+    private CaasIndexCreator(final long projectId, final SpecialistsBroker specialistsBroker, final FieldsConfig fieldsConfig) {
+        this.projectId = projectId;
+        this.specialistsBroker = specialistsBroker;
+        this.fieldsConfig = fieldsConfig;
     }
 
-    public static CaasIndexCreator create(final ProjectEnvironment projectEnvironment) {
-        return new CaasIndexCreator(projectEnvironment);
+    /**
+     * Creates a CaasIndexCreator instance.
+     *
+     * @param projectId         The id of the project the index should be created for.
+     * @param fieldsConfig      The FieldsConfig telling the CaasIndexCreator how to name and configure the index.
+     * @param specialistsBroker This broker is needed to get the project by projectId with the ModuleAdminAgent and to get the CaaS executable.
+     * @return Instance of CaasIndexCreator, ready to be run.
+     */
+    public static CaasIndexCreator create(final long projectId, final SpecialistsBroker specialistsBroker, final FieldsConfig fieldsConfig) {
+        return new CaasIndexCreator(projectId, specialistsBroker, fieldsConfig);
     }
 
-    private static Executable getCaasConnectCreateIndexExecutable(final ProjectEnvironment projectEnvironment) {
-        Class<? extends Executable> caasConnectCreateIndexExecutableClass = projectEnvironment
-            .getBroker()
-            .requireSpecialist(ModuleAgent.TYPE)
+    /**
+     * Adds an index to the CaaS for better performance when querying fetchByFilter for the
+     * findPage method in our Frontend API, based on the fields configured in the project app component.
+     */
+    public void run() {
+        String typeField = fieldsConfig.getTypeField();
+        String idField = fieldsConfig.getIdField();
+
+        final AdminService adminService = specialistsBroker.requireSpecialist(ServicesBroker.TYPE).getService(AdminService.class);
+        final Project project = adminService.getProjectStorage().getProject(projectId);
+        if (project == null) {
+            throw new CaasIndexCreatorException(format("Could not get project with id %d", projectId));
+        }
+
+        params.put("project", project);
+
+        // An index name based on the configured fields.
+        params.put("indexName", "idx_pageType_pageId_lang_country_with_%s_and_%s".formatted(typeField, idField));
+
+        params.put("indexBody", """
+            {
+              "keys": {
+                "page.formData.%s.value": 1,
+                "page.formData.%s.value": 1,
+                "locale.language": 1,
+                "locale.country": 1
+              }
+            }
+            """.formatted(typeField, idField));
+
+        Class<? extends Executable> caasConnectCreateIndexExecutableClass = specialistsBroker.requireSpecialist(ModuleAgent.TYPE)
             .getTypeForName(CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME, Executable.class);
 
         if (caasConnectCreateIndexExecutableClass != null) {
             try {
-                return caasConnectCreateIndexExecutableClass
+                caasConnectCreateIndexExecutableClass
                     .getDeclaredConstructor()
-                    .newInstance();
+                    .newInstance()
+                    .execute(params);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new CaasIndexCreatorException(format("Could not create %s instance.", CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME), e);
             }
-        }
-        return null;
-    }
-
-    private void createFindPageIndex() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("project", projectEnvironment.getProject());
-        params.put("indexName", FIND_PAGE_INDEX_NAME);
-        params.put("indexBody", FIND_PAGE_INDEX);
-
-        Executable executable = getCaasConnectCreateIndexExecutable(projectEnvironment);
-
-        if (executable != null) {
-            executable.execute(params);
         } else {
-            Logging.logInfo(format("Could not find executable class %s. No CaaS index will be created.", CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME), getClass());
+            Logging.logInfo(
+                format("Could not find executable class %s. No CaaS index will be created.", CAAS_CONNECT_CREATE_INDEX_EXECUTABLE_NAME),
+                getClass());
         }
     }
 
-    /**
-     * Creates a find page caas index for preview and release collection.
-     */
-    public void run() {
-        createFindPageIndex();
+    // ------ For Testing ------
+
+    public CaasIndexCreator() {
     }
+
+    Map<String, Object> getParams() {
+        return params;
+    }
+
+    void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
+
 }

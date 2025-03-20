@@ -1,6 +1,7 @@
 package to.be.renamed.executable;
 
 import to.be.renamed.EcomConnectScope;
+import to.be.renamed.bridge.EcomId;
 import to.be.renamed.bridge.EcomProduct;
 import to.be.renamed.bridge.EcomSearchResult;
 import to.be.renamed.dap.EcomDapUtilities;
@@ -90,7 +91,7 @@ public class BulkCreateProductPagesExecutable extends ExecutableUtilities implem
                     }
 
                     FsPageCreator fsPageCreator = Objects.requireNonNullElseGet(pageCreator, () -> new FsPageCreator(scope));
-                    fsPageCreator.create(product.getId(), fsPageTemplate, FsPageCreator.PRODUCT_PAGE_TYPE, displayNames, subfolder, release, true);
+                    fsPageCreator.create(product.getId(), fsPageTemplate, EcomId.TYPE_PRODUCT, displayNames, subfolder, release, true);
                 }
             } while (count < results.getTotal());
         }

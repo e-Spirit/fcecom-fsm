@@ -1,24 +1,37 @@
 package to.be.renamed.module.projectconfig.gui;
 
+import de.espirit.common.base.Logging;
+
 import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstants;
 import info.clearthought.layout.TableLayoutConstraints;
 
+import org.intellij.lang.annotations.Language;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.IntToDoubleFunction;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
 
 /**
  * Abstract configuration panel with helper functions for creating input fields.
@@ -27,15 +40,17 @@ import javax.swing.JPanel;
  */
 abstract class AbstractConfigurationPanel<ConfigurationT> {
 
-    private static final int TEXTFIELD_WIDTH = 80;
+    protected static final int TEXTFIELD_WIDTH = 80;
     protected static final int TEXTFIELD_COLUMNS = 35;
-    private static final int TEXTFIELD_HEIGHT = 23;
+    protected static final int TEXTFIELD_HEIGHT = 23;
     private static final int LAYOUT_H_GAP = 10;
     private static final int LAYOUT_V_GAP = 10;
     private static final int BORDER_SIZE = 10;
-    private final TableLayout layout;
+    protected final TableLayout layout;
     private int row;
-    private final JPanel panel;
+    protected final JPanel panel;
+    protected final JPanel containerPanel;
+    private final JPanel verticalPanel;
     protected final ResourceBundle labels;
 
     /**
@@ -50,13 +65,23 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
         layout.setHGap(LAYOUT_H_GAP);
         layout.setVGap(LAYOUT_V_GAP);
         panel.setLayout(layout);
-        panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+        panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         addFocusDismiss(panel);
         row = -1;
+
+        // A sub-panel to stack the table panel and the doc text vertically
+        verticalPanel = new JPanel();
+        verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS));
+        verticalPanel.add(panel);
+
+        // Container Panel with BorderLayout
+        containerPanel = new JPanel(new BorderLayout());
+        containerPanel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+        containerPanel.add(verticalPanel, BorderLayout.NORTH);
     }
 
     JPanel getPanel() {
-        return panel;
+        return containerPanel;
     }
 
     /**
@@ -75,6 +100,21 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
 
         panel.add(jLabel, new TableLayoutConstraints(0, row));
         panel.add(component, new TableLayoutConstraints(1, row));
+    }
+
+    /**
+     * Adds the given component with the given label to the panel.
+     *
+     * @param component The component to add
+     * @return row index
+     */
+    final int addComponent(final JComponent component) {
+        row++;
+        layout.insertRow(row, TableLayoutConstants.PREFERRED);
+        component.setPreferredSize(new Dimension(TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT));
+        panel.add(component, new TableLayoutConstraints(1, row));
+
+        return row;
     }
 
     final void addComponent(final JCheckBox component, final Label labelResourceKey) {
@@ -169,6 +209,65 @@ abstract class AbstractConfigurationPanel<ConfigurationT> {
 
         // Redraw the button
         button.repaint();
+    }
+
+    final void addRichText(final Label labelResourceKey) {
+        JEditorPane docPane = new JEditorPane();
+        docPane.setContentType("text/html");
+        docPane.setText(styledHtml(labelResourceKey));
+
+        docPane.setEditable(false);
+        docPane.setOpaque(false);
+        docPane.setBackground(Color.WHITE);
+
+        // Open link in browser when the user clicks on it.
+        docPane.addHyperlinkListener(this::hyperLinkClick);
+
+        docPane.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        docPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, docPane.getPreferredSize().height));
+        docPane.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, 0, BORDER_SIZE, 0));
+
+        addFocusDismiss(docPane);
+
+        verticalPanel.add(docPane);
+        verticalPanel.revalidate();
+        verticalPanel.repaint();
+    }
+
+    private String styledHtml(final Label labelResourceKey) {
+        @Language("HTML") String styledHtml = """
+            <html>
+            <head>
+                <style>
+                    body, a {
+                        color: #666666;
+                        margin: 0;
+                        padding: 0;
+                    }
+                </style>
+            </head>
+            <body>
+                %s
+            </body>
+            </html>
+            """.formatted(labels.getString(labelResourceKey.getResourceBundleKey()));
+
+        return styledHtml;
+    }
+
+    private void hyperLinkClick(HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            try {
+                // Opens the standard browser of the users' OS
+                Desktop.getDesktop().browse(event.getURL().toURI());
+            } catch (HeadlessException exception) {
+                Logging.logError("Cannot open link in headless system", exception, getClass());
+            } catch (IOException exception) {
+                Logging.logError("Could not open link in user's browser.", exception, getClass());
+            } catch (URISyntaxException exception) {
+                Logging.logError("URL to open is not valid.", exception, getClass());
+            }
+        }
     }
 
     void dismissFocus() {

@@ -1,5 +1,13 @@
 package to.be.renamed.executable;
 
+import to.be.renamed.module.ServiceFactory;
+import to.be.renamed.module.projectconfig.model.FieldsConfig;
+
+import de.espirit.firstspirit.access.BaseContext;
+import de.espirit.firstspirit.agency.BrokerAgent;
+import de.espirit.firstspirit.agency.ProjectAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -10,6 +18,12 @@ import java.util.Optional;
 public abstract class ExecutableUtilities {
 
     private Map<String, Object> parameters;
+
+    public FieldsConfig extractFieldsConfig(final BaseContext context) {
+        final long projectId = context.requireSpecialist(ProjectAgent.TYPE).getId();
+        SpecialistsBroker broker = context.requireSpecialist(BrokerAgent.TYPE).getBrokerByProjectId(projectId);
+        return ServiceFactory.getProjectAppConfigurationService(broker).loadConfiguration().getFieldsConfig();
+    }
 
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
