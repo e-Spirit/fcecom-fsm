@@ -71,6 +71,16 @@ public class EcomCategoryDataStreamBuilder implements DataStreamBuilder<EcomCate
             EcomDapUtilities.openDialog(e.getLocalizedMessage(), e.getErrorCode(), scope);
             categoryTree = Collections.emptyMap();
         }
+
+        boolean hasAnyChildren = categoryTree.values()
+            .stream()
+            .anyMatch(category -> !category.getChildren().isEmpty());
+
+        // If there are only root categories in the category tree, we do not add the filter.
+        if (!hasAnyChildren) {
+            return;
+        }
+
         categoryTree
             .entrySet()
             .stream()

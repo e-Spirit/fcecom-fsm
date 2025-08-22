@@ -11,4 +11,5 @@ dependencies {
     implementation(rootProject.libs.guava)
     implementation(rootProject.libs.unirest.java)
     implementation(rootProject.libs.nimbus.jose.jwt)
+    implementation(rootProject.libs.gson)
 }
