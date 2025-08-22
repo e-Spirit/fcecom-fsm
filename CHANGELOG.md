@@ -3,6 +3,7 @@
 ### Changes
 
 * Hiding the category tree dropdown in the category report, if the category tree is just a flat list of categories.
+* Fixed critical security vulnerabilities by updating dependencies.
 
 ## [3.17.0](https://github.com/e-Spirit/fcecom-fsm/compare/v3.16.1...v3.17.0) (2025-03-20)
 
